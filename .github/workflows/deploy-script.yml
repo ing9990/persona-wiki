@@ -22,7 +22,7 @@ jobs:
         run: ./gradlew clean bootJar
 
       - name: Copy to EC2
-        run: scp build/libs/*.jar root@${{ secrets.EC2_HOST }}:~/persona-wiki/web-0.0.1-SNAPSHOT.jar
+        run: scp ./web/build/libs/web-0.0.1-SNAPSHOT.jar root@${{ secrets.EC2_HOST }}:~/persona-wiki/web-0.0.1-SNAPSHOT.jar
 
       - name: Deploy on EC2
         run: ssh root@${{ secrets.EC2_HOST }} "~/persona-wiki/deploy-script.sh"
