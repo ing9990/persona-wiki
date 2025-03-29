@@ -42,7 +42,7 @@ jobs:
 
       - name: Copy JAR to EC2
         run: |
-          scp -i private_key.pem -o StrictHostKeyChecking=no ./web/build/libs/web-0.0.1-SNAPSHOT.jar root@${{ secrets.EC2_HOST }}:/root/persona-wiki/web-0.0.1-SNAPSHOT.jar
+          scp -v -i private_key.pem -o StrictHostKeyChecking=no ./web/build/libs/web-0.0.1-SNAPSHOT.jar root@${{ secrets.EC2_HOST }}:/root/persona-wiki/web-0.0.1-SNAPSHOT.jar
 
       - name: Run deploy script on EC2
         run: |
