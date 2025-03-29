@@ -8,5 +8,5 @@ data class SearchSuggestion(
     val name: String,
     val categoryId: String,
     val categoryName: String,
-    val imageUrl: String
+    val imageUrl: String,
 )

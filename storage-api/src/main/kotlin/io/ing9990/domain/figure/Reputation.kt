@@ -7,10 +7,8 @@ import jakarta.persistence.Embeddable
 class Reputation(
     @Column(name = "like_count", columnDefinition = "INT DEFAULT 0")
     var likeCount: Int = 0,
-
     @Column(name = "dislike_count", columnDefinition = "INT DEFAULT 0")
     var dislikeCount: Int = 0,
-
     @Column(name = "neutral_count", columnDefinition = "INT DEFAULT 0")
     var neutralCount: Int = 0,
 ) {

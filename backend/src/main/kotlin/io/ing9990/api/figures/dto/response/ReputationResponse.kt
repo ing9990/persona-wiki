@@ -10,5 +10,5 @@ data class ReputationResponse(
     val likeRatio: Double,
     val dislikeRatio: Double,
     val neutralRatio: Double,
-    val total: Int
+    val total: Int,
 )

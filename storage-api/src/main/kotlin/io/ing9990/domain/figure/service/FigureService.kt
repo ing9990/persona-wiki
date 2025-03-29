@@ -19,9 +19,8 @@ import org.springframework.transaction.annotation.Transactional
 class FigureService(
     private val figureRepository: FigureRepository,
     private val categoryRepository: CategoryRepository,
-    private val commentRepository: CommentRepository
+    private val commentRepository: CommentRepository,
 ) {
-
     /**
      * 모든 인물 목록을 카테고리와 함께 조회합니다.
      * 이제 카테고리가 함께 로딩되므로 LazyInitializationException이 발생하지 않습니다.
@@ -46,7 +45,10 @@ class FigureService(
      * @param categoryId 카테고리 ID
      * @param figureName 인물 이름
      */
-    fun findByCategoryIdAndNameWithDetails(categoryId: String, figureName: String): Figure? {
+    fun findByCategoryIdAndNameWithDetails(
+        categoryId: String,
+        figureName: String,
+    ): Figure? {
         return figureRepository.findByCategoryIdAndNameWithDetails(categoryId, figureName)
     }
 
@@ -120,7 +122,12 @@ class FigureService(
      * @param bio 인물 설명
      */
     @Transactional
-    fun createFigure(name: String, categoryId: String, imageUrl: String?, bio: String?): Figure {
+    fun createFigure(
+        name: String,
+        categoryId: String,
+        imageUrl: String?,
+        bio: String?,
+    ): Figure {
         val category = findCategoryById(categoryId)
 
         // 중복 체크
@@ -128,12 +135,13 @@ class FigureService(
             throw IllegalArgumentException("이미 '$categoryId' 카테고리에 '$name' 인물이 존재합니다.")
         }
 
-        val figure = Figure(
-            name = name,
-            imageUrl = imageUrl,
-            bio = bio,
-            category = category
-        )
+        val figure =
+            Figure(
+                name = name,
+                imageUrl = imageUrl,
+                bio = bio,
+                category = category,
+            )
 
         return figureRepository.save(figure)
     }
@@ -144,13 +152,17 @@ class FigureService(
      * @param content 댓글 내용
      */
     @Transactional
-    fun addComment(figureId: Long, content: String): Comment {
+    fun addComment(
+        figureId: Long,
+        content: String,
+    ): Comment {
         val figure = findById(figureId)
 
-        val comment = Comment(
-            figure = figure,
-            content = content,
-        )
+        val comment =
+            Comment(
+                figure = figure,
+                content = content,
+            )
 
         return commentRepository.save(comment)
     }
@@ -161,9 +173,13 @@ class FigureService(
      * @param isLike true면 좋아요, false면 싫어요
      */
     @Transactional
-    fun likeOrDislikeComment(commentId: Long, isLike: Boolean) {
-        val comment = commentRepository.findByIdOrNull(commentId)
-            ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $commentId")
+    fun likeOrDislikeComment(
+        commentId: Long,
+        isLike: Boolean,
+    ) {
+        val comment =
+            commentRepository.findByIdOrNull(commentId)
+                ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $commentId")
 
         if (isLike) {
             comment.likes++
@@ -179,7 +195,10 @@ class FigureService(
      * @return 업데이트된 인물 객체
      */
     @Transactional
-    fun voteFigure(figureId: Long, sentiment: Sentiment): Figure {
+    fun voteFigure(
+        figureId: Long,
+        sentiment: Sentiment,
+    ): Figure {
         val figure = findById(figureId)
 
         // 평가 타입에 따라 적절한 카운터 증가
@@ -194,38 +213,42 @@ class FigureService(
 
     companion object {
         // 한글 초성 매핑
-        private val CHOSUNG_MAP = mapOf(
-            'ㄱ' to Regex("^[가-깋]"),
-            'ㄲ' to Regex("^[까-낗]"),
-            'ㄴ' to Regex("^[나-닣]"),
-            'ㄷ' to Regex("^[다-딯]"),
-            'ㄸ' to Regex("^[따-띻]"),
-            'ㄹ' to Regex("^[라-맇]"),
-            'ㅁ' to Regex("^[마-밓]"),
-            'ㅂ' to Regex("^[바-빟]"),
-            'ㅃ' to Regex("^[빠-삫]"),
-            'ㅅ' to Regex("^[사-싷]"),
-            'ㅆ' to Regex("^[싸-앃]"),
-            'ㅇ' to Regex("^[아-잏]"),
-            'ㅈ' to Regex("^[자-짛]"),
-            'ㅉ' to Regex("^[짜-찧]"),
-            'ㅊ' to Regex("^[차-칳]"),
-            'ㅋ' to Regex("^[카-킿]"),
-            'ㅌ' to Regex("^[타-팋]"),
-            'ㅍ' to Regex("^[파-핗]"),
-            'ㅎ' to Regex("^[하-힣]")
-        )
+        private val CHOSUNG_MAP =
+            mapOf(
+                'ㄱ' to Regex("^[가-깋]"),
+                'ㄲ' to Regex("^[까-낗]"),
+                'ㄴ' to Regex("^[나-닣]"),
+                'ㄷ' to Regex("^[다-딯]"),
+                'ㄸ' to Regex("^[따-띻]"),
+                'ㄹ' to Regex("^[라-맇]"),
+                'ㅁ' to Regex("^[마-밓]"),
+                'ㅂ' to Regex("^[바-빟]"),
+                'ㅃ' to Regex("^[빠-삫]"),
+                'ㅅ' to Regex("^[사-싷]"),
+                'ㅆ' to Regex("^[싸-앃]"),
+                'ㅇ' to Regex("^[아-잏]"),
+                'ㅈ' to Regex("^[자-짛]"),
+                'ㅉ' to Regex("^[짜-찧]"),
+                'ㅊ' to Regex("^[차-칳]"),
+                'ㅋ' to Regex("^[카-킿]"),
+                'ㅌ' to Regex("^[타-팋]"),
+                'ㅍ' to Regex("^[파-핗]"),
+                'ㅎ' to Regex("^[하-힣]"),
+            )
 
         /**
          * 인물 이름이 주어진 초성 패턴과 일치하는지 확인
          */
-        private fun matchesWithChosung(name: String, chosungPattern: String): Boolean {
+        private fun matchesWithChosung(
+            name: String,
+            chosungPattern: String,
+        ): Boolean {
             // 이름에서 초성 추출
             val nameChosung = extractChosung(name)
 
             // 초성 패턴이 이름의 초성에 포함되는지 확인
             return nameChosung.startsWith(chosungPattern, ignoreCase = true) ||
-                    name.contains(chosungPattern, ignoreCase = true)
+                name.contains(chosungPattern, ignoreCase = true)
         }
 
         /**

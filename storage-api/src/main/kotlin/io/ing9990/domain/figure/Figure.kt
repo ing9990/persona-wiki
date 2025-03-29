@@ -20,38 +20,30 @@ import jakarta.persistence.UniqueConstraint
     uniqueConstraints = [
         UniqueConstraint(
             name = "uk_figure_name_category",
-            columnNames = ["name", "category_id"]
-        )
-    ]
+            columnNames = ["name", "category_id"],
+        ),
+    ],
 )
 @Entity(name = "figure")
 class Figure(
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "figure_id")
     val id: Long? = null,
-
     @Column(name = "name", nullable = false)
     var name: String,
-
     @Column(name = "image_url")
     var imageUrl: String? = null,
-
     @Column(name = "biography")
     var bio: String? = null,
-
     @Embedded
     val reputation: Reputation = Reputation(),
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     var category: Category,
-
     @OneToMany(mappedBy = "figure", cascade = [ALL], orphanRemoval = true)
-    val comments: MutableList<Comment> = mutableListOf()
+    val comments: MutableList<Comment> = mutableListOf(),
 ) : BaseEntity() {
-
     /**
      * 댓글을 추가합니다.
      */

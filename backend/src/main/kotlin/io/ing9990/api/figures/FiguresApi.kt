@@ -5,7 +5,12 @@ import io.ing9990.api.figures.dto.response.ReputationResponse
 import io.ing9990.api.figures.dto.response.VoteResponse
 import io.ing9990.domain.figure.service.FigureService
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 /**
  * 인물 관련 REST API를 제공하는 컨트롤러
@@ -13,16 +18,15 @@ import org.springframework.web.bind.annotation.*
 @RestController
 @RequestMapping("/api/figures")
 class FiguresApi(
-    private val figureService: FigureService
+    private val figureService: FigureService,
 ) {
-
     /**
      * 인물에 대한 평가를 등록합니다.
      */
     @PostMapping("/{figureId}/vote")
     fun voteFigure(
         @PathVariable figureId: Long,
-        @RequestBody request: VoteRequest
+        @RequestBody request: VoteRequest,
     ): ResponseEntity<VoteResponse> {
         val updated = figureService.voteFigure(figureId, request.sentiment)
 
@@ -32,8 +36,8 @@ class FiguresApi(
                 message = "평가가 성공적으로 등록되었습니다.",
                 likeCount = updated.reputation.likeCount,
                 dislikeCount = updated.reputation.dislikeCount,
-                neutralCount = updated.reputation.neutralCount
-            )
+                neutralCount = updated.reputation.neutralCount,
+            ),
         )
     }
 
@@ -42,7 +46,7 @@ class FiguresApi(
      */
     @GetMapping("/{figureId}/reputation")
     fun getReputation(
-        @PathVariable figureId: Long
+        @PathVariable figureId: Long,
     ): ResponseEntity<ReputationResponse> {
         val figure = figureService.findById(figureId)
 
@@ -54,8 +58,8 @@ class FiguresApi(
                 likeRatio = figure.reputation.likeRatio(),
                 dislikeRatio = figure.reputation.dislikeRatio(),
                 neutralRatio = figure.reputation.neutralRatio(),
-                total = figure.reputation.total()
-            )
+                total = figure.reputation.total(),
+            ),
         )
     }
 }

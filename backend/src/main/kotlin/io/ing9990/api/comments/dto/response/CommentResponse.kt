@@ -10,7 +10,7 @@ data class CommentResponse(
     val content: String,
     val likes: Int,
     val dislikes: Int,
-    val createdAt: String
+    val createdAt: String,
 ) {
     companion object {
         fun from(comment: Comment): CommentResponse {
@@ -19,7 +19,7 @@ data class CommentResponse(
                 content = comment.content,
                 likes = comment.likes,
                 dislikes = comment.dislikes,
-                createdAt = comment.createdAt.toString()
+                createdAt = comment.createdAt.toString(),
             )
         }
     }

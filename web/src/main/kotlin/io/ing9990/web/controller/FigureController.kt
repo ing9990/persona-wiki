@@ -18,9 +18,8 @@ import java.nio.charset.StandardCharsets
  */
 @Controller
 class FigureController(
-    private val figureService: FigureService
+    private val figureService: FigureService,
 ) {
-
     /**
      * 인물 상세 페이지를 렌더링합니다.
      * 새로운 URL 형식: /{categoryId}/@{figureName}
@@ -30,14 +29,15 @@ class FigureController(
     fun figureDetail(
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
-        model: Model
+        model: Model,
     ): String {
         // 카테고리 정보 조회
         val category = figureService.findCategoryById(categoryId)
 
         // 인물 정보 조회 (카테고리와 함께 로딩)
-        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
-            ?: throw EntityNotFoundException("Figure", "$categoryId/$figureName")
+        val figure =
+            figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+                ?: throw EntityNotFoundException("Figure", "$categoryId/$figureName")
 
         // 인물의 댓글 목록을 별도로 조회 (페이지네이션 지원을 위한 준비)
         val comments = figureService.findCommentsByFigureId(figure.id!!)
@@ -57,7 +57,7 @@ class FigureController(
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
         @RequestParam content: String,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         // 내용이 비어있는지 확인
         if (content.isBlank()) {
@@ -66,8 +66,9 @@ class FigureController(
         }
 
         // 인물 찾기
-        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
-            ?: throw EntityNotFoundException("Figure", "$categoryId/$figureName")
+        val figure =
+            figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+                ?: throw EntityNotFoundException("Figure", "$categoryId/$figureName")
 
         // 댓글 추가
         figureService.addComment(figure.id!!, content)
@@ -86,28 +87,31 @@ class FigureController(
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
         @RequestParam sentiment: String,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         // 인물 찾기
-        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
-            ?: throw EntityNotFoundException("Figure", "$categoryId/$figureName")
+        val figure =
+            figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+                ?: throw EntityNotFoundException("Figure", "$categoryId/$figureName")
 
         // 감정 분석
-        val sentimentEnum = when (sentiment.uppercase()) {
-            "POSITIVE" -> Sentiment.POSITIVE
-            "NEGATIVE" -> Sentiment.NEGATIVE
-            else -> Sentiment.NEUTRAL
-        }
+        val sentimentEnum =
+            when (sentiment.uppercase()) {
+                "POSITIVE" -> Sentiment.POSITIVE
+                "NEGATIVE" -> Sentiment.NEGATIVE
+                else -> Sentiment.NEUTRAL
+            }
 
         // 투표 등록
         figureService.voteFigure(figure.id!!, sentimentEnum)
 
         // 성공 메시지
-        val message = when (sentimentEnum) {
-            Sentiment.POSITIVE -> "숭배 평가가 등록되었습니다."
-            Sentiment.NEGATIVE -> "사형 평가가 등록되었습니다."
-            Sentiment.NEUTRAL -> "중립 평가가 등록되었습니다."
-        }
+        val message =
+            when (sentimentEnum) {
+                Sentiment.POSITIVE -> "숭배 평가가 등록되었습니다."
+                Sentiment.NEGATIVE -> "사형 평가가 등록되었습니다."
+                Sentiment.NEUTRAL -> "중립 평가가 등록되었습니다."
+            }
         redirectAttributes.addFlashAttribute("success", message)
 
         return getRedirectUrl(categoryId, figureName)
@@ -121,7 +125,7 @@ class FigureController(
     @GetMapping("/figures/{categoryId}/{figureName}")
     fun redirectFromLegacyUrl(
         @PathVariable categoryId: String,
-        @PathVariable figureName: String
+        @PathVariable figureName: String,
     ): String {
         return getRedirectUrl(categoryId, figureName)
     }
@@ -129,7 +133,10 @@ class FigureController(
     /**
      * URL 인코딩을 적용한 리다이렉트 URL을 생성합니다.
      */
-    private fun getRedirectUrl(categoryId: String, figureName: String): String {
+    private fun getRedirectUrl(
+        categoryId: String,
+        figureName: String,
+    ): String {
         val encodedFigureName = URLEncoder.encode(figureName, StandardCharsets.UTF_8.name())
         return "redirect:/$categoryId/@$encodedFigureName"
     }

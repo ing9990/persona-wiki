@@ -13,28 +13,31 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api")
 class SearchApi(
-    private val figureService: FigureService
+    private val figureService: FigureService,
 ) {
-
     @GetMapping("/search/suggestions")
-    fun getSearchSuggestions(@RequestParam query: String): ResponseEntity<List<SearchSuggestion>> {
+    fun getSearchSuggestions(
+        @RequestParam query: String,
+    ): ResponseEntity<List<SearchSuggestion>> {
         // 초성 검색을 위한 처리
-        val searchResults = if (query.length <= 3) {
-            figureService.searchByNameWithInitials(query)
-        } else {
-            figureService.searchByName(query)
-        }
+        val searchResults =
+            if (query.length <= 3) {
+                figureService.searchByNameWithInitials(query)
+            } else {
+                figureService.searchByName(query)
+            }
 
         // 최대 10개만 반환
-        val suggestions = searchResults.take(10).map { figure ->
-            SearchSuggestion(
-                id = figure.id ?: 0,
-                name = figure.name,
-                categoryId = figure.category.id,
-                categoryName = figure.category.displayName,
-                imageUrl = figure.imageUrl ?: ""
-            )
-        }
+        val suggestions =
+            searchResults.take(10).map { figure ->
+                SearchSuggestion(
+                    id = figure.id ?: 0,
+                    name = figure.name,
+                    categoryId = figure.category.id,
+                    categoryName = figure.category.displayName,
+                    imageUrl = figure.imageUrl ?: "",
+                )
+            }
 
         return ResponseEntity.ok(suggestions)
     }

@@ -12,22 +12,17 @@ import jakarta.persistence.ManyToOne
 
 @Entity(name = "comment")
 class Comment(
-
     @Id
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "comment_id")
     val id: Long? = null,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "figure_id")
     val figure: Figure,
-
     @Column(name = "content", nullable = false)
     var content: String,
-
     @Column(name = "likes")
     var likes: Int = 0,
-
     @Column(name = "dislikes")
-    var dislikes: Int = 0
+    var dislikes: Int = 0,
 ) : BaseEntity()

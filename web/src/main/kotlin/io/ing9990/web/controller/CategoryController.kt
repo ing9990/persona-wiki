@@ -14,9 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam
 @RequestMapping("/categories")
 class CategoryController(
     private val categoryService: CategoryService,
-    private val figureService: FigureService
+    private val figureService: FigureService,
 ) {
-
     /**
      * 카테고리 목록 페이지
      * 각 카테고리별 인물 수를 함께 표시
@@ -26,7 +25,7 @@ class CategoryController(
     fun listCategories(
         model: Model,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "9") size: Int
+        @RequestParam(defaultValue = "9") size: Int,
     ): String {
         // 모든 카테고리 조회 (페이지네이션용)
         val allCategories = categoryService.getAllCategories()
@@ -38,11 +37,12 @@ class CategoryController(
         // 현재 페이지에 표시할 카테고리 추출
         val startIndex = page * size
         val endIndex = minOf(startIndex + size, totalCategories)
-        val categories = if (startIndex < totalCategories) {
-            allCategories.subList(startIndex, endIndex)
-        } else {
-            emptyList()
-        }
+        val categories =
+            if (startIndex < totalCategories) {
+                allCategories.subList(startIndex, endIndex)
+            } else {
+                emptyList()
+            }
 
         // 카테고리별 인물 수 조회를 위한 맵 생성
         val figuresByCategory = mutableMapOf<String, List<Any>>()
@@ -67,10 +67,14 @@ class CategoryController(
      * 카테고리가 없는 경우 EntityNotFoundException 발생
      */
     @GetMapping("/{id}")
-    fun getCategoryDetails(@PathVariable id: String, model: Model): String {
+    fun getCategoryDetails(
+        @PathVariable id: String,
+        model: Model,
+    ): String {
         // 카테고리 정보 조회
-        val category = categoryService.getCategoryById(id)
-            ?: throw EntityNotFoundException("Category", id)
+        val category =
+            categoryService.getCategoryById(id)
+                ?: throw EntityNotFoundException("Category", id)
 
         // 카테고리에 속한 인물 목록 조회 (카테고리가 함께 로딩됨)
         val figures = figureService.findByCategoryId(id)

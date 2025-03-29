@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query
  * 인물 관련 데이터 액세스를 위한 Repository 인터페이스
  */
 interface FigureRepository : JpaRepository<Figure, Long> {
-
     /**
      * 카테고리와 함께 모든 인물을 조회합니다.
      * JPQL을 사용하여 N+1 문제를 방지합니다.
@@ -29,16 +28,22 @@ interface FigureRepository : JpaRepository<Figure, Long> {
      */
     @Query(
         "SELECT f FROM figure f " +
-                "JOIN FETCH f.category " +
-                "WHERE f.category.id = :categoryId AND f.name = :name"
+            "JOIN FETCH f.category " +
+            "WHERE f.category.id = :categoryId AND f.name = :name",
     )
-    fun findByCategoryIdAndNameWithDetails(categoryId: String, name: String): Figure?
+    fun findByCategoryIdAndNameWithDetails(
+        categoryId: String,
+        name: String,
+    ): Figure?
 
     /**
      * 카테고리 ID와 인물 이름으로 인물이 존재하는지 확인합니다.
      */
     @Query("select (count(f) > 0) from figure f where f.category.id = ?1 and f.name = ?2")
-    fun existsByCategoryIdAndName(categoryId: String, name: String): Boolean
+    fun existsByCategoryIdAndName(
+        categoryId: String,
+        name: String,
+    ): Boolean
 
     /**
      * 이름에 특정 문자열이 포함된 인물을 검색합니다.
@@ -53,8 +58,8 @@ interface FigureRepository : JpaRepository<Figure, Long> {
      */
     @Query(
         "SELECT f FROM figure f " +
-                "JOIN FETCH f.category " +
-                "WHERE f.id = :id"
+            "JOIN FETCH f.category " +
+            "WHERE f.id = :id",
     )
     fun findByIdWithDetails(id: Long): Figure?
 }

@@ -6,5 +6,5 @@ package io.ing9990.web.exceptions
 class EntityNotFoundException(
     val entityType: String,
     val identifier: Any,
-    message: String = "$entityType with identifier $identifier not found"
+    message: String = "$entityType with identifier $identifier not found",
 ) : RuntimeException(message)

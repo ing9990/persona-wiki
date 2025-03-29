@@ -8,5 +8,5 @@ data class VoteResponse(
     val message: String,
     val likeCount: Int,
     val dislikeCount: Int,
-    val neutralCount: Int
+    val neutralCount: Int,
 )

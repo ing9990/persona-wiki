@@ -12,14 +12,16 @@ import org.springframework.web.bind.annotation.ResponseStatus
  */
 @ControllerAdvice
 class GlobalExceptionHandler {
-
     /**
      * EntityNotFoundException 처리
      * 엔티티를 찾을 수 없는 경우 404 페이지로 이동
      */
     @ExceptionHandler(EntityNotFoundException::class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    fun handleEntityNotFoundException(e: EntityNotFoundException, model: Model): String {
+    fun handleEntityNotFoundException(
+        e: EntityNotFoundException,
+        model: Model,
+    ): String {
         model.addAttribute("error", e.message)
         model.addAttribute("entityType", e.entityType)
         model.addAttribute("identifier", e.identifier)
@@ -34,7 +36,10 @@ class GlobalExceptionHandler {
      */
     @ExceptionHandler(RuntimeException::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    fun handleRuntimeException(e: RuntimeException, model: Model): String {
+    fun handleRuntimeException(
+        e: RuntimeException,
+        model: Model,
+    ): String {
         model.addAttribute("error", e.message)
         model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value())
 
