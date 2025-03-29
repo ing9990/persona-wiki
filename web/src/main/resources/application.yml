@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: persona-wiki-web
+
+  config:
+    import:
+      - "jpa.yml"
+      - "actuator.yml"

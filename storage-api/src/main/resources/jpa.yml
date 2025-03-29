@@ -1,0 +1,13 @@
+spring:
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.default_batch_fetch_size: 100
+
+storage:
+  datasource:
+    jdbc-url: jdbc:mysql://persona-wiki.c7emcmko0vuq.ap-northeast-2.rds.amazonaws.com:3306/persona_wiki
+    username: admin
+    password: inglife0??
