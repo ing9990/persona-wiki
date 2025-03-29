@@ -21,8 +21,15 @@ jobs:
       - name: Build JAR
         run: ./gradlew clean bootJar
 
-      - name: Copy to EC2
-        run: scp ./web/build/libs/web-0.0.1-SNAPSHOT.jar root@${{ secrets.EC2_HOST }}:~/persona-wiki/web-0.0.1-SNAPSHOT.jar
+      - name: Add SSH key
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
 
-      - name: Deploy on EC2
-        run: ssh root@${{ secrets.EC2_HOST }} "~/persona-wiki/deploy-script.sh"
+      - name: Copy JAR to EC2
+        run: |
+          scp -i private_key.pem -o StrictHostKeyChecking=no ./web/build/libs/web-0.0.1-SNAPSHOT.jar root@${{ secrets.EC2_HOST }}:/root/persona-wiki/web-0.0.1-SNAPSHOT.jar
+
+      - name: Run deploy script on EC2
+        run: |
+          ssh -i private_key.pem -o StrictHostKeyChecking=no root@${{ secrets.EC2_HOST }} "bash /root/persona-wiki/deploy.sh"
