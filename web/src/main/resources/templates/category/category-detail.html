@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title th:text="${category.displayName} + ' - 인물사전'">카테고리 상세</title>
+  <meta name="description" th:content="${category.description}">
+
+  <!-- 추가 스타일 -->
+  <style>
+    .category-header {
+      position: relative;
+      overflow: hidden;
+      border-radius: 0.5rem;
+    }
+
+    .category-header-image {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+      filter: brightness(70%);
+    }
+
+    .category-header-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 2rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      color: white;
+    }
+
+    .figure-card {
+      transition: all 0.3s ease;
+    }
+
+    .figure-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 애니메이션 효과 */
+    .fade-in {
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 추천 카테고리 섹션 스타일 */
+    .related-categories {
+      margin-top: 3rem;
+      border-radius: 0.5rem;
+      overflow: hidden;
+    }
+
+    .related-category-card {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0.5rem;
+    }
+
+    .related-category-card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .related-category-image {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      filter: brightness(70%);
+    }
+
+    .related-category-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 1.5rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      color: white;
+    }
+  </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- 카테고리 헤더 -->
+  <section class="mb-8">
+    <div class="category-header shadow-lg">
+      <img
+          th:src="${category.imageUrl != null ? category.imageUrl : '/img/category-placeholder.jpg'}"
+          th:alt="${category.displayName}" class="category-header-image">
+      <div class="category-header-content">
+        <div>
+          <h1 class="text-4xl font-bold mb-2" th:text="${category.displayName}">카테고리 이름</h1>
+          <p class="text-xl opacity-90" th:text="${category.description}">카테고리 설명</p>
+        </div>
+
+        <!-- 카테고리 통계 (옵션) -->
+        <div class="mt-6 pt-6 border-t border-white border-opacity-20">
+          <div class="flex flex-wrap gap-4">
+            <div class="bg-white bg-opacity-20 rounded-lg px-4 py-3">
+              <div class="text-sm opacity-80">인물 수</div>
+              <div class="text-2xl font-bold" th:text="${figures.size()}">0</div>
+            </div>
+
+            <div class="bg-white bg-opacity-20 rounded-lg px-4 py-3">
+              <div class="text-sm opacity-80">최근 추가</div>
+              <div class="text-2xl font-bold"
+                   th:text="${figures.isEmpty() ? '-' : #temporals.format(figures[0].createdAt, 'yyyy-MM-dd')}">
+                -
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 인물 목록 -->
+  <section>
+    <!-- 정렬 및 필터 옵션 -->
+    <div class="flex flex-wrap justify-between items-center mb-6">
+      <h2 class="text-2xl font-bold text-gray-800" th:text="${category.displayName} + ' 인물 목록'">
+        카테고리 인물 목록
+      </h2>
+    </div>
+
+    <!-- 목록이 비어있을 경우 -->
+    <div th:if="${#lists.isEmpty(figures)}" class="bg-gray-50 p-8 rounded-lg text-center fade-in">
+      <i class="fas fa-info-circle text-indigo-500 text-4xl mb-4"></i>
+      <p class="text-xl text-gray-600">아직 등록된 인물이 없습니다.</p>
+      <p class="text-gray-500 mt-2">새로운 인물이 곧 추가될 예정입니다.</p>
+    </div>
+
+    <!-- 인물 카드 그리드 -->
+    <div th:if="${not #lists.isEmpty(figures)}"
+         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- 인물 카드 (Thymeleaf로 반복) -->
+      <div th:each="figure : ${figures}"
+           class="bg-white rounded-lg shadow-md overflow-hidden figure-card fade-in">
+        <div class="relative">
+          <!-- 인물 이미지 -->
+          <img
+              th:src="${figure.imageUrl != null ? figure.imageUrl : '/img/profile-placeholder.png'}"
+              th:alt="${figure.name}"
+              class="w-full h-48 object-cover">
+        </div>
+
+        <div class="p-6">
+          <!-- 인물 이름 -->
+          <h3 class="text-xl font-bold text-gray-800 mb-2" th:text="${figure.name}">인물 이름</h3>
+
+          <!-- 인물 소개 (일부만 표시) -->
+          <p class="text-gray-600 mb-4"
+             th:text="${figure.bio != null ? #strings.abbreviate(figure.bio, 100) : '소개가 등록되지 않았습니다.'}">
+            인물 소개 텍스트...
+          </p>
+
+          <!-- 평판 지표 -->
+          <div class="flex items-center mb-4">
+            <div class="flex items-center mr-4 tooltip" data-tooltip="숭배">
+              <i class="fas fa-crown text-green-500 mr-1"></i>
+              <span th:text="${figure.reputation.likeCount}">0</span>
+            </div>
+            <div class="flex items-center mr-4 tooltip" data-tooltip="중립">
+              <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
+              <span th:text="${figure.reputation.neutralCount}">0</span>
+            </div>
+            <div class="flex items-center tooltip" data-tooltip="사형">
+              <i class="fas fa-skull text-red-500 mr-1"></i>
+              <span th:text="${figure.reputation.dislikeCount}">0</span>
+            </div>
+          </div>
+
+          <!-- 상세 페이지 링크 -->
+          <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name}}"
+             class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+            자세히 보기
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 페이지네이션 (향후 구현) -->
+  <section th:if="${not #lists.isEmpty(figures) and figures.size() > 10}"
+           class="mt-8 flex justify-center">
+    <nav class="inline-flex rounded-md shadow">
+      <a href="#"
+         class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+        이전
+      </a>
+      <a href="#" class="px-3 py-2 border-t border-b border-gray-300 bg-indigo-50 text-indigo-600">
+        1
+      </a>
+      <a href="#"
+         class="px-3 py-2 border-t border-b border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+        2
+      </a>
+      <a href="#"
+         class="px-3 py-2 border-t border-b border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+        3
+      </a>
+      <a href="#"
+         class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+        다음
+      </a>
+    </nav>
+  </section>
+
+  <!-- 검색 섹션 (추가됨) -->
+  <section class="mt-12 bg-gray-50 rounded-lg p-8 text-center fade-in">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">특정 인물을 찾고 계신가요?</h2>
+    <p class="text-gray-600 mb-6">이름으로 바로 검색해보세요. 초성 검색도 지원합니다.</p>
+
+    <form action="/search" method="get" class="max-w-lg mx-auto">
+      <div class="flex rounded-md shadow-lg">
+        <input type="text" name="query"
+               class="flex-1 px-4 py-3 rounded-l-md border-0 focus:ring-2 focus:ring-indigo-500"
+               placeholder="인물 이름 검색 (예: 윤석열, ㅇㅅㄹ)">
+        <button type="submit"
+                class="px-6 py-3 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 transition">
+          <i class="fas fa-search mr-1"></i> 검색
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<!-- 페이지 자바스크립트 -->
+<th:block layout:fragment="script">
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 정렬 기능
+      const sortSelect = document.getElementById('sortOption');
+      if (sortSelect) {
+        sortSelect.addEventListener('change', function () {
+          const sortBy = this.value;
+          sortFigures(sortBy);
+        });
+      }
+
+      // 인물 카드 정렬 함수
+      function sortFigures(sortBy) {
+        const container = document.querySelector('.grid');
+        if (!container) {
+          return;
+        }
+
+        const items = Array.from(container.children);
+
+        items.sort((a, b) => {
+          if (sortBy === 'name') {
+            const nameA = a.querySelector('h3').textContent.trim();
+            const nameB = b.querySelector('h3').textContent.trim();
+            return nameA.localeCompare(nameB);
+          } else if (sortBy === 'newest') {
+            // 이 부분은 생성일 데이터가 HTML에 노출되어 있다면 구현 가능
+            // 현재는 UI 상 보이지 않으므로 구현하지 않음
+            return 0;
+          } else if (sortBy === 'popular') {
+            const likesA = parseInt(a.querySelector('.fa-crown').nextElementSibling.textContent);
+            const likesB = parseInt(b.querySelector('.fa-crown').nextElementSibling.textContent);
+            return likesB - likesA; // 내림차순
+          }
+          return 0;
+        });
+
+        // 정렬된 순서대로 DOM에 다시 삽입
+        items.forEach(item => {
+          container.appendChild(item);
+        });
+      }
+
+      // 이미지 로딩 오류 처리
+      const images = document.querySelectorAll('.category-header-image, .related-category-image');
+      images.forEach(img => {
+        img.onerror = function () {
+          this.src = '/img/category-placeholder.jpg';
+        };
+      });
+    });
+  </script>
+</th:block>
+</body>
+</html>

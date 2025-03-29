@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title>카테고리 목록 - 인물사전</title>
+  <meta name="description" content="인물사전의 모든 카테고리를 둘러보세요.">
+
+  <!-- 추가 스타일 -->
+  <style>
+    .category-card {
+      transition: all 0.3s ease;
+    }
+
+    .category-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    /* 애니메이션 효과 */
+    .fade-in {
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 카테고리 이미지 스타일 */
+    .category-image-container {
+      height: 140px;
+      overflow: hidden;
+      position: relative;
+      border-top-left-radius: 0.5rem;
+      border-top-right-radius: 0.5rem;
+    }
+
+    .category-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+
+    .category-card:hover .category-image {
+      transform: scale(1.05);
+    }
+
+    .category-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.7));
+      display: flex;
+      align-items: flex-end;
+      padding: 1rem;
+    }
+
+    .category-title {
+      color: white;
+      font-weight: bold;
+      font-size: 1.5rem;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    }
+
+    /* 페이지네이션 스타일 */
+    .pagination-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+    }
+
+    .pagination {
+      display: inline-flex;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-item {
+      border: 1px solid #e5e7eb;
+    }
+
+    .page-item:not(:first-child) {
+      border-left: none;
+    }
+
+    .page-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1rem;
+      min-width: 2.5rem;
+      color: #4B5563;
+      background-color: white;
+      transition: all 0.15s ease;
+    }
+
+    .page-link:hover {
+      background-color: #F3F4F6;
+      color: #1F2937;
+    }
+
+    .page-item.active .page-link {
+      background-color: #4F46E5;
+      color: white;
+      border-color: #4F46E5;
+      z-index: 1;
+    }
+
+    .page-item.disabled .page-link {
+      color: #9CA3AF;
+      background-color: #F3F4F6;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- 카테고리 목록 헤더 -->
+  <section class="mb-8">
+    <div class="gradient-bg text-white rounded-lg shadow-lg p-8">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+        <div>
+          <h1 class="text-4xl font-bold mb-2">카테고리 목록</h1>
+          <p class="text-xl opacity-90">다양한 분야의 인물들을 카테고리별로 만나보세요</p>
+        </div>
+        <div class="mt-4 md:mt-0">
+          <a href="/"
+             class="bg-white text-indigo-600 px-6 py-3 rounded-full font-semibold hover:bg-opacity-90 transition">
+            홈으로 돌아가기
+          </a>
+        </div>
+      </div>
+
+      <!-- 카테고리 통계 정보 추가 -->
+      <div class="mt-6 pt-4 border-t border-white border-opacity-20">
+        <div class="text-white text-opacity-90">
+          총 <span class="font-bold" th:text="${totalCategories}">0</span>개의 카테고리
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 카테고리 목록 -->
+  <section>
+    <!-- 목록이 비어있을 경우 -->
+    <div th:if="${#lists.isEmpty(categories)}"
+         class="bg-gray-50 p-8 rounded-lg text-center fade-in">
+      <i class="fas fa-info-circle text-indigo-500 text-4xl mb-4"></i>
+      <p class="text-xl text-gray-600">등록된 카테고리가 없습니다.</p>
+      <p class="text-gray-500 mt-2">카테고리가 곧 추가될 예정입니다.</p>
+    </div>
+
+    <!-- 카테고리 카드 그리드 -->
+    <div th:if="${not #lists.isEmpty(categories)}"
+         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      <!-- 카테고리 카드 (모든 카테고리에 공통 적용) -->
+      <a th:each="category : ${categories}" th:href="@{'/categories/' + ${category.id}}"
+         class="category-card block rounded-lg overflow-hidden shadow-md fade-in">
+
+        <!-- 카테고리 이미지 섹션 -->
+        <div class="category-image-container">
+          <img
+              th:src="${category.imageUrl != null ? category.imageUrl : '/img/category-placeholder.jpg'}"
+              th:alt="${category.displayName}" class="category-image">
+          <div class="category-overlay">
+            <h2 class="category-title" th:text="${category.displayName}">카테고리명</h2>
+          </div>
+        </div>
+
+        <!-- 카테고리 정보 섹션 -->
+        <div class="bg-white p-4">
+          <p class="text-gray-600 mb-3" th:text="${category.description}">카테고리 설명</p>
+          <div class="flex justify-between items-center">
+            <div class="text-gray-600">
+              <span th:text="${#lists.size(figuresByCategory[category.id] ?: {})}">0</span> 명의 인물
+            </div>
+            <span class="text-indigo-600">
+              자세히 보기 <i class="fas fa-chevron-right ml-1 text-xs"></i>
+            </span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- 페이지네이션 섹션 -->
+  <section th:if="${totalPages > 1}" class="pagination-container">
+    <nav aria-label="카테고리 페이지 탐색">
+      <ul class="pagination">
+        <!-- 이전 페이지 링크 -->
+        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
+          <a class="page-link" th:href="@{/categories(page=${currentPage - 1})}" aria-label="이전">
+            <i class="fas fa-chevron-left"></i>
+          </a>
+        </li>
+
+        <!-- 페이지 번호 -->
+        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+            th:classappend="${currentPage == i} ? 'active' : ''">
+          <a class="page-link" th:href="@{/categories(page=${i})}" th:text="${i + 1}">1</a>
+        </li>
+
+        <!-- 다음 페이지 링크 -->
+        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+          <a class="page-link" th:href="@{/categories(page=${currentPage + 1})}" aria-label="다음">
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </section>
+
+  <!-- 검색 섹션 -->
+  <section class="mt-12 bg-gray-50 rounded-lg p-8 text-center">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">찾으시는 인물이 있으신가요?</h2>
+    <p class="text-gray-600 mb-6">이름으로 바로 검색해보세요. 초성 검색도 지원합니다.</p>
+
+    <form action="/search" method="get" class="max-w-lg mx-auto">
+      <div class="flex rounded-md shadow-lg">
+        <input type="text" name="query"
+               class="flex-1 px-4 py-3 rounded-l-md border-0 focus:ring-2 focus:ring-indigo-500"
+               placeholder="인물 이름 검색 (예: 윤석열, ㅇㅅㄹ)">
+        <button type="submit"
+                class="px-6 py-3 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 transition">
+          <i class="fas fa-search mr-1"></i> 검색
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
+
+<!-- 페이지 자바스크립트 -->
+<th:block layout:fragment="script">
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 카테고리 카드에 애니메이션 적용
+      const cards = document.querySelectorAll('.category-card');
+      cards.forEach((card, index) => {
+        // 순차적 애니메이션을 위한 지연 추가
+        setTimeout(() => {
+          card.style.opacity = '1';
+          card.style.transform = 'translateY(0)';
+        }, index * 100);
+      });
+
+      // 이미지 로딩 오류 처리
+      const images = document.querySelectorAll('.category-image');
+      images.forEach(img => {
+        img.onerror = function () {
+          this.src = '/img/category-placeholder.jpg';
+        };
+      });
+    });
+  </script>
+</th:block>
+</body>
+</html>

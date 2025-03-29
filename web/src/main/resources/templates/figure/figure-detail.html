@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title th:text="${figure.name} + ' - 인물사전'">인물 상세</title>
+  <meta name="description" th:content="${figure.bio}">
+
+  <!-- 추가 스타일 -->
+  <style>
+    .profile-header {
+      position: relative;
+      height: 300px;
+      overflow: hidden;
+      border-radius: 0.5rem;
+    }
+
+    .profile-header-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(70%);
+    }
+
+    .profile-header-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 2rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      color: white;
+    }
+
+    .profile-image {
+      border: 4px solid white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .badge-category {
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+    }
+
+    .comment-box {
+      transition: all 0.3s ease;
+    }
+
+    .comment-box:hover {
+      border-color: #6366F1;
+    }
+
+    .stat-card {
+      transition: transform 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .reputation-meter {
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    /* 애니메이션 효과 */
+    .fade-in {
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 카테고리 카드 스타일 */
+    .category-card {
+      position: relative;
+      border-radius: 0.5rem;
+      overflow: hidden;
+      height: 120px; /* 높이 고정 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .category-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: brightness(70%);
+    }
+
+    .category-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 1.5rem;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+      color: white;
+      z-index: 10; /* 텍스트가 이미지 위에 확실히 표시되도록 */
+    }
+  </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- 인물 프로필 헤더 -->
+  <section class="profile-header mb-8 shadow-lg">
+    <img th:src="${figure.imageUrl}" th:alt="${figure.name}" class="profile-header-image">
+    <div class="profile-header-content">
+      <div class="flex items-end">
+        <img th:src="${figure.imageUrl}" th:alt="${figure.name}"
+             class="w-24 h-24 rounded-full profile-image object-cover mr-6">
+        <div>
+          <div class="flex items-center mb-2">
+            <h1 class="text-4xl font-bold mr-3" th:text="${figure.name}">인물 이름</h1>
+            <span th:text="${category.displayName}"
+                  class="badge-category text-white text-sm px-3 py-1 rounded-full">카테고리</span>
+          </div>
+          <p class="text-gray-200 text-lg">
+            <i class="fas fa-quote-left text-sm opacity-50 mr-1"></i>
+            <span th:text="${#strings.abbreviate(figure.bio, 100)}">인물 소개 요약</span>
+            <i class="fas fa-quote-right text-sm opacity-50 ml-1"></i>
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- 왼쪽: 인물 정보 -->
+    <div class="lg:col-span-2">
+      <!-- 인물 평가 투표 섹션 -->
+      <section class="bg-white rounded-lg shadow-md p-6 mb-8 fade-in">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-vote-yea text-indigo-500 mr-2"></i>
+          <span>인물 평가</span>
+        </h2>
+        <div class="text-gray-700 mb-4">
+          이 인물에 대한 평가를 선택해 주세요. 한 번 투표하면 변경할 수 없습니다.
+        </div>
+
+        <div class="grid grid-cols-3 gap-4">
+          <!-- 숭배 버튼 -->
+          <button onclick="voteSentiment('POSITIVE')"
+                  class="vote-button flex flex-col items-center justify-center p-6 rounded-lg border-2 border-green-200 hover:border-green-500 hover:bg-green-50 transition-all">
+            <i class="fas fa-crown text-3xl text-green-500 mb-2"></i>
+            <span class="font-bold text-lg text-green-600">숭배</span>
+            <p class="text-xs text-gray-500 mt-2 text-center">이 인물은 존경받아 마땅합니다</p>
+          </button>
+
+          <!-- 중립 버튼 -->
+          <button onclick="voteSentiment('NEUTRAL')"
+                  class="vote-button flex flex-col items-center justify-center p-6 rounded-lg border-2 border-blue-200 hover:border-blue-500 hover:bg-blue-50 transition-all">
+            <i class="fas fa-balance-scale text-3xl text-blue-500 mb-2"></i>
+            <span class="font-bold text-lg text-blue-600">중립</span>
+            <p class="text-xs text-gray-500 mt-2 text-center">이 인물에 대해 중립적입니다</p>
+          </button>
+
+          <!-- 사형 버튼 -->
+          <button onclick="voteSentiment('NEGATIVE')"
+                  class="vote-button flex flex-col items-center justify-center p-6 rounded-lg border-2 border-red-200 hover:border-red-500 hover:bg-red-50 transition-all">
+            <i class="fas fa-skull text-3xl text-red-500 mb-2"></i>
+            <span class="font-bold text-lg text-red-600">사형</span>
+            <p class="text-xs text-gray-500 mt-2 text-center">이 인물은 비판받아 마땅합니다</p>
+          </button>
+        </div>
+      </section>
+
+      <!-- 댓글 섹션 -->
+      <section class="bg-white rounded-lg shadow-md p-6 fade-in">
+        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+          <i class="fas fa-comments text-indigo-500 mr-2"></i>
+          <span>의견</span>
+          <span class="ml-2 text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full"
+                th:text="${comments != null ? comments.size() : 0}">0</span>
+        </h2>
+
+        <!-- 댓글 작성 폼 -->
+        <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/comment'}" method="post"
+              class="mb-8">
+          <div class="mb-3">
+            <textarea name="content" rows="3"
+                      class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 comment-box"
+                      placeholder="이 인물에 대한 의견을 남겨주세요..."></textarea>
+          </div>
+          <div class="text-right">
+            <button type="submit"
+                    class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition">
+              <i class="fas fa-paper-plane mr-1"></i> 게시하기
+            </button>
+          </div>
+        </form>
+
+        <!-- 댓글 목록 -->
+        <div class="space-y-6">
+          <!-- 댓글이 없는 경우 -->
+          <div th:if="${#lists.isEmpty(comments)}" class="text-center py-8 text-gray-500">
+            <i class="fas fa-comment-slash text-4xl mb-3 opacity-30"></i>
+            <p>아직 의견이 없습니다. 첫 번째 의견을 남겨보세요!</p>
+          </div>
+
+          <!-- 댓글 항목 (반복) -->
+          <div th:each="comment : ${comments}"
+               class="border-b border-gray-200 pb-6 comment-item fade-in">
+            <div class="flex justify-between mb-2">
+              <div class="text-sm text-gray-500">
+                <i class="fas fa-user-circle mr-1"></i>
+                <span>익명</span>
+                <span class="ml-3"
+                      th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}">날짜</span>
+              </div>
+            </div>
+            <p class="text-gray-800 mb-3" th:text="${comment.content}">댓글 내용</p>
+
+            <!-- 좋아요/싫어요 버튼 -->
+            <div class="flex items-center text-sm">
+              <button class="flex items-center mr-4 text-gray-500 hover:text-green-500 transition"
+                      th:onclick="'likeComment(' + ${comment.id} + ')'">
+                <i class="fas fa-thumbs-up mr-1"></i>
+                <span th:text="${comment.likes}" class="like-count">0</span>
+              </button>
+              <button class="flex items-center text-gray-500 hover:text-red-500 transition"
+                      th:onclick="'dislikeComment(' + ${comment.id} + ')'">
+                <i class="fas fa-thumbs-down mr-1"></i>
+                <span th:text="${comment.dislikes}" class="dislike-count">0</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 오른쪽: 통계 및 정보 사이드바 -->
+    <div class="space-y-6">
+      <!-- 평판 카드 -->
+      <div class="bg-white rounded-lg shadow-md p-6 stat-card fade-in">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-chart-pie text-indigo-500 mr-2"></i>
+          <span>평판 통계</span>
+        </h3>
+
+        <!-- 평판 그래프 -->
+        <div class="space-y-4 mb-4">
+          <!-- 숭배 평가 -->
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium text-green-600 flex items-center">
+                <i class="fas fa-crown mr-1 text-xs"></i>숭배
+              </span>
+              <span class="text-gray-600"
+                    th:text="${figure.reputation.likeCount} + ' (' + ${#numbers.formatPercent(figure.reputation.likeRatio(), 0, 0)} + ')'">
+                0 (0%)
+              </span>
+            </div>
+            <div class="reputation-meter bg-gray-200">
+              <div class="h-full bg-green-500"
+                   th:style="'width: ' + ${figure.reputation.likeRatio() * 100} + '%'"></div>
+            </div>
+          </div>
+
+          <!-- 중립 평가 -->
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium text-blue-600 flex items-center">
+                <i class="fas fa-balance-scale mr-1 text-xs"></i>중립
+              </span>
+              <span class="text-gray-600"
+                    th:text="${figure.reputation.neutralCount} + ' (' + ${#numbers.formatPercent(figure.reputation.neutralRatio(), 0, 0)} + ')'">
+                0 (0%)
+              </span>
+            </div>
+            <div class="reputation-meter bg-gray-200">
+              <div class="h-full bg-blue-500"
+                   th:style="'width: ' + ${figure.reputation.neutralRatio() * 100} + '%'"></div>
+            </div>
+          </div>
+
+          <!-- 사형 평가 -->
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span class="font-medium text-red-600 flex items-center">
+                <i class="fas fa-skull mr-1 text-xs"></i>사형
+              </span>
+              <span class="text-gray-600"
+                    th:text="${figure.reputation.dislikeCount} + ' (' + ${#numbers.formatPercent(figure.reputation.dislikeRatio(), 0, 0)} + ')'">
+                0 (0%)
+              </span>
+            </div>
+            <div class="reputation-meter bg-gray-200">
+              <div class="h-full bg-red-500"
+                   th:style="'width: ' + ${figure.reputation.dislikeRatio() * 100} + '%'"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="text-center text-sm text-gray-500">
+          총 <span th:text="${figure.reputation.total()}" class="font-bold">0</span>개의 평가 기록
+        </div>
+      </div>
+
+      <!-- 카테고리 정보 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden stat-card fade-in">
+        <div class="category-card">
+          <img
+              th:src="${category.imageUrl != null ? category.imageUrl : '/img/category-placeholder.jpg'}"
+              th:alt="${category.displayName}" class="category-image">
+          <div class="category-content">
+            <h3 class="text-xl font-bold mb-1" th:text="${category.displayName}">카테고리명</h3>
+          </div>
+        </div>
+
+        <div class="p-4">
+          <p class="text-gray-600 text-sm mb-4" th:text="${category.description}">카테고리 설명</p>
+
+          <div class="mt-2">
+            <a th:href="@{'/categories/' + ${category.id}}"
+               class="text-indigo-600 hover:text-indigo-800 text-sm flex items-center">
+              <span>이 카테고리의 다른 인물 보기</span>
+              <i class="fas fa-chevron-right ml-1 text-xs"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 공유하기 -->
+      <div class="bg-white rounded-lg shadow-md p-6 stat-card fade-in">
+        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+          <i class="fas fa-share-alt text-indigo-500 mr-2"></i>
+          <span>공유하기</span>
+        </h3>
+
+        <div class="flex justify-center space-x-4">
+          <a href="#" onclick="shareTwitter()"
+             class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white hover:bg-blue-500 transition">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#" onclick="shareFacebook()"
+             class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 transition">
+            <i class="fab fa-facebook-f"></i>
+          </a>
+          <a href="#" onclick="copyLink()"
+             class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-500 text-white hover:bg-gray-600 transition">
+            <i class="fas fa-link"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 페이지 자바스크립트 -->
+<th:block layout:fragment="script">
+  <script>
+    // 페이지 로드 시 이미 투표했는지 확인
+    document.addEventListener('DOMContentLoaded', function () {
+      checkIfVoted();
+
+      // 이미지 로딩 오류 처리
+      const images = document.querySelectorAll('.category-image');
+      images.forEach(img => {
+        img.onerror = function () {
+          this.src = '/img/category-placeholder.jpg';
+        };
+      });
+    });
+
+    // 이미 투표했는지 확인
+    function checkIfVoted() {
+      // localStorage에서 투표 내역 확인
+      const figureId = '[[${figure.id}]]'; // Thymeleaf를 사용하여 인물 ID 가져오기
+      const voted = localStorage.getItem('voted_' + figureId);
+
+      if (voted) {
+        // 이미 투표한 경우, 투표 버튼 비활성화
+        disableVoteButtons();
+        showVotedMessage(voted);
+      }
+    }
+
+    // 투표 버튼 비활성화
+    function disableVoteButtons() {
+      const voteButtons = document.querySelectorAll('.vote-button');
+      voteButtons.forEach(button => {
+        button.disabled = true;
+        button.classList.add('opacity-50', 'cursor-not-allowed');
+        button.classList.remove('hover:border-green-500', 'hover:border-blue-500',
+            'hover:border-red-500', 'hover:bg-green-50', 'hover:bg-blue-50', 'hover:bg-red-50');
+      });
+    }
+
+    // 투표 완료 메시지 표시
+    function showVotedMessage(sentiment) {
+      const voteSection = document.querySelector('.vote-button').parentNode.parentNode;
+      const messageDiv = document.createElement('div');
+
+      let sentimentText = '중립적';
+      let sentimentClass = 'text-blue-600';
+      let sentimentIcon = 'fa-balance-scale';
+
+      if (sentiment === 'POSITIVE') {
+        sentimentText = '숭배';
+        sentimentClass = 'text-green-600';
+        sentimentIcon = 'fa-crown';
+      } else if (sentiment === 'NEGATIVE') {
+        sentimentText = '사형';
+        sentimentClass = 'text-red-600';
+        sentimentIcon = 'fa-skull';
+      }
+
+      messageDiv.className = 'mt-4 text-center py-2 border-t border-gray-200';
+      messageDiv.innerHTML = `
+        <p class="text-gray-600">이미 이 인물에 대해 <span class="${sentimentClass} font-bold"><i class="fas ${sentimentIcon} mr-1"></i>${sentimentText}</span> 평가를 하셨습니다.</p>
+      `;
+
+      voteSection.appendChild(messageDiv);
+    }
+
+    // 인물 평가 투표 기능
+    function voteSentiment(sentiment) {
+      const figureId = '[[${figure.id}]]'; // Thymeleaf를 사용하여 인물 ID 가져오기
+
+      // API 호출 (백엔드에 투표 등록)
+      axios.post(`/api/figures/${figureId}/vote`, {sentiment: sentiment})
+      .then(response => {
+        // 투표 성공 시 처리
+        localStorage.setItem('voted_' + figureId, sentiment); // 투표 내역 저장
+
+        // 투표 버튼 비활성화
+        disableVoteButtons();
+
+        // 투표 완료 메시지 표시
+        showVotedMessage(sentiment);
+
+        // 페이지의 평판 통계 업데이트 (새로고침 없이)
+        updateReputationStats();
+
+        // 성공 메시지 표시
+        let message = '중립 평가를 등록했습니다.';
+        if (sentiment === 'POSITIVE') {
+          message = '숭배 평가를 등록했습니다.';
+        } else if (sentiment === 'NEGATIVE') {
+          message = '사형 평가를 등록했습니다.';
+        }
+        showToast(message);
+      })
+      .catch(error => {
+        console.error('투표 등록 실패:', error);
+        showToast('오류가 발생했습니다. 다시 시도해주세요.', true);
+      });
+    }
+
+    // 페이지의 평판 통계 업데이트
+    function updateReputationStats() {
+      // 실제로는 최신 데이터로 업데이트하기 위해 API 호출이 필요할 수 있습니다
+      // 이 예제에서는 간단히 페이지 새로고침으로 대체
+      location.reload();
+    }
+
+    // 댓글 좋아요 기능
+    function likeComment(commentId) {
+      axios.post('/api/comments/' + commentId + '/like')
+      .then(response => {
+        // 성공 시 해당 댓글의 좋아요 수 업데이트
+        const likeCountElem = document.querySelector(
+            `[data-comment-id="${commentId}"] .like-count`);
+        if (likeCountElem) {
+          likeCountElem.textContent = parseInt(likeCountElem.textContent) + 1;
+        }
+        showToast('좋아요를 표시했습니다.');
+      })
+      .catch(error => {
+        console.error('좋아요 등록 실패:', error);
+        showToast('오류가 발생했습니다. 다시 시도해주세요.', true);
+      });
+    }
+
+    // 댓글 싫어요 기능
+    function dislikeComment(commentId) {
+      axios.post('/api/comments/' + commentId + '/dislike')
+      .then(response => {
+        // 성공 시 해당 댓글의 싫어요 수 업데이트
+        const dislikeCountElem = document.querySelector(
+            `[data-comment-id="${commentId}"] .dislike-count`);
+        if (dislikeCountElem) {
+          dislikeCountElem.textContent = parseInt(dislikeCountElem.textContent) + 1;
+        }
+        showToast('싫어요를 표시했습니다.');
+      })
+      .catch(error => {
+        console.error('싫어요 등록 실패:', error);
+        showToast('오류가 발생했습니다. 다시 시도해주세요.', true);
+      });
+    }
+
+    // 소셜 미디어 공유 기능
+    function shareTwitter() {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent(document.title);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+    }
+
+    function shareFacebook() {
+      const url = encodeURIComponent(window.location.href);
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+    }
+
+    function copyLink() {
+      const url = window.location.href;
+      navigator.clipboard.writeText(url).then(() => {
+        showToast('링크가 클립보드에 복사되었습니다.');
+      }).catch(err => {
+        console.error('클립보드 복사 실패:', err);
+        showToast('링크 복사에 실패했습니다.', true);
+      });
+    }
+
+    // 토스트 메시지 표시
+    function showToast(message, isError = false) {
+      // 이미 있는 토스트 제거
+      const existingToast = document.querySelector('.toast-message');
+      if (existingToast) {
+        existingToast.remove();
+      }
+
+      // 새 토스트 생성
+      const toast = document.createElement('div');
+      toast.className = `fixed bottom-4 right-4 py-2 px-4 rounded-lg shadow-lg z-50 toast-message transition-opacity duration-300 ${isError
+          ? 'bg-red-600' : 'bg-indigo-600'} text-white`;
+      toast.textContent = message;
+
+      document.body.appendChild(toast);
+
+      // 3초 후 제거
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => {
+          toast.remove();
+        }, 300);
+      }, 3000);
+    }
+  </script>
+</th:block>
+</body>
+</html>

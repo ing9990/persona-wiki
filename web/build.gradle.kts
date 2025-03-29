@@ -7,10 +7,12 @@ tasks.getByName("jar") {
 }
 
 dependencies {
+    implementation(project(":backend"))
     implementation(project(":monitor"))
     implementation(project(":storage-api"))
     implementation("org.springframework.boot:spring-boot-starter-web")
 
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
+    implementation("org.springframework.boot:spring-boot-devtools")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
 }

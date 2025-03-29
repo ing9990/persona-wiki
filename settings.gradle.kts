@@ -31,3 +31,5 @@ plugins {
 }
 include("storage-api")
 include("monitor")
+include("backend")
+include("common")

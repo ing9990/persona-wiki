@@ -40,9 +40,14 @@ jobs:
           echo "${{ secrets.EC2_KEY }}" > private_key.pem
           chmod 600 private_key.pem
 
-      - name: Copy JAR to EC2
+      - name: Compress and Copy JAR
         run: |
-          scp -v -i private_key.pem -o StrictHostKeyChecking=no ./web/build/libs/web-0.0.1-SNAPSHOT.jar root@${{ secrets.EC2_HOST }}:/root/persona-wiki/web-0.0.1-SNAPSHOT.jar
+          tar -czf web.tar.gz -C ./web/build/libs web-0.0.1-SNAPSHOT.jar
+          scp -i private_key.pem -o StrictHostKeyChecking=no web.tar.gz root@${{ secrets.EC2_HOST }}:/root/persona-wiki/
+
+      - name: Extract on EC2
+        run: |
+          ssh -i private_key.pem -o StrictHostKeyChecking=no root@${{ secrets.EC2_HOST }} "cd /root/persona-wiki && tar -xzf web.tar.gz"
 
       - name: Run deploy script on EC2
         run: |

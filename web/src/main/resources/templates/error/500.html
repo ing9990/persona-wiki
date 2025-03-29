@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title>500 - 서버 오류</title>
+</head>
+
+<body>
+<div layout:fragment="content" class="py-12">
+  <div class="max-w-xl mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="bg-gradient-to-r from-red-500 to-red-700 py-6 px-8">
+      <div class="flex items-center">
+        <div class="flex-shrink-0 bg-white bg-opacity-30 rounded-lg p-4">
+          <h1 class="text-6xl font-bold text-white">500</h1>
+        </div>
+        <div class="ml-6">
+          <h2 class="text-2xl font-bold text-white">서버 오류</h2>
+          <p class="text-red-100">요청을 처리하는 중에 오류가 발생했습니다</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="p-8">
+      <div class="mb-6">
+        <h3 class="text-xl font-semibold text-gray-800 mb-2">문제 세부 정보</h3>
+        <div class="bg-gray-50 rounded-lg p-4 border border-gray-200">
+          <p class="text-gray-700" th:text="${error}">오류 메시지가 여기에 표시됩니다</p>
+        </div>
+      </div>
+
+      <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+        <a href="/"
+           class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+          <i class="fas fa-home mr-2"></i> 홈으로 돌아가기
+        </a>
+        <button onclick="window.location.reload()"
+                class="inline-flex items-center justify-center px-5 py-3 border border-transparent text-base font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200">
+          <i class="fas fa-redo mr-2"></i> 페이지 새로고침
+        </button>
+      </div>
+
+      <div class="mt-8 pt-6 border-t border-gray-200">
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+          <div class="flex">
+            <div class="flex-shrink-0">
+              <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+            </div>
+            <div class="ml-3">
+              <p class="text-sm text-yellow-700">
+                이 오류가 계속되면 관리자에게 문의해주세요.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

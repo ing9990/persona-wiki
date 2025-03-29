@@ -6,3 +6,17 @@ spring:
     import:
       - "jpa.yml"
       - "actuator.yml"
+
+  thymeleaf:
+    cache: false
+    check-template-location: true
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML
+
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
