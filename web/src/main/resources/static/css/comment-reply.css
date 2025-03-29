@@ -1,0 +1,63 @@
+/* 답글 버튼 스타일 */
+.reply-toggle-btn, .view-replies-btn {
+  transition: all 0.2s ease;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.reply-toggle-btn:hover, .view-replies-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* 소셜미디어 스타일의 "답글 보기" 버튼 */
+.view-replies-btn {
+  color: #3B82F6; /* Tailwind blue-500 */
+  margin-left: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+.view-replies-btn .fa-chevron-down {
+  transition: transform 0.3s ease;
+}
+
+.view-replies-btn.active .fa-chevron-down {
+  transform: rotate(180deg);
+}
+
+/* 답글 컨테이너 */
+.replies-container {
+  transition: all 0.3s ease;
+  border-left: 2px solid #E0E7FF; /* Tailwind indigo-100 */
+  margin-top: 0.75rem;
+  padding-left: 1.5rem;
+}
+
+/* 답글 아이템 스타일 */
+.reply-item {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #F3F4F6; /* Tailwind gray-100 */
+  font-size: 0.95rem;
+}
+
+.reply-item:last-child {
+  border-bottom: none;
+}
+
+/* 답글 폼 애니메이션 */
+.reply-form {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+/* 숨김 상태일 때 */
+.reply-form.hidden {
+  max-height: 0;
+  opacity: 0;
+}
+
+.hidden {
+  display: none !important;
+}
