@@ -8,9 +8,11 @@
   <!-- Tailwind CSS - UI 구성을 위한 프레임워크 -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
         rel="stylesheet">
+
   <!-- Font Awesome - 아이콘 -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
   <!-- Alpine.js - 간단한 인터랙션 -->
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
@@ -33,6 +35,10 @@
       background-color: #EEF2FF;
     }
   </style>
+
+  <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+          crossorigin="anonymous"></script>
 </head>
 <body class="bg-gray-50 min-h-screen flex flex-col">
 <!-- 헤더 -->
@@ -88,7 +94,6 @@
           </div>
         </form>
       </div>
-      </nav>
     </div>
   </div>
 </header>
@@ -115,7 +120,13 @@
   </div>
 </footer>
 
-<!-- 검색 스크립트 -->
+<!-- 공통 자바스크립트 -->
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="/js/utils/utils.js"></script>
+<script src="/js/utils/toast-manager.js"></script>
+<script src="/js/search/search-handler.js"></script>
+
+<!-- Alpine.js 검색 핸들러 스크립트 -->
 <script>
   function searchHandler() {
     return {
@@ -145,7 +156,9 @@
       async fetchSuggestions() {
         try {
           const response = await fetch(
-              `/api/search/suggestions?query=${encodeURIComponent(this.searchQuery)}`);
+              `/api/search/suggestions?query=${encodeURIComponent(this.searchQuery)}`
+          );
+
           if (response.ok) {
             const data = await response.json();
             this.suggestions = data;
@@ -155,6 +168,7 @@
         } catch (error) {
           console.error('검색 추천 목록 가져오기 실패:', error);
           this.suggestions = [];
+          this.showSuggestions = false;
         }
       },
 
@@ -197,13 +211,5 @@
 
 <!-- 페이지별 자바스크립트 -->
 <th:block layout:fragment="script"></th:block>
-
-<!-- Axios - HTTP 클라이언트 -->
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-<!-- 공통 자바스크립트 -->
-<script>
-  // 공통 기능 구현
-</script>
 </body>
 </html>

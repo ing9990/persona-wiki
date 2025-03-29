@@ -1,6 +1,7 @@
 package io.ing9990.web.controller
 
 import io.ing9990.domain.figure.Sentiment
+import io.ing9990.domain.figure.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.web.exceptions.EntityNotFoundException
 import org.springframework.stereotype.Controller
@@ -13,22 +14,23 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
-/**
- * 인물 관련 페이지를 처리하는 컨트롤러
- */
 @Controller
 class FigureController(
     private val figureService: FigureService,
+    private val categoryService: CategoryService,
 ) {
     /**
      * 인물 상세 페이지를 렌더링합니다.
      * 새로운 URL 형식: /{categoryId}/@{figureName}
      * 인물이 없는 경우 EntityNotFoundException 발생
+     * 댓글을 페이징 처리합니다(10개씩)
      */
     @GetMapping("/{categoryId}/@{figureName}")
     fun figureDetail(
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
         model: Model,
     ): String {
         // 카테고리 정보 조회
@@ -39,12 +41,12 @@ class FigureController(
             figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
                 ?: throw EntityNotFoundException("Figure", "$categoryId/$figureName")
 
-        // 인물의 댓글 목록을 별도로 조회 (페이지네이션 지원을 위한 준비)
-        val comments = figureService.findCommentsByFigureId(figure.id!!)
+        // 인물의 댓글 목록을 페이징하여 조회 (10개씩)
+        val commentPage = figureService.getCommentsByFigureId(figure.id!!, page, size)
 
         model.addAttribute("category", category)
         model.addAttribute("figure", figure)
-        model.addAttribute("comments", comments)
+        model.addAttribute("commentPage", commentPage)
 
         return "figure/figure-detail"
     }
@@ -139,5 +141,55 @@ class FigureController(
     ): String {
         val encodedFigureName = URLEncoder.encode(figureName, StandardCharsets.UTF_8.name())
         return "redirect:/$categoryId/@$encodedFigureName"
+    }
+
+    /**
+     * 인물 추가 페이지를 렌더링합니다.
+     * 검색 결과에서 넘어온 경우 name 파라미터로 검색어를 받아서 자동으로 채워줍니다.
+     */
+    @GetMapping("/add-figure")
+    fun addFigureForm(
+        @RequestParam(required = false) category: String?,
+        @RequestParam(required = false) name: String?,
+        model: Model,
+    ): String {
+        // 카테고리 목록을 모델에 추가
+        val categories = categoryService.getAllCategories()
+        model.addAttribute("categories", categories)
+
+        // 쿼리 파라미터로 카테고리 ID가 전달된 경우, 해당 카테고리를 선택된 상태로 설정
+        if (category != null) {
+            model.addAttribute("selectedCategoryId", category)
+        }
+
+        // 쿼리 파라미터로 이름이 전달된 경우, 해당 이름을 자동으로 채워줌
+        if (name != null) {
+            model.addAttribute("figureName", name)
+        }
+
+        return "figure/add-figure"
+    }
+
+    /**
+     * 인물 수정 페이지를 렌더링합니다.
+     */
+    @GetMapping("/edit-figure/{figureId}")
+    fun editFigureForm(
+        @PathVariable figureId: Long,
+        model: Model,
+    ): String {
+        // 인물 정보 조회
+        val figure =
+            figureService.findById(figureId)
+                ?: throw EntityNotFoundException("Figure", figureId)
+
+        // 카테고리 목록 조회
+        val categories = categoryService.getAllCategories()
+
+        model.addAttribute("figure", figure)
+        model.addAttribute("categories", categories)
+        model.addAttribute("selectedCategoryId", figure.category.id)
+
+        return "figure/edit-figure"
     }
 }

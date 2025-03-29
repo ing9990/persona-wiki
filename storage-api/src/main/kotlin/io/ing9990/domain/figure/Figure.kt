@@ -14,6 +14,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
+import java.util.*
 
 @Table(
     name = "figure",
@@ -55,6 +56,6 @@ class Figure(
      * URL 경로로 사용할 수 있는 형태의 이름을 반환합니다.
      */
     fun getUrlName(): String {
-        return name.replace(" ", "-").toLowerCase()
+        return name.replace(" ", "-").lowercase(Locale.getDefault())
     }
 }

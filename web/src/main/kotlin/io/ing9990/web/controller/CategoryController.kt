@@ -89,4 +89,10 @@ class CategoryController(
 
         return "category/category-detail"
     }
+
+    // 카테고리 추가 페이지를 렌더링하는 메서드 추가
+    @GetMapping("/add")
+    fun addCategoryForm(): String {
+        return "category/add-category"
+    }
 }

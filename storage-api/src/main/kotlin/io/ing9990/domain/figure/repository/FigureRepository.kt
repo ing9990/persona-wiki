@@ -45,11 +45,14 @@ interface FigureRepository : JpaRepository<Figure, Long> {
         name: String,
     ): Boolean
 
-    /**
-     * 이름에 특정 문자열이 포함된 인물을 검색합니다.
-     * 카테고리도 함께 조회합니다.
-     */
-    @Query("SELECT f FROM figure f JOIN FETCH f.category WHERE f.name LIKE CONCAT('%', :name, '%')")
+    @Query(
+        """
+        SELECT f 
+        FROM figure f 
+        LEFT JOIN FETCH f.category 
+        WHERE f.name LIKE CONCAT('%', :name, '%')
+    """,
+    )
     fun findByNameContaining(name: String): List<Figure>
 
     /**
@@ -57,9 +60,11 @@ interface FigureRepository : JpaRepository<Figure, Long> {
      * 댓글은 성능을 위해 필요할 때 별도로 로드합니다.
      */
     @Query(
-        "SELECT f FROM figure f " +
-            "JOIN FETCH f.category " +
-            "WHERE f.id = :id",
+        """
+                SELECT f FROM figure f 
+                JOIN FETCH f.category 
+                WHERE f.id = :id
+        """,
     )
     fun findByIdWithDetails(id: Long): Figure?
 }

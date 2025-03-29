@@ -38,6 +38,17 @@
         transform: translateY(0);
       }
     }
+
+    .add-figure-button {
+      background-color: #10B981;
+      transition: all 0.3s ease;
+    }
+
+    .add-figure-button:hover {
+      background-color: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
   </style>
 </head>
 
@@ -61,17 +72,29 @@
     <div class="bg-gray-50 rounded-lg p-10 text-center">
       <i class="fas fa-search text-gray-300 text-5xl mb-4"></i>
       <h2 class="text-xl font-bold text-gray-700 mb-2">검색 결과가 없습니다</h2>
-      <p class="text-gray-600 mb-6">다른 검색어로 다시 시도해보세요.</p>
+      <p class="text-gray-600 mb-4">원하는 인물을 찾을 수 없나요? 직접 추가해보세요!</p>
 
-      <div class="max-w-md mx-auto">
-        <form action="/search" method="get" class="flex">
-          <input type="text" name="query" th:value="${query}"
-                 class="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-          <button type="submit"
-                  class="bg-indigo-600 text-white px-4 py-2 rounded-r-lg hover:bg-indigo-700 transition">
-            <i class="fas fa-search"></i>
-          </button>
-        </form>
+      <!-- 새 인물 추가 버튼 -->
+      <div class="mb-6">
+        <a th:href="@{/add-figure(name=${query})}"
+           class="add-figure-button inline-flex items-center px-6 py-3 text-white font-medium rounded-lg shadow-md">
+          <i class="fas fa-user-plus mr-2"></i>
+          <span th:text="'&quot;' + ${query} + '&quot; 인물 추가하기'">인물 추가하기</span>
+        </a>
+      </div>
+
+      <div class="my-6 border-t border-gray-200 pt-6">
+        <p class="text-gray-600 mb-6">또는 다른 검색어로 다시 시도해보세요.</p>
+        <div class="max-w-md mx-auto">
+          <form action="/search" method="get" class="flex">
+            <input type="text" name="query" th:value="${query}"
+                   class="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <button type="submit"
+                    class="bg-indigo-600 text-white px-4 py-2 rounded-r-lg hover:bg-indigo-700 transition">
+              <i class="fas fa-search"></i>
+            </button>
+          </form>
+        </div>
       </div>
 
       <div class="mt-8">
@@ -102,7 +125,11 @@
            class="bg-white rounded-lg shadow-md overflow-hidden search-result-card fade-in">
         <div class="relative">
           <!-- 인물 이미지 -->
-          <img th:src="${figure.imageUrl}" alt="인물 이미지" class="w-full h-48 object-cover">
+          <img th:src="${figure.imageUrl}"
+               alt="인물 이미지"
+               class="w-full h-48 object-cover"
+               data-handle-error="true"
+               data-placeholder="/img/profile-placeholder.png">
           <!-- 카테고리 배지 -->
           <span th:if="${figure.category != null}" th:text="${figure.category.displayName}"
                 class="absolute top-4 right-4 bg-indigo-600 text-white text-sm px-3 py-1 rounded-full">
@@ -143,6 +170,17 @@
         </div>
       </div>
     </div>
+
+    <!-- 찾는 인물이 없는 경우 인물 추가 섹션 -->
+    <div class="mt-10 bg-white rounded-lg shadow-md p-6 text-center fade-in">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">원하는 인물을 찾지 못하셨나요?</h3>
+      <p class="text-gray-600 mb-4">검색하신 인물이 없다면 직접 추가해보세요!</p>
+      <a th:href="@{/add-figure(name=${query})}"
+         class="add-figure-button inline-flex items-center px-5 py-2 text-white font-medium rounded-md shadow-sm">
+        <i class="fas fa-user-plus mr-2"></i>
+        <span>새 인물 추가하기</span>
+      </a>
+    </div>
   </section>
 
   <!-- 연관 검색어 제안 -->
@@ -169,31 +207,6 @@
 </div>
 
 <!-- 페이지 자바스크립트 -->
-<th:block layout:fragment="script">
-  <script>
-    // 검색어 하이라이트 기능
-    document.addEventListener('DOMContentLoaded', function () {
-      const query = '[[${query}]]';
-
-      if (query && query.length > 1) {
-        const regex = new RegExp(query, 'gi');
-
-        // 이름 하이라이트
-        document.querySelectorAll('.search-result-card h3').forEach(element => {
-          const text = element.textContent;
-          element.innerHTML = text.replace(regex,
-              match => `<span class="highlight">${match}</span>`);
-        });
-
-        // 소개글 하이라이트
-        document.querySelectorAll('.search-result-card p').forEach(element => {
-          const text = element.textContent;
-          element.innerHTML = text.replace(regex,
-              match => `<span class="highlight">${match}</span>`);
-        });
-      }
-    });
-  </script>
-</th:block>
+<script src="/js/search/search-results-handler.js"></script>
 </body>
 </html>

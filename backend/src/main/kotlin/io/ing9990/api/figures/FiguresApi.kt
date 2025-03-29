@@ -1,9 +1,12 @@
 package io.ing9990.api.figures
 
+import io.ing9990.api.figures.dto.request.CreateFigureRequest
 import io.ing9990.api.figures.dto.request.VoteRequest
+import io.ing9990.api.figures.dto.response.FigureResponse
 import io.ing9990.api.figures.dto.response.ReputationResponse
 import io.ing9990.api.figures.dto.response.VoteResponse
 import io.ing9990.domain.figure.service.FigureService
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -61,5 +64,21 @@ class FiguresApi(
                 total = figure.reputation.total(),
             ),
         )
+    }
+
+    // 인물 생성 API 추가
+    @PostMapping
+    fun createFigure(
+        @RequestBody request: CreateFigureRequest,
+    ): ResponseEntity<FigureResponse> {
+        val figure =
+            figureService.createFigure(
+                name = request.name,
+                categoryId = request.categoryId,
+                imageUrl = request.imageUrl,
+                bio = request.bio,
+            )
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(FigureResponse.from(figure))
     }
 }

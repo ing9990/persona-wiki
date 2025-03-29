@@ -44,11 +44,7 @@ class WebController(
         return "index"
     }
 
-    /**
-     * 인물 검색 기능
-     * 검색 결과 페이지로 이동합니다.
-     * @param query 검색어
-     */
+    // WebController.kt 파일의 search 메서드 수정
     @GetMapping("/search")
     fun search(
         @RequestParam query: String,
@@ -68,9 +64,10 @@ class WebController(
                 figureService.searchByName(query)
             }
 
+        // 검색 결과가 없더라도 빈 목록을 model에 추가
         model.addAttribute("searchResults", searchResults)
         model.addAttribute("query", query)
 
-        return "search-results" // 검색 결과 페이지 템플릿 이름
+        return "search/search-results" // 검색 결과 페이지 템플릿 이름
     }
 }

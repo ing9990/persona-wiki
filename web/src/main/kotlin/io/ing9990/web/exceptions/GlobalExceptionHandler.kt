@@ -30,6 +30,24 @@ class GlobalExceptionHandler {
         return "error/404"
     }
 
+    // GlobalExceptionHandler.kt 파일에 아래 메서드 추가
+
+    /**
+     * 검색 관련 예외 처리
+     * 검색 중 발생하는 예외를 처리하여 사용자에게 적절한 메시지를 보여줍니다.
+     */
+    @ExceptionHandler(value = [NoSuchElementException::class, IllegalArgumentException::class])
+    fun handleSearchException(
+        e: Exception,
+        model: Model,
+    ): String {
+        model.addAttribute("error", "검색 중 오류가 발생했습니다: ${e.message}")
+        model.addAttribute("query", "")
+        model.addAttribute("searchResults", emptyList<Any>())
+
+        return "search/search-results"
+    }
+
     /**
      * 일반적인 RuntimeException 처리
      * 서버 내부 오류 발생 시 500 페이지로 이동

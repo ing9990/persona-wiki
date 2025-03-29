@@ -101,7 +101,9 @@
     <div class="category-header shadow-lg">
       <img
           th:src="${category.imageUrl != null ? category.imageUrl : '/img/category-placeholder.jpg'}"
-          th:alt="${category.displayName}" class="category-header-image">
+          th:alt="${category.displayName}" class="category-header-image"
+          data-handle-error="true"
+          data-placeholder="/img/category-placeholder.jpg">
       <div class="category-header-content">
         <div>
           <h1 class="text-4xl font-bold mb-2" th:text="${category.displayName}">카테고리 이름</h1>
@@ -131,11 +133,16 @@
 
   <!-- 인물 목록 -->
   <section>
-    <!-- 정렬 및 필터 옵션 -->
+    <!-- 카테고리 인물 목록 -->
     <div class="flex flex-wrap justify-between items-center mb-6">
       <h2 class="text-2xl font-bold text-gray-800" th:text="${category.displayName} + ' 인물 목록'">
         카테고리 인물 목록
       </h2>
+      <a th:href="@{'/add-figure?category=' + ${category.id}}"
+         class="mt-2 sm:mt-0 inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+        <i class="fas fa-plus-circle mr-1"></i>
+        <span>이 카테고리에 인물 추가</span>
+      </a>
     </div>
 
     <!-- 목록이 비어있을 경우 -->
@@ -156,7 +163,9 @@
           <img
               th:src="${figure.imageUrl != null ? figure.imageUrl : '/img/profile-placeholder.png'}"
               th:alt="${figure.name}"
-              class="w-full h-48 object-cover">
+              class="w-full h-48 object-cover"
+              data-handle-error="true"
+              data-placeholder="/img/profile-placeholder.png">
         </div>
 
         <div class="p-6">
@@ -241,59 +250,6 @@
 </div>
 
 <!-- 페이지 자바스크립트 -->
-<th:block layout:fragment="script">
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // 정렬 기능
-      const sortSelect = document.getElementById('sortOption');
-      if (sortSelect) {
-        sortSelect.addEventListener('change', function () {
-          const sortBy = this.value;
-          sortFigures(sortBy);
-        });
-      }
-
-      // 인물 카드 정렬 함수
-      function sortFigures(sortBy) {
-        const container = document.querySelector('.grid');
-        if (!container) {
-          return;
-        }
-
-        const items = Array.from(container.children);
-
-        items.sort((a, b) => {
-          if (sortBy === 'name') {
-            const nameA = a.querySelector('h3').textContent.trim();
-            const nameB = b.querySelector('h3').textContent.trim();
-            return nameA.localeCompare(nameB);
-          } else if (sortBy === 'newest') {
-            // 이 부분은 생성일 데이터가 HTML에 노출되어 있다면 구현 가능
-            // 현재는 UI 상 보이지 않으므로 구현하지 않음
-            return 0;
-          } else if (sortBy === 'popular') {
-            const likesA = parseInt(a.querySelector('.fa-crown').nextElementSibling.textContent);
-            const likesB = parseInt(b.querySelector('.fa-crown').nextElementSibling.textContent);
-            return likesB - likesA; // 내림차순
-          }
-          return 0;
-        });
-
-        // 정렬된 순서대로 DOM에 다시 삽입
-        items.forEach(item => {
-          container.appendChild(item);
-        });
-      }
-
-      // 이미지 로딩 오류 처리
-      const images = document.querySelectorAll('.category-header-image, .related-category-image');
-      images.forEach(img => {
-        img.onerror = function () {
-          this.src = '/img/category-placeholder.jpg';
-        };
-      });
-    });
-  </script>
-</th:block>
+<script src="/js/category/category-detail-handler.js"></script>
 </body>
 </html>

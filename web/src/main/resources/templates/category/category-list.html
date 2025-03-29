@@ -71,57 +71,6 @@
       font-size: 1.5rem;
       text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
     }
-
-    /* 페이지네이션 스타일 */
-    .pagination-container {
-      display: flex;
-      justify-content: center;
-      margin-top: 2rem;
-    }
-
-    .pagination {
-      display: inline-flex;
-      border-radius: 0.5rem;
-      overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    }
-
-    .page-item {
-      border: 1px solid #e5e7eb;
-    }
-
-    .page-item:not(:first-child) {
-      border-left: none;
-    }
-
-    .page-link {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.75rem 1rem;
-      min-width: 2.5rem;
-      color: #4B5563;
-      background-color: white;
-      transition: all 0.15s ease;
-    }
-
-    .page-link:hover {
-      background-color: #F3F4F6;
-      color: #1F2937;
-    }
-
-    .page-item.active .page-link {
-      background-color: #4F46E5;
-      color: white;
-      border-color: #4F46E5;
-      z-index: 1;
-    }
-
-    .page-item.disabled .page-link {
-      color: #9CA3AF;
-      background-color: #F3F4F6;
-      cursor: not-allowed;
-    }
   </style>
 </head>
 
@@ -174,7 +123,10 @@
         <div class="category-image-container">
           <img
               th:src="${category.imageUrl != null ? category.imageUrl : '/img/category-placeholder.jpg'}"
-              th:alt="${category.displayName}" class="category-image">
+              th:alt="${category.displayName}"
+              class="category-image"
+              data-handle-error="true"
+              data-placeholder="/img/category-placeholder.jpg">
           <div class="category-overlay">
             <h2 class="category-title" th:text="${category.displayName}">카테고리명</h2>
           </div>
@@ -193,31 +145,39 @@
           </div>
         </div>
       </a>
-
     </div>
   </section>
 
   <!-- 페이지네이션 섹션 -->
-  <section th:if="${totalPages > 1}" class="pagination-container">
+  <section th:if="${totalPages > 1}" class="mt-8 flex justify-center">
     <nav aria-label="카테고리 페이지 탐색">
-      <ul class="pagination">
+      <ul class="inline-flex rounded-md shadow">
         <!-- 이전 페이지 링크 -->
-        <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled' : ''">
-          <a class="page-link" th:href="@{/categories(page=${currentPage - 1})}" aria-label="이전">
-            <i class="fas fa-chevron-left"></i>
+        <li th:classappend="${currentPage == 0} ? 'disabled' : ''">
+          <a th:href="@{/categories(page=${currentPage - 1})}"
+             class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+             th:classappend="${currentPage == 0} ? 'pointer-events-none opacity-50' : ''">
+            이전
           </a>
         </li>
 
         <!-- 페이지 번호 -->
-        <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+        <li th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
             th:classappend="${currentPage == i} ? 'active' : ''">
-          <a class="page-link" th:href="@{/categories(page=${i})}" th:text="${i + 1}">1</a>
+          <a th:href="@{/categories(page=${i})}"
+             th:text="${i + 1}"
+             class="px-3 py-2 border-t border-b border-gray-300"
+             th:classappend="${currentPage == i} ? 'bg-indigo-50 text-indigo-600' : 'bg-white text-gray-500 hover:bg-gray-50'">
+            1
+          </a>
         </li>
 
         <!-- 다음 페이지 링크 -->
-        <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
-          <a class="page-link" th:href="@{/categories(page=${currentPage + 1})}" aria-label="다음">
-            <i class="fas fa-chevron-right"></i>
+        <li th:classappend="${currentPage == totalPages - 1} ? 'disabled' : ''">
+          <a th:href="@{/categories(page=${currentPage + 1})}"
+             class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+             th:classappend="${currentPage == totalPages - 1} ? 'pointer-events-none opacity-50' : ''">
+            다음
           </a>
         </li>
       </ul>
@@ -244,28 +204,6 @@
 </div>
 
 <!-- 페이지 자바스크립트 -->
-<th:block layout:fragment="script">
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // 카테고리 카드에 애니메이션 적용
-      const cards = document.querySelectorAll('.category-card');
-      cards.forEach((card, index) => {
-        // 순차적 애니메이션을 위한 지연 추가
-        setTimeout(() => {
-          card.style.opacity = '1';
-          card.style.transform = 'translateY(0)';
-        }, index * 100);
-      });
-
-      // 이미지 로딩 오류 처리
-      const images = document.querySelectorAll('.category-image');
-      images.forEach(img => {
-        img.onerror = function () {
-          this.src = '/img/category-placeholder.jpg';
-        };
-      });
-    });
-  </script>
-</th:block>
+<script src="/js/category/category-list-handler.js"></script>
 </body>
 </html>

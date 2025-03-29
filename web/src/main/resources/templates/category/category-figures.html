@@ -76,7 +76,11 @@
            class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
         <div class="relative">
           <!-- 인물 이미지 -->
-          <img th:src="${figure.imageUrl}" alt="인물 이미지" class="w-full h-48 object-cover">
+          <img th:src="${figure.imageUrl}"
+               alt="인물 이미지"
+               class="w-full h-48 object-cover"
+               data-handle-error="true"
+               data-placeholder="/img/profile-placeholder.png">
         </div>
 
         <div class="p-6">
@@ -113,5 +117,8 @@
     </div>
   </section>
 </div>
+
+<!-- 페이지 자바스크립트 -->
+<script src="/js/category/category-figures-handler.js"></script>
 </body>
 </html>
