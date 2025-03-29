@@ -32,4 +32,4 @@ jobs:
 
       - name: Run deploy script on EC2
         run: |
-          ssh -i private_key.pem -o StrictHostKeyChecking=no root@${{ secrets.EC2_HOST }} "bash /root/persona-wiki/deploy.sh"
+          ssh -i private_key.pem -o StrictHostKeyChecking=no root@${{ secrets.EC2_HOST }} "bash /root/persona-wiki/deploy-script.sh"
