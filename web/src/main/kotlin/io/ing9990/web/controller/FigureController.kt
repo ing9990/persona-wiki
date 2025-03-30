@@ -4,8 +4,6 @@ import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.figure.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.web.exceptions.EntityNotFoundException
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -13,13 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Controller
 class FigureController(
     private val figureService: FigureService,
     private val categoryService: CategoryService,
 ) {
-
     /**
      * 인물 목록 페이지 - 카테고리별 인기 인물 표시
      * 인물이 많은 상위 10개 카테고리의 인물을 각각 3명씩 표시

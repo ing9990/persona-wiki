@@ -10,17 +10,19 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class WebConfig : WebMvcConfigurer {
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(object : HandlerInterceptor {
-            override fun preHandle(
-                request: HttpServletRequest,
-                response: HttpServletResponse,
-                handler: Any
-            ): Boolean {
-                val baseDomain = "https://국민사형투표.com"
-                val canonicalUrl = baseDomain + request.requestURI
-                request.setAttribute("canonicalUrl", canonicalUrl)
-                return true
-            }
-        })
+        registry.addInterceptor(
+            object : HandlerInterceptor {
+                override fun preHandle(
+                    request: HttpServletRequest,
+                    response: HttpServletResponse,
+                    handler: Any,
+                ): Boolean {
+                    val baseDomain = "https://국민사형투표.com"
+                    val canonicalUrl = baseDomain + request.requestURI
+                    request.setAttribute("canonicalUrl", canonicalUrl)
+                    return true
+                }
+            },
+        )
     }
 }

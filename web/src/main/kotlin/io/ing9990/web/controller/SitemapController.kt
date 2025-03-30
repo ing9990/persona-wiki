@@ -4,18 +4,17 @@ package io.ing9990.web.controller
 import io.ing9990.domain.figure.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
 import jakarta.servlet.http.HttpServletRequest
-import java.time.format.DateTimeFormatter
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.ResponseBody
+import java.time.format.DateTimeFormatter
 
 @Controller
 class SitemapController(
     private val figureService: FigureService,
-    private val categoryService: CategoryService
+    private val categoryService: CategoryService,
 ) {
-
     @GetMapping("/sitemap.xml", produces = [MediaType.APPLICATION_XML_VALUE])
     @ResponseBody
     fun getSitemap(request: HttpServletRequest): String {

@@ -47,9 +47,10 @@ class FigureService(
         // 인물별 댓글 수 계산
         return allFigures.map { figure ->
             // 인물 ID로 댓글 조회
-            val commentCount = figure.id?.let { figureId ->
-                commentRepository.findByFigureIdOrderByCreatedAtDesc(figureId).size
-            } ?: 0
+            val commentCount =
+                figure.id?.let { figureId ->
+                    commentRepository.findByFigureIdOrderByCreatedAtDesc(figureId).size
+                } ?: 0
 
             // 평판 점수 계산 (투표 총합)
             val reputationScore = figure.reputation.total()
@@ -58,9 +59,7 @@ class FigureService(
             Pair(figure, reputationScore + commentCount)
         }
             // 점수 기준 내림차순 정렬 후 limit 개수만큼 추출
-            .sortedByDescending { it.second }
-            .take(limit)
-            .map { it.first }
+            .sortedByDescending { it.second }.take(limit).map { it.first }
     }
 
     /**
@@ -71,14 +70,11 @@ class FigureService(
     @Transactional(readOnly = true)
     fun getPopularFiguresByCategory(limit: Int = 3): Map<Category, List<Figure>> {
         // 인물이 많은 상위 카테고리 10개 조회
-        val topCategories = categoryRepository.findAll()
-            .map { category ->
+        val topCategories =
+            categoryRepository.findAll().map { category ->
                 val figureCount = figureRepository.findByCategoryId(category.id).size
                 Pair(category, figureCount)
-            }
-            .sortedByDescending { it.second }
-            .take(10)
-            .map { it.first }
+            }.sortedByDescending { it.second }.take(10).map { it.first }
 
         // 각 카테고리별 인기 인물 조회
         return topCategories.associateWith { category ->
@@ -86,8 +82,7 @@ class FigureService(
             val figures = findByCategoryId(category.id)
 
             // 평판 점수 기준으로 정렬 후 limit 개수만큼 추출
-            figures.sortedByDescending { it.reputation.total() }
-                .take(limit)
+            figures.sortedByDescending { it.reputation.total() }.take(limit)
         }
     }
 
