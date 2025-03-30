@@ -15,7 +15,7 @@ interface FigureRepository : JpaRepository<Figure, Long> {
      * 카테고리와 함께 모든 인물을 조회합니다.
      * JPQL을 사용하여 N+1 문제를 방지합니다.
      */
-    @Query("SELECT f FROM figure f LEFT JOIN FETCH f.category")
+    @Query("SELECT f FROM figure f LEFT JOIN FETCH f.category order by f.reputation.likeCount + f.reputation.dislikeCount desc")
     fun findAllWithCategory(): List<Figure>
 
     /**

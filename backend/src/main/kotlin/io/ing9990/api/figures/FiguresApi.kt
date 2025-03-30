@@ -6,6 +6,7 @@ import io.ing9990.api.figures.dto.response.FigureResponse
 import io.ing9990.api.figures.dto.response.ReputationResponse
 import io.ing9990.api.figures.dto.response.VoteResponse
 import io.ing9990.domain.figure.service.FigureService
+import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -30,6 +31,7 @@ class FiguresApi(
     fun voteFigure(
         @PathVariable figureId: Long,
         @RequestBody request: VoteRequest,
+        httpServletRequest: HttpServletRequest
     ): ResponseEntity<VoteResponse> {
         val updated = figureService.voteFigure(figureId, request.sentiment)
 
