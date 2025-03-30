@@ -1,6 +1,9 @@
 package io.ing9990.domain.figure.repository
 
 import io.ing9990.domain.figure.Figure
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
@@ -67,4 +70,13 @@ interface FigureRepository : JpaRepository<Figure, Long> {
         """,
     )
     fun findByIdWithDetails(id: Long): Figure?
+
+    /**
+     * 카테고리를 JOIN FETCH로 함께 로드하여 인물 목록 조회
+     */
+    @Query("SELECT f FROM figure f JOIN FETCH f.category ORDER BY f.createdAt DESC")
+    fun findAllWithCategoryFetchJoin(pageable: Pageable): Page<Figure>
+
+    @EntityGraph(attributePaths = ["category"])
+    override fun findAll(pageable: Pageable): Page<Figure>
 }

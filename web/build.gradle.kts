@@ -10,6 +10,7 @@ dependencies {
     implementation(project(":backend"))
     implementation(project(":monitor"))
     implementation(project(":storage-api"))
+    implementation(project(":admin"))
     implementation("org.springframework.boot:spring-boot-starter-web")
 
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")

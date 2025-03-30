@@ -169,27 +169,27 @@ class FigureController(
 
         return "figure/add-figure"
     }
-
-    /**
-     * 인물 수정 페이지를 렌더링합니다.
-     */
-    @GetMapping("/edit-figure/{figureId}")
-    fun editFigureForm(
-        @PathVariable figureId: Long,
-        model: Model,
-    ): String {
-        // 인물 정보 조회
-        val figure =
-            figureService.findById(figureId)
-                ?: throw EntityNotFoundException("Figure", figureId)
-
-        // 카테고리 목록 조회
-        val categories = categoryService.getAllCategories()
-
-        model.addAttribute("figure", figure)
-        model.addAttribute("categories", categories)
-        model.addAttribute("selectedCategoryId", figure.category.id)
-
-        return "figure/edit-figure"
-    }
+//
+//    /**
+//     * 인물 수정 페이지를 렌더링합니다.
+//     */
+//    @GetMapping("/edit-figure/{figureId}")
+//    fun editFigureForm(
+//        @PathVariable figureId: Long,
+//        model: Model,
+//    ): String {
+//        // 인물 정보 조회
+//        val figure =
+//            figureService.findById(figureId)
+//                ?: throw EntityNotFoundException("Figure", figureId)
+//
+//        // 카테고리 목록 조회
+//        val categories = categoryService.getAllCategories()
+//
+//        model.addAttribute("figure", figure)
+//        model.addAttribute("categories", categories)
+//        model.addAttribute("selectedCategoryId", figure.category.id)
+//
+//        return "figure/edit-figure"
+//    }
 }
