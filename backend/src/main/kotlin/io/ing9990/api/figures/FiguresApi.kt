@@ -31,7 +31,7 @@ class FiguresApi(
     fun voteFigure(
         @PathVariable figureId: Long,
         @RequestBody request: VoteRequest,
-        httpServletRequest: HttpServletRequest
+        httpServletRequest: HttpServletRequest,
     ): ResponseEntity<VoteResponse> {
         val updated = figureService.voteFigure(figureId, request.sentiment)
 
