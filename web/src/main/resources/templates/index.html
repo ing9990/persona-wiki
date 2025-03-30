@@ -5,9 +5,9 @@
 <head>
   <title>홈</title>
   <style>
-    /* 인물 이미지 컨테이너 스타일 */
+    /* 인물 이미지 컨테이너 스타일 수정 - .figure-image-container 부분 */
     .figure-image-container {
-      height: 220px;
+      height: 250px; /* 카드 크기 증가 */
       overflow: hidden;
       position: relative;
     }
@@ -17,6 +17,36 @@
       height: 100%;
       object-fit: cover;
       object-position: center 15%; /* 이미지 위치 조정 - 얼굴이 더 잘 보이도록 상단에 맞춤 */
+      transition: transform 0.3s ease; /* 호버 효과를 위한 전환 추가 */
+    }
+
+    /* 호버 효과 추가 */
+    .card-hover:hover .figure-image {
+      transform: scale(1.05);
+    }
+
+    /* 인물 이름 텍스트에 그림자 효과 추가 */
+    .drop-shadow-lg {
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    }
+
+    /* 카드 크기 균일화를 위한 스타일 */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 카드 최소 너비 증가 */
+      gap: 1.5rem;
+    }
+
+    @media (min-width: 768px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
 
     /* 히어로 섹션 스타일 */
@@ -98,52 +128,62 @@
     <!-- 인물 카드 그리드 -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- 인물 카드 (Thymeleaf로 반복) -->
+      <!-- index.html 파일 수정 - 인물 카드 부분 -->
+      <!-- 파일: index.html - 인물 카드 부분 수정 -->
       <div th:each="figure : ${figures}"
-           class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover">
-        <div class="figure-image-container">
+           class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover flex flex-col h-full">
+        <div class="figure-image-container relative">
           <!-- 인물 이미지 -->
           <img
               th:src="${figure.imageUrl != null ? figure.imageUrl : '/img/profile-placeholder.png'}"
               th:alt="${figure.name}" class="figure-image" data-handle-error="true"
               data-placeholder="/img/profile-placeholder.png">
+
+          <!-- 이름을 이미지 위에 오버레이로 배치 -->
+          <div
+              class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+            <h3 class="text-xl font-bold text-white mb-0 drop-shadow-lg" th:text="${figure.name}">인물
+              이름</h3>
+          </div>
+
           <!-- 카테고리 배지 -->
           <span th:if="${figure.category != null}" th:text="${figure.category.displayName}"
-                class="absolute top-4 right-4 bg-indigo-600 text-white text-sm px-3 py-1 rounded-full">
-            카테고리
-          </span>
+                class="absolute top-4 right-4 bg-indigo-600 text-white text-sm px-3 py-1 rounded-full shadow-md">
+      카테고리
+    </span>
         </div>
 
-        <div class="p-6">
-          <!-- 인물 이름 -->
-          <h3 class="text-xl font-bold text-gray-800 mb-2" th:text="${figure.name}">인물 이름</h3>
-
+        <div class="p-5 flex flex-col flex-grow">
           <!-- 인물 소개 (일부만 표시) -->
-          <p class="text-gray-600 mb-4"
+          <p class="text-gray-600 mb-4 flex-grow"
              th:text="${figure.bio != null ? #strings.abbreviate(figure.bio, 100) : '소개가 등록되지 않았습니다.'}">
             인물 소개 텍스트...
           </p>
 
-          <!-- 평판 지표 -->
-          <div class="flex items-center mb-4">
-            <div class="flex items-center mr-4 tooltip" data-tooltip="숭배">
-              <i class="fas fa-crown text-green-500 mr-1"></i>
-              <span th:text="${figure.reputation.likeCount}">0</span>
+          <!-- 하단 정보 영역 - 통계와 버튼을 가로로 일렬 배치 -->
+          <div class="mt-auto flex items-center justify-between">
+            <!-- 평판 지표 -->
+            <div class="flex items-center">
+              <div class="flex items-center mr-3 tooltip" data-tooltip="숭배">
+                <i class="fas fa-crown text-green-500 mr-1"></i>
+                <span th:text="${figure.reputation.likeCount}">0</span>
+              </div>
+              <div class="flex items-center mr-3 tooltip" data-tooltip="중립">
+                <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
+                <span th:text="${figure.reputation.neutralCount}">0</span>
+              </div>
+              <div class="flex items-center tooltip" data-tooltip="사형">
+                <i class="fas fa-skull text-red-500 mr-1"></i>
+                <span th:text="${figure.reputation.dislikeCount}">0</span>
+              </div>
             </div>
-            <div class="flex items-center mr-4 tooltip" data-tooltip="중립">
-              <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
-              <span th:text="${figure.reputation.neutralCount}">0</span>
-            </div>
-            <div class="flex items-center tooltip" data-tooltip="사형">
-              <i class="fas fa-skull text-red-500 mr-1"></i>
-              <span th:text="${figure.reputation.dislikeCount}">0</span>
-            </div>
-          </div>
 
-          <!-- 상세 페이지 링크 -->
-          <a th:href="@{'/' + ${figure.category.id} + '/@' + ${figure.name}}"
-             class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
-            자세히 보기
-          </a>
+            <!-- 상세 페이지 링크 -->
+            <a th:href="@{'/' + ${figure.category.id} + '/@' + ${figure.name}}"
+               class="inline-block bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 transition text-sm">
+              자세히 보기
+            </a>
+          </div>
         </div>
       </div>
     </div>
