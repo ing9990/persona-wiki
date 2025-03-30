@@ -113,7 +113,7 @@
 <body>
 <div layout:fragment="content">
   <!-- 인물 프로필 헤더 -->
-  <section class="profile-header mb-8 shadow-lg">
+  <section class="profile-header mb-8 shadow-lg" th:attr="data-figure-id=${figure.id}">
     <img th:src="${figure.imageUrl}" th:alt="${figure.name}" class="profile-header-image">
     <!-- 인물 프로필 헤더 내 수정 버튼 추가 -->
     <div class="profile-header-content">

@@ -158,10 +158,22 @@ class FigureDetailHandler {
    * @returns {string} 인물 ID
    */
   getFigureId() {
-    const figureDetailSection = document.querySelector('.profile-header');
-    const editLink = figureDetailSection.querySelector(
-        'a[href^="/edit-figure/"]');
-    return editLink ? editLink.getAttribute('href').split('/').pop() : null;
+    // 1. data 속성으로 ID 직접 전달
+    const figureSection = document.querySelector('.profile-header');
+    if (figureSection) {
+      const figureId = figureSection.getAttribute('data-figure-id');
+      if (figureId) {
+        return figureId;
+      }
+    }
+
+    // 2. URL에서 ID 추출 (예: /{categoryId}/@{figureName} 형식)
+    const path = window.location.pathname;
+    const pathParts = path.split('/');
+
+    console.log('Path parts:', pathParts);
+
+    return null;
   }
 
   /**
