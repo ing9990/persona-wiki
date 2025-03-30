@@ -35,6 +35,63 @@ class FigureService(
     }
 
     /**
+     * 인기 있는 인물 목록을 가져옵니다. (평판 투표 + 댓글 수 기준)
+     * @param limit 가져올 인물 수
+     * @return 인기 있는 인물 목록
+     */
+    @Transactional(readOnly = true)
+    fun getPopularFigures(limit: Int = 6): List<Figure> {
+        // 모든 인물을 가져와 카테고리와 함께 로드
+        val allFigures = findAllWithCategory()
+
+        // 인물별 댓글 수 계산
+        return allFigures.map { figure ->
+            // 인물 ID로 댓글 조회
+            val commentCount = figure.id?.let { figureId ->
+                commentRepository.findByFigureIdOrderByCreatedAtDesc(figureId).size
+            } ?: 0
+
+            // 평판 점수 계산 (투표 총합)
+            val reputationScore = figure.reputation.total()
+
+            // 인물과 점수를 페어로 반환
+            Pair(figure, reputationScore + commentCount)
+        }
+            // 점수 기준 내림차순 정렬 후 limit 개수만큼 추출
+            .sortedByDescending { it.second }
+            .take(limit)
+            .map { it.first }
+    }
+
+    /**
+     * 카테고리별 인기 인물을 가져옵니다.
+     * @param limit 각 카테고리별로 가져올 인물 수
+     * @return 카테고리 ID를 키로, 인물 목록을 값으로 하는 맵
+     */
+    @Transactional(readOnly = true)
+    fun getPopularFiguresByCategory(limit: Int = 3): Map<Category, List<Figure>> {
+        // 인물이 많은 상위 카테고리 10개 조회
+        val topCategories = categoryRepository.findAll()
+            .map { category ->
+                val figureCount = figureRepository.findByCategoryId(category.id).size
+                Pair(category, figureCount)
+            }
+            .sortedByDescending { it.second }
+            .take(10)
+            .map { it.first }
+
+        // 각 카테고리별 인기 인물 조회
+        return topCategories.associateWith { category ->
+            // 해당 카테고리의 모든 인물
+            val figures = findByCategoryId(category.id)
+
+            // 평판 점수 기준으로 정렬 후 limit 개수만큼 추출
+            figures.sortedByDescending { it.reputation.total() }
+                .take(limit)
+        }
+    }
+
+    /**
      * ID로 인물 정보를 상세히 조회합니다.
      * 카테고리와 댓글이 함께 로딩됩니다.
      * @param id 인물 ID

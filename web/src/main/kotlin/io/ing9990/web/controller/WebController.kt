@@ -21,27 +21,27 @@ class WebController(
      */
     @GetMapping("/")
     fun index(model: Model): String {
-        // 카테고리와 함께 모든 인물 목록 조회
-        val figures = figureService.findAllWithCategory()
-        model.addAttribute("figures", figures)
+        // 인기 인물 6명 조회 (평판투표 + 댓글 수 기준)
+        val popularFigures = figureService.getPopularFigures(6)
+        model.addAttribute("figures", popularFigures)
 
         // 모든 카테고리 조회
         val allCategories = categoryService.getAllCategories()
         model.addAttribute("allCategories", allCategories)
 
         // 인기 카테고리 (최대 3개) 조회
-        // 인기 카테고리는 인물이 많은 순으로 정렬
-        val popularCategories =
-            allCategories.map { category ->
+        val popularCategories = allCategories
+            .map { category ->
                 val figuresCount = figureService.findByCategoryId(category.id).size
                 Pair(category, figuresCount)
-            }.sortedByDescending { it.second }
-                .take(3)
-                .map { it.first }
+            }
+            .sortedByDescending { it.second }
+            .take(3)
+            .map { it.first }
 
         model.addAttribute("popularCategories", popularCategories)
 
-        return "index"
+        return "index";
     }
 
     // WebController.kt 파일의 search 메서드 수정

@@ -92,6 +92,21 @@
         font-size: 2.5rem;
       }
     }
+
+    /* 아이콘 버튼 스타일 */
+    .icon-button {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: all 0.2s ease;
+    }
+
+    .icon-button:hover {
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 
@@ -103,7 +118,7 @@
       <div class="md:w-3/4 mb-6 md:mb-0">
         <h1 class="hero-title">공적인 인물들에 대한 여러분의 생각을 공유해보세요!</h1>
         <p class="hero-text">익명으로 안전하게 의견을 표현하고, 다양한 시각을 만나보세요.</p>
-        <a href="#figures" class="hero-button">
+        <a href="/figures" class="hero-button">
           인물 둘러보기
         </a>
       </div>
@@ -115,12 +130,18 @@
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-3xl font-bold text-gray-800">주목받는 인물들</h2>
       <div class="flex space-x-3">
+        <!-- 인물 추가 버튼 (아이콘만) -->
         <a href="/add-figure"
-           class="text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-md transition flex items-center">
-          <i class="fas fa-plus-circle mr-1"></i> 인물 추가
+           class="icon-button bg-indigo-600 text-white hover:bg-indigo-700 transition"
+           title="인물 추가">
+          <i class="fas fa-plus-circle"></i>
         </a>
-        <a href="/categories" class="text-indigo-600 hover:text-indigo-800 transition">
-          모든 카테고리 <i class="fas fa-arrow-right ml-1"></i>
+
+        <!-- 모든 카테고리 버튼 (아이콘만) -->
+        <a href="/categories"
+           class="icon-button bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition"
+           title="모든 카테고리">
+          <i class="fas fa-th-large"></i>
         </a>
       </div>
     </div>
@@ -128,8 +149,6 @@
     <!-- 인물 카드 그리드 -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- 인물 카드 (Thymeleaf로 반복) -->
-      <!-- index.html 파일 수정 - 인물 카드 부분 -->
-      <!-- 파일: index.html - 인물 카드 부분 수정 -->
       <div th:each="figure : ${figures}"
            class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover flex flex-col h-full">
         <div class="figure-image-container relative">
@@ -200,19 +219,9 @@
   <script src="/js/home/index-page.js"></script>
 
   <script>
-    // 스크롤 부드럽게 처리
+    // 기본 페이지 초기화 코드
     document.addEventListener('DOMContentLoaded', function () {
-      // 인물 둘러보기 버튼 클릭 시 부드러운 스크롤
-      const heroButton = document.querySelector('.hero-button');
-      if (heroButton) {
-        heroButton.addEventListener('click', function (e) {
-          e.preventDefault();
-          const target = document.querySelector(this.getAttribute('href'));
-          if (target) {
-            target.scrollIntoView({behavior: 'smooth'});
-          }
-        });
-      }
+      // 이미지 오류 처리 등의 초기화 코드만 유지
     });
   </script>
 </th:block>

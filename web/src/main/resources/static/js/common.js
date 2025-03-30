@@ -1,12 +1,12 @@
 /**
- * 인물사전 공통 JavaScript 파일
+ * 국민사형투표 공통 JavaScript 파일
  * 작성일: 2025-03-30
  *
  * 모든 페이지에서 공통으로 사용되는 기능을 초기화합니다.
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('인물사전 웹 애플리케이션이 로드되었습니다.');
+  console.log('국민사형투표 웹 애플리케이션이 로드되었습니다.');
 
   // 공통 초기화 함수 실행
   initNavActiveState();

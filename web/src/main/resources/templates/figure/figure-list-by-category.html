@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title>인물 목록 - 국민사형투표</title>
+  <meta name="description" content="카테고리별 인기 인물들을 둘러보세요.">
+
+  <style>
+    .category-section {
+      margin-bottom: 3rem;
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    .category-header {
+      border-bottom: 2px solid #e5e7eb;
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.75rem;
+    }
+
+    .figure-card {
+      transition: all 0.3s ease;
+    }
+
+    .figure-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .figure-image-container {
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .figure-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 15%;
+      transition: transform 0.3s ease;
+    }
+
+    .figure-card:hover .figure-image {
+      transform: scale(1.05);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- 페이지 헤더 -->
+  <section class="mb-8">
+    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg shadow-lg p-8">
+      <h1 class="text-4xl font-bold mb-2">카테고리별 인기 인물</h1>
+      <p class="text-xl opacity-90">인물이 많은 상위 카테고리의 인기 인물들을 확인해보세요</p>
+    </div>
+  </section>
+
+  <!-- 카테고리별 인물 목록 -->
+  <div th:each="entry : ${categoriesWithFigures}" class="category-section">
+    <div class="category-header flex justify-between items-center">
+      <h2 class="text-2xl font-bold text-gray-800">
+        <i class="fas fa-folder text-indigo-500 mr-2"></i>
+        <span th:text="${entry.key.displayName}">카테고리명</span>
+      </h2>
+      <a th:href="@{'/categories/' + ${entry.key.id}}"
+         class="text-indigo-600 hover:text-indigo-800 transition">
+        더 보기 <i class="fas fa-arrow-right ml-1"></i>
+      </a>
+    </div>
+
+    <!-- 인물 카드 그리드 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- 인물 카드 (반복) -->
+      <div th:each="figure : ${entry.value}"
+           class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 figure-card">
+        <div class="figure-image-container">
+          <!-- 인물 이미지 -->
+          <img
+              th:src="${figure.imageUrl != null ? figure.imageUrl : '/img/profile-placeholder.png'}"
+              th:alt="${figure.name}" class="figure-image"
+              data-handle-error="true"
+              data-placeholder="/img/profile-placeholder.png">
+
+          <!-- 이름을 이미지 위에 오버레이로 배치 -->
+          <div
+              class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+            <h3 class="text-xl font-bold text-white mb-0 drop-shadow-lg" th:text="${figure.name}">인물
+              이름</h3>
+          </div>
+        </div>
+
+        <div class="p-5">
+          <!-- 인물 소개 (일부만 표시) -->
+          <p class="text-gray-600 mb-4"
+             th:text="${figure.bio != null ? #strings.abbreviate(figure.bio, 100) : '소개가 등록되지 않았습니다.'}">
+            인물 소개 텍스트...
+          </p>
+
+          <!-- 하단 정보 영역 -->
+          <div class="flex items-center justify-between">
+            <!-- 평판 지표 -->
+            <div class="flex items-center">
+              <div class="flex items-center mr-3 tooltip" data-tooltip="숭배">
+                <i class="fas fa-crown text-green-500 mr-1"></i>
+                <span th:text="${figure.reputation.likeCount}">0</span>
+              </div>
+              <div class="flex items-center mr-3 tooltip" data-tooltip="중립">
+                <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
+                <span th:text="${figure.reputation.neutralCount}">0</span>
+              </div>
+              <div class="flex items-center tooltip" data-tooltip="사형">
+                <i class="fas fa-skull text-red-500 mr-1"></i>
+                <span th:text="${figure.reputation.dislikeCount}">0</span>
+              </div>
+            </div>
+
+            <!-- 상세 페이지 링크 -->
+            <a th:href="@{'/' + ${figure.category.id} + '/@' + ${figure.name}}"
+               class="inline-block bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 transition text-sm">
+              자세히 보기
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인 페이지로 이동 -->
+  <div class="mt-12 text-center">
+    <a href="/"
+       class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition">
+      <i class="fas fa-home mr-2"></i> 메인 페이지로 돌아가기
+    </a>
+  </div>
+</div>
+
+<!-- 페이지 자바스크립트 -->
+<script src="/js/utils/image-handler.js"></script>
+</body>
+</html>
