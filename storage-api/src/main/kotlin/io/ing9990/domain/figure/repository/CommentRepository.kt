@@ -13,7 +13,6 @@ import org.springframework.data.jpa.repository.Query
  * 댓글 관련 데이터 액세스를 위한 Repository 인터페이스
  */
 interface CommentRepository : JpaRepository<Comment, Long>, CommentCustomRepository {
-
     /**
      * 인물 ID로 최상위 댓글(원 댓글)만 조회하고, 생성일 내림차순으로 정렬합니다.
      */
@@ -24,11 +23,11 @@ interface CommentRepository : JpaRepository<Comment, Long>, CommentCustomReposit
         WHERE c.figure.id = :figureId 
         AND c.commentType = :commentType 
         ORDER BY c.createdAt DESC
-    """
+    """,
     )
     fun findCommentsByFigureIdAndTypeOrderByCreatedAtDesc(
         figureId: Long,
-        commentType: CommentType = ROOT
+        commentType: CommentType = ROOT,
     ): List<Comment>
 
     /**
@@ -44,7 +43,7 @@ interface CommentRepository : JpaRepository<Comment, Long>, CommentCustomReposit
         FROM comment c
         WHERE c.figure.id = :figureId 
         AND c.commentType = :commentType
-    """
+    """,
     )
     fun findCommentsByFigureIdAndType(
         figureId: Long,
@@ -75,11 +74,11 @@ interface CommentRepository : JpaRepository<Comment, Long>, CommentCustomReposit
         WHERE c.parent.id = :parentId 
         AND c.commentType = :commentType 
         ORDER BY c.createdAt ASC
-    """
+    """,
     )
     fun findRepliesByParentId(
         parentId: Long,
-        commentType: CommentType = CommentType.REPLY
+        commentType: CommentType = CommentType.REPLY,
     ): List<Comment>
 
     /**
@@ -95,7 +94,7 @@ interface CommentRepository : JpaRepository<Comment, Long>, CommentCustomReposit
         FROM comment c 
         WHERE c.parent.id = :parentId 
         AND c.commentType = :commentType
-    """
+    """,
     )
     fun findRepliesByParentId(
         parentId: Long,
@@ -115,10 +114,10 @@ interface CommentRepository : JpaRepository<Comment, Long>, CommentCustomReposit
         FROM comment c 
         WHERE c.parent.id = :commentId 
         AND c.commentType = :commentType
-    """
+    """,
     )
     fun countRepliesByParentId(
         commentId: Long,
-        commentType: CommentType = CommentType.REPLY
+        commentType: CommentType = CommentType.REPLY,
     ): Long
 }

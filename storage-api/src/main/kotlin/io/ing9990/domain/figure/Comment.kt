@@ -25,48 +25,37 @@ class Comment(
     @GeneratedValue(strategy = IDENTITY)
     @Column(name = "comment_id")
     val id: Long? = null,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "figure_id")
     val figure: Figure,
-
     @Column(name = "content", nullable = false)
     var content: String,
-
     @Column(name = "likes")
     var likes: Int = 0,
-
     @Column(name = "dislikes")
     var dislikes: Int = 0,
-
     // 부모 댓글 참조 (자기 참조 관계)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_id")
     val parent: Comment? = null,
-
     // 댓글 깊이 (0: 원 댓글, 1: 답글, ...)
     @Column(name = "depth")
     val depth: Int = 0,
-
     // 원 댓글 ID (최상위 부모 댓글의 ID)
     @Column(name = "root_id")
     val rootId: Long? = null,
-
     @Column(name = "replies_count", nullable = false, columnDefinition = "INT DEFAULT 0")
     var repliesCount: Int = 0,
-
     // 댓글 유형 (ROOT 또는 REPLY)
     @Enumerated(EnumType.STRING)
     @ColumnDefault("'ROOT'")
     @Column(name = "comment_type", nullable = false)
     val commentType: CommentType = ROOT,
-
     // 자식 댓글 목록 (답글들)
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
-    @OrderBy("createdAt ASC") // 생성 시간 순으로 정렬
-    val replies: MutableList<Comment> = mutableListOf()
+    @OrderBy("createdAt ASC")
+    val replies: MutableList<Comment> = mutableListOf(),
 ) : BaseEntity() {
-
     /**
      * 이 댓글이 답글인지 확인합니다.
      * @return 답글이면 true, 원 댓글이면 false

@@ -6,6 +6,6 @@ package io.ing9990.domain.figure
  * REPLY: 답글 (다른 댓글에 대한 응답)
  */
 enum class CommentType {
-    ROOT,    // 원 댓글
-    REPLY    // 답글
+    ROOT, // 원 댓글
+    REPLY, // 답글
 }

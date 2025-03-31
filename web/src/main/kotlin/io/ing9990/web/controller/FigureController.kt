@@ -4,8 +4,6 @@ import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.figure.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -14,6 +12,8 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Controller
 class FigureController(
@@ -198,7 +198,7 @@ class FigureController(
         val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
 
         // 인물의 댓글 트리를 페이징하여 조회
-        val commentPage : Page<Comment> = figureService.getCommentTreesByFigureId(figure.id!!, page, size)
+        val commentPage: Page<Comment> = figureService.getCommentTreesByFigureId(figure.id!!, page, size)
 
         model.addAttribute("category", category)
         model.addAttribute("figure", figure)

@@ -7,6 +7,6 @@ package io.ing9990.domain.figure
  * DISLIKE: 싫어요
  */
 enum class InteractionType {
-    LIKE,    // 좋아요
-    DISLIKE  // 싫어요
+    LIKE, // 좋아요
+    DISLIKE, // 싫어요
 }

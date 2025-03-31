@@ -44,7 +44,7 @@ class GlobalExceptionHandler {
     fun handleSearchException(
         e: Exception,
         model: Model,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         // 메시지에 따라 토스트 표시 또는 페이지 리다이렉트 결정
         if (e.message?.contains("검색") == true) {
@@ -65,7 +65,7 @@ class GlobalExceptionHandler {
     @ExceptionHandler(value = [FigureOperationException::class])
     fun handleFigureOperationException(
         e: FigureOperationException,
-        redirectAttributes: RedirectAttributes
+        redirectAttributes: RedirectAttributes,
     ): String {
         redirectAttributes.addFlashAttribute("error", e.message)
         return "redirect:/add-figure"

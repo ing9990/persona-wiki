@@ -26,8 +26,6 @@ import org.springframework.web.bind.annotation.RestController
 class FiguresApi(
     private val figureService: FigureService,
 ) {
-
-
     // backend/src/main/kotlin/io/ing9990/api/figures/FiguresApi.kt
 
     @PostMapping("/{figureId}/vote")
@@ -46,7 +44,7 @@ class FiguresApi(
                     likeCount = updated.reputation.likeCount,
                     dislikeCount = updated.reputation.dislikeCount,
                     neutralCount = updated.reputation.neutralCount,
-                )
+                ),
             )
         } catch (e: EntityNotFoundException) {
             throw ApiException(e.message ?: "인물을 찾을 수 없습니다", HttpStatus.NOT_FOUND)

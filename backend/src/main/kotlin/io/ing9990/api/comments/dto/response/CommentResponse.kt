@@ -14,33 +14,37 @@ data class CommentResponse(
     val dislikes: Int,
     val createdAt: String,
     val commentType: CommentType,
-    val isReply: Boolean,  // 답글 여부
-    val depth: Int,        // 댓글 깊이
-    val parentId: Long?,   // 부모 댓글 ID (답글인 경우)
-    val rootId: Long?,     // 원 댓글 ID (답글인 경우)
-    val replyCount: Int,   // 답글 수 (원 댓글인 경우)
-    val replies: List<CommentResponse>? = null  // 답글 목록 (선택적으로 포함)
+    val isReply: Boolean,
+    val depth: Int,
+    val parentId: Long?,
+    val rootId: Long?,
+    val replyCount: Int,
+    val replies: List<CommentResponse>? = null,
 ) {
     companion object {
-        fun from(comment: Comment, includeReplies: Boolean = false): CommentResponse {
-            val commentResponse = CommentResponse(
-                id = comment.id,
-                content = comment.content,
-                likes = comment.likes,
-                dislikes = comment.dislikes,
-                createdAt = comment.createdAt.toString(),
-                commentType = comment.commentType,
-                isReply = comment.isReply(),
-                depth = comment.depth,
-                parentId = comment.parent?.id,
-                rootId = comment.rootId,
-                replyCount = comment.repliesCount,
-            )
+        fun from(
+            comment: Comment,
+            includeReplies: Boolean = false,
+        ): CommentResponse {
+            val commentResponse =
+                CommentResponse(
+                    id = comment.id,
+                    content = comment.content,
+                    likes = comment.likes,
+                    dislikes = comment.dislikes,
+                    createdAt = comment.createdAt.toString(),
+                    commentType = comment.commentType,
+                    isReply = comment.isReply(),
+                    depth = comment.depth,
+                    parentId = comment.parent?.id,
+                    rootId = comment.rootId,
+                    replyCount = comment.repliesCount,
+                )
 
             // 답글 목록도 포함할지 결정
             return if (includeReplies && comment.replies.isNotEmpty()) {
                 commentResponse.copy(
-                    replies = comment.replies.map { from(it, false) }
+                    replies = comment.replies.map { from(it, false) },
                 )
             } else {
                 commentResponse

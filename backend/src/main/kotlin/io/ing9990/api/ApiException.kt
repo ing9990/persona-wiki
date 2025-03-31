@@ -8,5 +8,5 @@ import org.springframework.http.HttpStatus
  */
 class ApiException(
     message: String,
-    val status: HttpStatus? = HttpStatus.BAD_REQUEST
+    val status: HttpStatus? = HttpStatus.BAD_REQUEST,
 ) : RuntimeException(message)

@@ -106,10 +106,9 @@ class FigureService(
             ?: throw EntityNotFoundException(
                 "Figure",
                 "$categoryId/$figureName",
-                "해당 인물을 찾을 수 없습니다."
+                "해당 인물을 찾을 수 없습니다.",
             )
     }
-
 
     /**
      * 카테고리 ID로, 해당 카테고리에 속한 인물 목록을 조회합니다.
@@ -135,10 +134,9 @@ class FigureService(
             return figureRepository.findByNameContaining(name)
         } catch (e: Exception) {
             println("인물 검색 중 오류 발생: ${e.message}")
-            throw RuntimeException("인물 '${name}' 검색 중 오류가 발생했습니다", e)
+            throw RuntimeException("인물 '$name' 검색 중 오류가 발생했습니다", e)
         }
     }
-
 
     fun searchByNameWithInitials(query: String): List<Figure> {
         if (query.isBlank()) {
@@ -159,7 +157,7 @@ class FigureService(
             }
         } catch (e: Exception) {
             println("초성 검색 중 오류 발생: ${e.message}")
-            throw RuntimeException("검색어 '${query}'로 초성 검색 중 오류가 발생했습니다", e)
+            throw RuntimeException("검색어 '$query'로 초성 검색 중 오류가 발생했습니다", e)
         }
     }
 
@@ -291,15 +289,17 @@ class FigureService(
         parentCommentId: Long,
         content: String,
     ): Comment {
-        val parentComment = commentRepository.findByIdOrNull(parentCommentId)
-            ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $parentCommentId")
+        val parentComment =
+            commentRepository.findByIdOrNull(parentCommentId)
+                ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $parentCommentId")
 
         // 최상위 부모(root) 댓글 ID 결정
-        val rootId = if (parentComment.isRootComment()) {
-            parentComment.id
-        } else {
-            parentComment.rootId
-        }
+        val rootId =
+            if (parentComment.isRootComment()) {
+                parentComment.id
+            } else {
+                parentComment.rootId
+            }
 
         // 댓글 깊이 결정 (부모 댓글의 깊이 + 1)
         val depth = parentComment.depth + 1
@@ -310,14 +310,15 @@ class FigureService(
         }
 
         // 새 답글 생성
-        val reply = Comment(
-            figure = parentComment.figure,
-            content = content,
-            parent = parentComment,
-            depth = depth,
-            rootId = rootId,
-            commentType = CommentType.REPLY
-        )
+        val reply =
+            Comment(
+                figure = parentComment.figure,
+                content = content,
+                parent = parentComment,
+                depth = depth,
+                rootId = rootId,
+                commentType = CommentType.REPLY,
+            )
 
         // 부모 댓글에 답글 추가
         parentComment.addReply(reply)
@@ -334,12 +335,14 @@ class FigureService(
      */
     fun getCommentWithReplies(rootCommentId: Long): Comment {
         // QueryDSL을 사용하여 원 댓글과 답글을 함께 조회
-        val rootComment = commentRepository.findWithRepliesById(rootCommentId)
-            ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $rootCommentId")
+        val rootComment =
+            commentRepository.findWithRepliesById(rootCommentId)
+                ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $rootCommentId")
 
         // 원 댓글인지 확인
-        if (!rootComment.isRootComment())
+        if (!rootComment.isRootComment()) {
             throw IllegalArgumentException("이 댓글은 원 댓글이 아닙니다: $rootCommentId")
+        }
 
         return rootComment
     }
@@ -355,7 +358,7 @@ class FigureService(
     fun getCommentTreesByFigureId(
         figureId: Long,
         page: Int,
-        size: Int
+        size: Int,
     ): Page<Comment> {
         val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
 
@@ -363,7 +366,7 @@ class FigureService(
         return commentRepository.findCommentsByFigureIdAndType(
             figureId = figureId,
             commentType = CommentType.ROOT,
-            pageable = pageable
+            pageable = pageable,
         )
     }
 }

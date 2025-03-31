@@ -94,10 +94,11 @@ class CommentApi(
         @PathVariable commentId: Long,
         @RequestBody request: CommentRequest,
     ): ResponseEntity<CommentResponse> {
-        val reply = figureService.addReply(
-            parentCommentId = commentId,
-            content = request.content
-        )
+        val reply =
+            figureService.addReply(
+                parentCommentId = commentId,
+                content = request.content,
+            )
 
         return ResponseEntity.ok(CommentResponse.from(reply))
     }
@@ -107,14 +108,13 @@ class CommentApi(
      */
     @GetMapping("/comments/{commentId}/replies")
     fun getReplies(
-        @PathVariable commentId: Long
+        @PathVariable commentId: Long,
     ): ResponseEntity<List<CommentResponse>> {
         val comment = figureService.getCommentWithReplies(commentId)
         val replies = comment.replies.map { CommentResponse.from(it) }
 
         return ResponseEntity.ok(replies)
     }
-
 
     /**
      * 인물에 대한 댓글과 답글을 계층 구조로 조회합니다.
@@ -136,7 +136,7 @@ class CommentApi(
                 size = commentPage.size,
                 isFirst = commentPage.isFirst,
                 isLast = commentPage.isLast,
-            )
+            ),
         )
     }
 }
