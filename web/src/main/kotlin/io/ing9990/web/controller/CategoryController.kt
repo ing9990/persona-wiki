@@ -2,7 +2,6 @@ package io.ing9990.web.controller
 
 import io.ing9990.domain.figure.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
-import io.ing9990.web.exceptions.EntityNotFoundException
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -61,20 +60,15 @@ class CategoryController(
 
         return "category/category-list"
     }
+// web/src/main/kotlin/io/ing9990/web/controller/CategoryController.kt
 
-    /**
-     * 특정 카테고리에 속한 인물 목록 페이지
-     * 카테고리가 없는 경우 EntityNotFoundException 발생
-     */
     @GetMapping("/{id}")
     fun getCategoryDetails(
         @PathVariable id: String,
         model: Model,
     ): String {
-        // 카테고리 정보 조회
-        val category =
-            categoryService.getCategoryById(id)
-                ?: throw EntityNotFoundException("Category", id)
+        // 카테고리 정보 조회 (이제 서비스에서 예외를 발생시키므로 null 체크 불필요)
+        val category = categoryService.getCategoryById(id)
 
         // 카테고리에 속한 인물 목록 조회 (카테고리가 함께 로딩됨)
         val figures = figureService.findByCategoryId(id)

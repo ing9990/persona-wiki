@@ -1,9 +1,11 @@
 package io.ing9990.web.controller
 
+import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.figure.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
-import io.ing9990.web.exceptions.EntityNotFoundException
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -11,8 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Controller
 class FigureController(
@@ -33,12 +33,8 @@ class FigureController(
         return "figure/figure-list-by-category"
     }
 
-    /**
-     * 인물 상세 페이지를 렌더링합니다.
-     * 새로운 URL 형식: /{categoryId}/@{figureName}
-     * 인물이 없는 경우 EntityNotFoundException 발생
-     * 댓글을 페이징 처리합니다(10개씩)
-     */
+    // web/src/main/kotlin/io/ing9990/web/controller/FigureController.kt
+
     @GetMapping("/{categoryId}/@{figureName}")
     fun figureDetail(
         @PathVariable categoryId: String,
@@ -50,10 +46,8 @@ class FigureController(
         // 카테고리 정보 조회
         val category = figureService.findCategoryById(categoryId)
 
-        // 인물 정보 조회 (카테고리와 함께 로딩)
-        val figure =
-            figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
-                ?: throw EntityNotFoundException("Figure", "$categoryId/$figureName")
+        // 인물 정보 조회 (이제 서비스에서 예외를 발생시키므로 null 체크 불필요)
+        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
 
         // 인물의 댓글 목록을 페이징하여 조회 (10개씩)
         val commentPage = figureService.getCommentsByFigureId(figure.id!!, page, size)

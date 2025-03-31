@@ -2,6 +2,7 @@ package io.ing9990.domain.figure.service
 
 import io.ing9990.common.HangeulUtil
 import io.ing9990.common.HangeulUtil.Companion.CHOSUNG_MAP
+import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.Category
 import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.Figure
@@ -96,17 +97,16 @@ class FigureService(
             ?: throw IllegalArgumentException("해당 ID의 인물이 존재하지 않습니다: $id")
     }
 
-    /**
-     * 카테고리ID와 인물 이름으로 인물 정보를 상세히 조회합니다.
-     * 카테고리와 댓글이 함께 로딩됩니다.
-     * @param categoryId 카테고리 ID
-     * @param figureName 인물 이름
-     */
     fun findByCategoryIdAndNameWithDetails(
         categoryId: String,
         figureName: String,
-    ): Figure? {
+    ): Figure {
         return figureRepository.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+            ?: throw EntityNotFoundException(
+                "Figure",
+                "$categoryId/$figureName",
+                "해당 인물을 찾을 수 없습니다."
+            )
     }
 
     /**
@@ -135,44 +135,38 @@ class FigureService(
             ?: throw IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: $categoryId")
     }
 
+    // 검색 메서드를 수정합니다
     fun searchByName(name: String): List<Figure> {
         try {
             return figureRepository.findByNameContaining(name)
         } catch (e: Exception) {
-            // 오류 발생 시 로그 남기고 빈 목록 반환
-            // 실제 환경에서는 로깅 프레임워크 사용 권장
             println("인물 검색 중 오류 발생: ${e.message}")
-            return emptyList()
+            throw RuntimeException("인물 '${name}' 검색 중 오류가 발생했습니다", e)
         }
     }
 
-    // FigureService.kt 파일의 searchByNameWithInitials 메서드 수정
+
     fun searchByNameWithInitials(query: String): List<Figure> {
-        // 쿼리가 비어있으면 빈 리스트 반환
+        // 쿼리가 비어있으면 예외 발생
         if (query.isBlank()) {
-            return emptyList()
+            throw IllegalArgumentException("검색어를 입력해주세요")
         }
 
         try {
-            // 모든 인물 목록 가져오기 (카테고리 함께 로딩)
+            // 로직은 유지
             val allFigures = figureRepository.findAllWithCategory()
-
-            // 초성이 포함된 쿼리인지 확인
             val hasChosung = query.any { it in CHOSUNG_MAP.keys }
 
             return if (hasChosung) {
-                // 초성 검색 로직
                 allFigures.filter { figure ->
                     HangeulUtil.matchesWithChosung(figure.name, query)
                 }
             } else {
-                // 일반 텍스트 검색 (기존 방식)
                 figureRepository.findByNameContaining(query)
             }
         } catch (e: Exception) {
-            // 오류 발생 시 로그 남기고 빈 목록 반환
             println("초성 검색 중 오류 발생: ${e.message}")
-            return emptyList()
+            throw RuntimeException("검색어 '${query}'로 초성 검색 중 오류가 발생했습니다", e)
         }
     }
 

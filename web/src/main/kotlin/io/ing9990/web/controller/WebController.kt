@@ -45,7 +45,8 @@ class WebController(
         return "index"
     }
 
-    // WebController.kt 파일의 search 메서드 수정
+    // web/src/main/kotlin/io/ing9990/web/controller/WebController.kt
+
     @GetMapping("/search")
     fun search(
         @RequestParam query: String,
@@ -53,11 +54,10 @@ class WebController(
     ): String {
         // 검색어가 비어 있는지 확인
         if (query.isBlank()) {
-            return "redirect:/"
+            throw IllegalArgumentException("검색어를 입력해주세요")
         }
 
-        // 검색어로 인물 검색 (카테고리 함께 로딩)
-        // 일반 검색과 초성 검색 모두 지원
+        // 검색어로 인물 검색 (이제 서비스에서 예외를 발생시키므로 try-catch 불필요)
         val searchResults =
             if (query.length <= 3 && query.any { it in 'ㄱ'..'ㅎ' }) {
                 figureService.searchByNameWithInitials(query)
@@ -65,10 +65,9 @@ class WebController(
                 figureService.searchByName(query)
             }
 
-        // 검색 결과가 없더라도 빈 목록을 model에 추가
         model.addAttribute("searchResults", searchResults)
         model.addAttribute("query", query)
 
-        return "search/search-results" // 검색 결과 페이지 템플릿 이름
+        return "search/search-results"
     }
 }
