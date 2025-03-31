@@ -51,7 +51,7 @@ class FigureService(
             // 인물 ID로 댓글 조회
             val commentCount =
                 figure.id?.let { figureId ->
-                    commentRepository.findByFigureIdOrderByCreatedAtDesc(figureId).size
+                    commentRepository.countCommentsByFigureId(figureId)
                 } ?: 0
 
             // 평판 점수 계산 (투표 총합)

@@ -15,7 +15,10 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OrderBy
+import org.hibernate.annotations.ColumnDefault
+import org.hibernate.annotations.DynamicInsert
 
+@DynamicInsert
 @Entity(name = "comment")
 class Comment(
     @Id
@@ -49,11 +52,12 @@ class Comment(
     @Column(name = "root_id")
     val rootId: Long? = null,
 
-    @Column(name = "replies_count", nullable = false)
+    @Column(name = "replies_count", nullable = false, columnDefinition = "INT DEFAULT 0")
     var repliesCount: Int = 0,
 
     // 댓글 유형 (ROOT 또는 REPLY)
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'ROOT'")
     @Column(name = "comment_type", nullable = false)
     val commentType: CommentType = ROOT,
 
@@ -80,7 +84,7 @@ class Comment(
      * @param reply 추가할 답글
      */
     fun addReply(reply: Comment) {
-        repliesCount ++
+        repliesCount++
         replies.add(reply)
     }
 }

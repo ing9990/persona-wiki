@@ -217,14 +217,14 @@
         <!-- 댓글 목록 -->
         <div class="space-y-6">
           <!-- 댓글이 없는 경우 -->
-          <div th:if="${commentPage.empty}" class="text-center py-8 text-gray-500">
+          <div th:if="${commentPage.isEmpty()}" class="text-center py-8 text-gray-500">
             <i class="fas fa-comment-slash text-4xl mb-3 opacity-30"></i>
             <p>아직 의견이 없습니다. 첫 번째 의견을 남겨보세요!</p>
           </div>
 
           <!-- 댓글 항목 (최상위 댓글만 반복, 답글은 지연로드) -->
           <div th:each="comment : ${commentPage.content}"
-               th:if="${comment.commentType.name() == 'ROOT'}"
+               th:if="${comment.isRootComment()}"
                class="border-b border-gray-200 pb-6 comment-item fade-in"
                th:id="'comment-' + ${comment.id}">
             <div class="flex justify-between mb-2">

@@ -2,9 +2,9 @@ package io.ing9990.domain.figure.repository
 
 import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.CommentType
+import io.ing9990.domain.figure.CommentType.ROOT
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.repository.EntityGraph
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
@@ -26,7 +26,7 @@ interface CommentRepository : JpaRepository<Comment, Long> {
     )
     fun findCommentsByFigureIdAndTypeOrderByCreatedAtDesc(
         figureId: Long,
-        commentType: CommentType = CommentType.ROOT
+        commentType: CommentType = ROOT
     ): List<Comment>
 
     /**
@@ -46,14 +46,12 @@ interface CommentRepository : JpaRepository<Comment, Long> {
     )
     fun findCommentsByFigureIdAndType(
         figureId: Long,
-        commentType: CommentType = CommentType.ROOT,
+        commentType: CommentType = ROOT,
         pageable: Pageable,
     ): Page<Comment>
 
-    /**
-     * 원래 메서드 유지 (기존 코드와의 호환성을 위해)
-     */
-    fun findByFigureIdOrderByCreatedAtDesc(figureId: Long): List<Comment>
+    @Query("select count(c) from comment c where c.figure.id = ?1")
+    fun countCommentsByFigureId(figureId: Long): Int
 
     /**
      * 원래 메서드 유지 (기존 코드와의 호환성을 위해)
