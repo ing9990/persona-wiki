@@ -1,11 +1,12 @@
 package io.ing9990.web.controller
 
-import io.ing9990.domain.EntityNotFoundException
+import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.figure.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -33,32 +34,6 @@ class FigureController(
         return "figure/figure-list-by-category"
     }
 
-    // web/src/main/kotlin/io/ing9990/web/controller/FigureController.kt
-
-    @GetMapping("/{categoryId}/@{figureName}")
-    fun figureDetail(
-        @PathVariable categoryId: String,
-        @PathVariable figureName: String,
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
-        model: Model,
-    ): String {
-        // 카테고리 정보 조회
-        val category = figureService.findCategoryById(categoryId)
-
-        // 인물 정보 조회 (이제 서비스에서 예외를 발생시키므로 null 체크 불필요)
-        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
-
-        // 인물의 댓글 목록을 페이징하여 조회 (10개씩)
-        val commentPage = figureService.getCommentsByFigureId(figure.id!!, page, size)
-
-        model.addAttribute("category", category)
-        model.addAttribute("figure", figure)
-        model.addAttribute("commentPage", commentPage)
-
-        return "figure/figure-detail"
-    }
-
     /**
      * 인물에 대한 새 댓글을 추가합니다.
      */
@@ -78,7 +53,6 @@ class FigureController(
         // 인물 찾기
         val figure =
             figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
-                ?: throw EntityNotFoundException("Figure", "$categoryId/$figureName")
 
         // 댓글 추가
         figureService.addComment(figure.id!!, content)
@@ -102,7 +76,6 @@ class FigureController(
         // 인물 찾기
         val figure =
             figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
-                ?: throw EntityNotFoundException("Figure", "$categoryId/$figureName")
 
         // 감정 분석
         val sentimentEnum =
@@ -177,27 +150,60 @@ class FigureController(
 
         return "figure/add-figure"
     }
-//
-//    /**
-//     * 인물 수정 페이지를 렌더링합니다.
-//     */
-//    @GetMapping("/edit-figure/{figureId}")
-//    fun editFigureForm(
-//        @PathVariable figureId: Long,
-//        model: Model,
-//    ): String {
-//        // 인물 정보 조회
-//        val figure =
-//            figureService.findById(figureId)
-//                ?: throw EntityNotFoundException("Figure", figureId)
-//
-//        // 카테고리 목록 조회
-//        val categories = categoryService.getAllCategories()
-//
-//        model.addAttribute("figure", figure)
-//        model.addAttribute("categories", categories)
-//        model.addAttribute("selectedCategoryId", figure.category.id)
-//
-//        return "figure/edit-figure"
-//    }
+
+    /**
+     * 댓글에 답글을 추가합니다.
+     */
+    @PostMapping("/{categoryId}/@{figureName}/comment/{commentId}/reply")
+    fun addReply(
+        @PathVariable categoryId: String,
+        @PathVariable figureName: String,
+        @PathVariable commentId: Long,
+        @RequestParam content: String,
+        redirectAttributes: RedirectAttributes,
+    ): String {
+        // 내용이 비어있는지 확인
+        if (content.isBlank()) {
+            redirectAttributes.addFlashAttribute("error", "답글 내용을 입력해주세요.")
+            return getRedirectUrl(categoryId, figureName)
+        }
+
+        try {
+            // 답글 추가
+            figureService.addReply(commentId, content)
+
+            // 성공 메시지
+            redirectAttributes.addFlashAttribute("success", "답글이 성공적으로 등록되었습니다.")
+        } catch (e: Exception) {
+            // 오류 메시지
+            redirectAttributes.addFlashAttribute("error", e.message ?: "답글 등록에 실패했습니다.")
+        }
+
+        return getRedirectUrl(categoryId, figureName)
+    }
+
+    /**
+     * 인물 상세 페이지에서 댓글 트리를 표시하기 위해 기존 figureDetail 메서드를 수정
+     */
+    @GetMapping("/{categoryId}/@{figureName}")
+    fun figureDetail(
+        @PathVariable categoryId: String,
+        @PathVariable figureName: String,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+        model: Model,
+    ): String {
+        // 카테고리 정보 조회
+        val category = figureService.findCategoryById(categoryId)
+        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+
+        // 인물의 댓글 트리를 페이징하여 조회
+        val commentPage : Page<Comment> = figureService.getCommentTreesByFigureId(figure.id!!, page, size)
+
+        model.addAttribute("category", category)
+        model.addAttribute("figure", figure)
+        model.addAttribute("commentPage", commentPage)
+
+        return "figure/figure-detail"
+    }
 }

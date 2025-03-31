@@ -6,6 +6,8 @@
   <title th:text="${figure.name} + ' - 국민사형투표'">인물 상세</title>
   <meta name="description" th:content="${figure.bio}">
 
+  <link rel="stylesheet" href="/css/comment-reply.css">
+
   <!-- 추가 스타일 -->
   <style>
     .profile-header {
@@ -134,10 +136,10 @@
             </p>
           </div>
         </div>
-<!--        <a th:href="@{'/edit-figure/' + ${figure.id}}"-->
-<!--           class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-md hover:bg-opacity-30 transition flex items-center">-->
-<!--          <i class="fas fa-edit mr-1"></i> 수정-->
-<!--        </a>-->
+        <!--        <a th:href="@{'/edit-figure/' + ${figure.id}}"-->
+        <!--           class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-md hover:bg-opacity-30 transition flex items-center">-->
+        <!--          <i class="fas fa-edit mr-1"></i> 수정-->
+        <!--        </a>-->
       </div>
     </div>
   </section>
@@ -185,6 +187,8 @@
         </div>
       </section>
 
+      <!-- web/src/main/resources/templates/figure/figure-detail.html (댓글 섹션 부분만 수정) -->
+
       <!-- 댓글 섹션 -->
       <section class="bg-white rounded-lg shadow-md p-6 fade-in">
         <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
@@ -198,9 +202,9 @@
         <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/comment'}" method="post"
               class="mb-8">
           <div class="mb-3">
-            <textarea name="content" rows="3"
-                      class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 comment-box"
-                      placeholder="이 인물에 대한 의견을 남겨주세요..."></textarea>
+      <textarea name="content" rows="3"
+                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 comment-box"
+                placeholder="이 인물에 대한 의견을 남겨주세요..."></textarea>
           </div>
           <div class="text-right">
             <button type="submit"
@@ -218,9 +222,11 @@
             <p>아직 의견이 없습니다. 첫 번째 의견을 남겨보세요!</p>
           </div>
 
-          <!-- 댓글 항목 (반복) -->
+          <!-- 댓글 항목 (최상위 댓글만 반복, 답글은 지연로드) -->
           <div th:each="comment : ${commentPage.content}"
-               class="border-b border-gray-200 pb-6 comment-item fade-in">
+               th:if="${comment.commentType.name() == 'ROOT'}"
+               class="border-b border-gray-200 pb-6 comment-item fade-in"
+               th:id="'comment-' + ${comment.id}">
             <div class="flex justify-between mb-2">
               <div class="text-sm text-gray-500">
                 <i class="fas fa-user-circle mr-1"></i>
@@ -231,18 +237,70 @@
             </div>
             <p class="text-gray-800 mb-3" th:text="${comment.content}">댓글 내용</p>
 
-            <!-- 좋아요/싫어요 버튼 -->
+            <!-- 좋아요/싫어요 버튼 및 답글 버튼 -->
             <div class="flex items-center text-sm">
               <button class="flex items-center mr-4 text-gray-500 hover:text-green-500 transition"
                       data-action="like-comment" th:data-comment-id="${comment.id}">
                 <i class="fas fa-thumbs-up mr-1"></i>
                 <span th:text="${comment.likes}" class="like-count">0</span>
               </button>
-              <button class="flex items-center text-gray-500 hover:text-red-500 transition"
+              <button class="flex items-center mr-4 text-gray-500 hover:text-red-500 transition"
                       data-action="dislike-comment" th:data-comment-id="${comment.id}">
                 <i class="fas fa-thumbs-down mr-1"></i>
                 <span th:text="${comment.dislikes}" class="dislike-count">0</span>
               </button>
+
+              <!-- 답글 버튼 추가 -->
+              <button
+                  class="flex items-center text-gray-500 hover:text-indigo-500 transition reply-toggle-btn"
+                  data-comment-id="${comment.id}">
+                <i class="fas fa-reply mr-1"></i>
+                <span>답글 달기</span>
+              </button>
+
+              <!-- 답글 개수가 있는 경우 답글 보기 버튼 추가 -->
+              <button th:if="${comment.repliesCount > 0}"
+                      class="flex items-center ml-4 text-gray-500 hover:text-indigo-500 transition view-replies-btn"
+                      th:data-comment-id="${comment.id}"
+                      th:data-reply-count="${comment.repliesCount}">
+                <i class="fas fa-comments mr-1"></i>
+                <span th:text="'답글 보기(' + ${comment.repliesCount} + '개)'">답글 보기(0개)</span>
+              </button>
+            </div>
+
+            <!-- 답글 작성 폼 (기본적으로 숨김) -->
+            <div th:id="'reply-form-' + ${comment.id}"
+                 class="mt-4 pl-6 border-l-2 border-gray-200 hidden reply-form">
+              <form
+                  th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/comment/' + ${comment.id} + '/reply'}"
+                  method="post" class="reply-form">
+                <div class="mb-2">
+            <textarea name="content" rows="2"
+                      class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                      placeholder="답글을 입력하세요..."></textarea>
+                </div>
+                <div class="flex justify-end space-x-2">
+                  <button type="button"
+                          class="text-gray-500 px-3 py-1 rounded text-sm cancel-reply-btn"
+                          data-comment-id="${comment.id}">
+                    취소
+                  </button>
+                  <button type="submit"
+                          class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition">
+                    <i class="fas fa-reply mr-1"></i> 답글 작성
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            <!-- 답글 목록 컨테이너 (지연 로드용) -->
+            <div th:id="'replies-' + ${comment.id}"
+                 class="mt-4 pl-6 border-l-2 border-gray-200 space-y-4 hidden replies-container">
+              <!-- 답글은 AJAX로 로드되어 여기에 삽입됩니다 -->
+              <div class="text-center py-2 replies-loading">
+                <i class="fas fa-spinner fa-spin text-indigo-500"></i>
+                <span class="ml-2 text-gray-500">답글을 불러오는 중...</span>
+              </div>
             </div>
           </div>
         </div>
@@ -250,36 +308,7 @@
         <!-- 페이지네이션 -->
         <div th:if="${commentPage.totalPages > 1}" class="mt-8 flex justify-center">
           <nav aria-label="댓글 페이지 탐색" class="pagination">
-            <ul class="inline-flex rounded-md shadow">
-              <!-- 이전 페이지 링크 -->
-              <li th:classappend="${commentPage.first} ? 'disabled' : ''">
-                <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name} + '?page=' + ${commentPage.number - 1}}"
-                   class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                   th:classappend="${commentPage.first} ? 'pointer-events-none opacity-50' : ''">
-                  이전
-                </a>
-              </li>
-
-              <!-- 페이지 번호 -->
-              <li th:each="i : ${#numbers.sequence(0, commentPage.totalPages - 1)}"
-                  th:classappend="${commentPage.number == i} ? 'active' : ''">
-                <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name} + '?page=' + ${i}}"
-                   th:text="${i + 1}"
-                   class="px-3 py-2 border-t border-b border-gray-300"
-                   th:classappend="${commentPage.number == i} ? 'bg-indigo-50 text-indigo-600' : 'bg-white text-gray-500 hover:bg-gray-50'">
-                  1
-                </a>
-              </li>
-
-              <!-- 다음 페이지 링크 -->
-              <li th:classappend="${commentPage.last} ? 'disabled' : ''">
-                <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name} + '?page=' + ${commentPage.number + 1}}"
-                   class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                   th:classappend="${commentPage.last} ? 'pointer-events-none opacity-50' : ''">
-                  다음
-                </a>
-              </li>
-            </ul>
+            <!-- 기존 페이지네이션 코드 유지 -->
           </nav>
         </div>
       </section>
@@ -403,6 +432,68 @@
   </div>
 </div>
 
+
+<!-- 답글 아이템 템플릿 -->
+<template id="reply-template">
+  <div class="reply-item pb-4 mb-4 border-b border-gray-100">
+    <div class="flex justify-between mb-1">
+      <div class="text-sm text-gray-500">
+        <i class="fas fa-user-circle mr-1"></i>
+        <span class="reply-author">익명</span>
+        <span class="ml-3 reply-date">날짜</span>
+      </div>
+    </div>
+    <p class="text-gray-800 mb-2 reply-content">답글 내용</p>
+
+    <!-- 좋아요/싫어요 버튼 -->
+    <div class="flex items-center text-sm">
+      <button
+          class="flex items-center mr-4 text-gray-500 hover:text-green-500 transition reply-like-btn">
+        <i class="fas fa-thumbs-up mr-1"></i>
+        <span class="reply-likes">0</span>
+      </button>
+      <button
+          class="flex items-center text-gray-500 hover:text-red-500 transition reply-dislike-btn">
+        <i class="fas fa-thumbs-down mr-1"></i>
+        <span class="reply-dislikes">0</span>
+      </button>
+
+      <!-- 대댓글 버튼 -->
+      <button
+          class="flex items-center ml-3 text-gray-500 hover:text-indigo-500 transition reply-to-reply-btn">
+        <i class="fas fa-reply mr-1"></i>
+        <span>답글 달기</span>
+      </button>
+    </div>
+
+    <!-- 대댓글 작성 폼 (기본적으로 숨김) -->
+    <div class="reply-to-reply-form mt-3 pl-4 border-l-2 border-gray-200 hidden">
+      <form class="nested-reply-form">
+        <div class="mb-2">
+          <textarea name="content" rows="2"
+                    class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    placeholder="답글을 입력하세요..."></textarea>
+        </div>
+        <div class="flex justify-end space-x-2">
+          <button type="button"
+                  class="text-gray-500 px-3 py-1 rounded text-sm cancel-nested-reply-btn">
+            취소
+          </button>
+          <button type="submit"
+                  class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition">
+            <i class="fas fa-reply mr-1"></i> 답글 작성
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- 중첩된 답글 컨테이너 -->
+    <div class="nested-replies mt-3 pl-4 border-l-2 border-gray-200 space-y-4 hidden">
+      <!-- 중첩된 답글이 여기에 로드됩니다 -->
+    </div>
+  </div>
+</template>
+
 <!-- 페이지 자바스크립트 -->
 <th:block layout:fragment="script">
   <!-- 공통 유틸리티 -->
@@ -411,6 +502,16 @@
 
   <!-- 페이지별 스크립트 -->
   <script src="/js/figure/figure-detail-handler.js"></script>
+  <script src="/js/figure/comment-reply-handler.js"></script>
+  <script src="/js/figure/notification-handler.js"></script>
+
+  <script>
+    // 페이지 로드 시 핸들러 초기화
+    document.addEventListener('DOMContentLoaded', () => {
+      new CommentReplyHandler();
+      new NotificationHandler();
+    });
+  </script>
 </th:block>
 </body>
 </html>

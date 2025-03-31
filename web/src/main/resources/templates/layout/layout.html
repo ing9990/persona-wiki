@@ -235,6 +235,8 @@
         </form>
       </div>
 
+      <!-- web/src/main/resources/templates/layout/layout.html (네비게이션 부분 수정) -->
+
       <!-- 메인 메뉴 -->
       <div class="hidden md:flex items-center space-x-4">
         <a href="/figures" class="text-white hover:text-indigo-100 transition" aria-label="인물 목록">
@@ -251,6 +253,14 @@
           <i class="fas fa-plus-circle mr-1" aria-hidden="true"></i>
           <span>추가</span>
         </a>
+
+        <!-- 알림 버튼 추가 -->
+        <button id="notification-btn" class="text-white hover:text-indigo-100 transition relative"
+                aria-label="알림">
+          <i class="fas fa-bell mr-1" aria-hidden="true"></i>
+          <span>알림</span>
+          <!-- 알림 배지는 동적으로 추가됨 -->
+        </button>
       </div>
 
       <!-- 모바일 메뉴 버튼 -->

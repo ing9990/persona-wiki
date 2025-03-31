@@ -83,4 +83,60 @@ class CommentApi(
         val comment = figureService.likeOrDislikeComment(commentId, false)
         return ResponseEntity.ok(mapOf("likes" to comment.likes, "dislikes" to comment.dislikes))
     }
+
+    // backend/src/main/kotlin/io/ing9990/api/comments/CommentApi.kt에 추가할 메서드
+
+    /**
+     * 댓글에 답글을 추가합니다.
+     */
+    @PostMapping("/comments/{commentId}/replies")
+    fun addReply(
+        @PathVariable commentId: Long,
+        @RequestBody request: CommentRequest,
+    ): ResponseEntity<CommentResponse> {
+        val reply = figureService.addReply(
+            parentCommentId = commentId,
+            content = request.content
+        )
+
+        return ResponseEntity.ok(CommentResponse.from(reply))
+    }
+
+    /**
+     * 댓글과 그에 달린 답글 목록을 조회합니다.
+     */
+    @GetMapping("/comments/{commentId}/replies")
+    fun getReplies(
+        @PathVariable commentId: Long
+    ): ResponseEntity<List<CommentResponse>> {
+        val comment = figureService.getCommentWithReplies(commentId)
+        val replies = comment.replies.map { CommentResponse.from(it) }
+
+        return ResponseEntity.ok(replies)
+    }
+
+
+    /**
+     * 인물에 대한 댓글과 답글을 계층 구조로 조회합니다.
+     */
+    @GetMapping("/figure/{figureId}/comment-trees")
+    fun getCommentTrees(
+        @PathVariable figureId: Long,
+        @RequestParam(defaultValue = "0") page: Int,
+        @RequestParam(defaultValue = "10") size: Int,
+    ): ResponseEntity<CommentPageResponse> {
+        val commentPage = figureService.getCommentTreesByFigureId(figureId, page, size)
+
+        return ResponseEntity.ok(
+            CommentPageResponse(
+                content = commentPage.content.map { CommentResponse.from(it) },
+                totalPages = commentPage.totalPages,
+                totalElements = commentPage.totalElements,
+                currentPage = commentPage.number,
+                size = commentPage.size,
+                isFirst = commentPage.isFirst,
+                isLast = commentPage.isLast,
+            )
+        )
+    }
 }

@@ -5,6 +5,7 @@ import io.ing9990.common.HangeulUtil.Companion.CHOSUNG_MAP
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.Category
 import io.ing9990.domain.figure.Comment
+import io.ing9990.domain.figure.CommentType
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.figure.repository.CategoryRepository
@@ -109,13 +110,6 @@ class FigureService(
             )
     }
 
-    /**
-     * 인물 ID로 댓글 목록을 조회합니다.
-     * @param figureId 인물 ID
-     */
-    fun findCommentsByFigureId(figureId: Long): List<Comment> {
-        return commentRepository.findByFigureIdOrderByCreatedAtDesc(figureId)
-    }
 
     /**
      * 카테고리 ID로, 해당 카테고리에 속한 인물 목록을 조회합니다.
@@ -147,7 +141,6 @@ class FigureService(
 
 
     fun searchByNameWithInitials(query: String): List<Figure> {
-        // 쿼리가 비어있으면 예외 발생
         if (query.isBlank()) {
             throw IllegalArgumentException("검색어를 입력해주세요")
         }
@@ -285,5 +278,90 @@ class FigureService(
     ): Page<Comment> {
         val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
         return commentRepository.findByFigureId(figureId, pageable)
+    }
+
+    /**
+     * 댓글에 답글을 추가합니다.
+     * @param parentCommentId 부모 댓글 ID
+     * @param content 답글 내용
+     * @return 생성된 답글
+     */
+    @Transactional
+    fun addReply(
+        parentCommentId: Long,
+        content: String,
+    ): Comment {
+        val parentComment = commentRepository.findByIdOrNull(parentCommentId)
+            ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $parentCommentId")
+
+        // 최상위 부모(root) 댓글 ID 결정
+        val rootId = if (parentComment.isRootComment()) {
+            parentComment.id
+        } else {
+            parentComment.rootId
+        }
+
+        // 댓글 깊이 결정 (부모 댓글의 깊이 + 1)
+        val depth = parentComment.depth + 1
+
+        // 제한된 깊이 체크 (최대 3단계까지만 허용)
+        if (depth > 3) {
+            throw IllegalArgumentException("더 이상 답글을 달 수 없습니다. 최대 깊이에 도달했습니다.")
+        }
+
+        // 새 답글 생성
+        val reply = Comment(
+            figure = parentComment.figure,
+            content = content,
+            parent = parentComment,
+            depth = depth,
+            rootId = rootId,
+            commentType = CommentType.REPLY
+        )
+
+        // 부모 댓글에 답글 추가
+        parentComment.addReply(reply)
+
+        return commentRepository.save(reply)
+    }
+
+    /**
+     * 원 댓글과 그에 속한 모든 답글을 조회합니다.
+     * @param rootCommentId 원 댓글 ID
+     * @return 원 댓글과 모든 답글 목록
+     */
+    fun getCommentWithReplies(rootCommentId: Long): Comment {
+        val rootComment = commentRepository.findByIdOrNull(rootCommentId)
+            ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $rootCommentId")
+
+        if (!rootComment.isRootComment()) throw IllegalArgumentException("이 댓글은 원 댓글이 아닙니다: $rootCommentId")
+        // 이미 JPA의 지연 로딩에 의해 replies가 로드됨
+
+
+
+        return rootComment
+    }
+
+    /**
+     * 특정 인물에 대한 댓글 트리(원 댓글과 답글)를 페이지 단위로 조회합니다.
+     * @param figureId 인물 ID
+     * @param page 페이지 번호
+     * @param size 페이지 크기
+     * @return 댓글 트리 목록
+     */
+    @Transactional(readOnly = true)
+    fun getCommentTreesByFigureId(
+        figureId: Long,
+        page: Int,
+        size: Int
+    ): Page<Comment> {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+
+        // 원 댓글만 페이징하여 조회
+        return commentRepository.findCommentsByFigureIdAndType(
+            figureId = figureId,
+            commentType = CommentType.ROOT,
+            pageable = pageable
+        )
     }
 }
