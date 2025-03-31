@@ -1,10 +1,12 @@
 package io.ing9990.api.figures
 
+import io.ing9990.api.ApiException
 import io.ing9990.api.figures.dto.request.CreateFigureRequest
 import io.ing9990.api.figures.dto.request.VoteRequest
 import io.ing9990.api.figures.dto.response.FigureResponse
 import io.ing9990.api.figures.dto.response.ReputationResponse
 import io.ing9990.api.figures.dto.response.VoteResponse
+import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.service.FigureService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
@@ -24,26 +26,33 @@ import org.springframework.web.bind.annotation.RestController
 class FiguresApi(
     private val figureService: FigureService,
 ) {
-    /**
-     * 인물에 대한 평가를 등록합니다.
-     */
+
+
+    // backend/src/main/kotlin/io/ing9990/api/figures/FiguresApi.kt
+
     @PostMapping("/{figureId}/vote")
     fun voteFigure(
         @PathVariable figureId: Long,
         @RequestBody request: VoteRequest,
         httpServletRequest: HttpServletRequest,
     ): ResponseEntity<VoteResponse> {
-        val updated = figureService.voteFigure(figureId, request.sentiment)
+        try {
+            val updated = figureService.voteFigure(figureId, request.sentiment)
 
-        return ResponseEntity.ok(
-            VoteResponse(
-                success = true,
-                message = "평가가 성공적으로 등록되었습니다.",
-                likeCount = updated.reputation.likeCount,
-                dislikeCount = updated.reputation.dislikeCount,
-                neutralCount = updated.reputation.neutralCount,
-            ),
-        )
+            return ResponseEntity.ok(
+                VoteResponse(
+                    success = true,
+                    message = "평가가 성공적으로 등록되었습니다.",
+                    likeCount = updated.reputation.likeCount,
+                    dislikeCount = updated.reputation.dislikeCount,
+                    neutralCount = updated.reputation.neutralCount,
+                )
+            )
+        } catch (e: EntityNotFoundException) {
+            throw ApiException(e.message ?: "인물을 찾을 수 없습니다", HttpStatus.NOT_FOUND)
+        } catch (e: Exception) {
+            throw ApiException("평가 등록 중 오류가 발생했습니다: ${e.message}")
+        }
     }
 
     /**

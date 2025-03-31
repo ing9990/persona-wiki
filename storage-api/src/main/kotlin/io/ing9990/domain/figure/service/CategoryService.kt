@@ -1,5 +1,6 @@
 package io.ing9990.domain.figure.service
 
+import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.Category
 import io.ing9990.domain.figure.repository.CategoryRepository
 import org.springframework.stereotype.Service
@@ -22,15 +23,22 @@ class CategoryService(
     /**
      * ID로 카테고리 조회
      */
-    fun getCategoryById(id: String): Category? {
-        return categoryRepository.findById(id).orElse(null)
+    fun getCategoryById(id: String): Category {
+        return categoryRepository.findById(id).orElseThrow {
+            EntityNotFoundException("Category", id, "해당 ID의 카테고리가 존재하지 않습니다: $id")
+        }
     }
 
     /**
      * 표시 이름으로 카테고리 조회
      */
-    fun getCategoryByDisplayName(displayName: String): Category? {
+    fun getCategoryByDisplayName(displayName: String): Category {
         return categoryRepository.findByDisplayName(displayName)
+            ?: throw EntityNotFoundException(
+                "Category",
+                displayName,
+                "해당 이름의 카테고리가 존재하지 않습니다: $displayName"
+            )
     }
 
     /**

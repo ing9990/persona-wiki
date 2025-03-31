@@ -2,8 +2,10 @@ package io.ing9990.domain.figure.service
 
 import io.ing9990.common.HangeulUtil
 import io.ing9990.common.HangeulUtil.Companion.CHOSUNG_MAP
+import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.Category
 import io.ing9990.domain.figure.Comment
+import io.ing9990.domain.figure.CommentType
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.figure.repository.CategoryRepository
@@ -49,7 +51,7 @@ class FigureService(
             // 인물 ID로 댓글 조회
             val commentCount =
                 figure.id?.let { figureId ->
-                    commentRepository.findByFigureIdOrderByCreatedAtDesc(figureId).size
+                    commentRepository.countCommentsByFigureId(figureId)
                 } ?: 0
 
             // 평판 점수 계산 (투표 총합)
@@ -96,26 +98,18 @@ class FigureService(
             ?: throw IllegalArgumentException("해당 ID의 인물이 존재하지 않습니다: $id")
     }
 
-    /**
-     * 카테고리ID와 인물 이름으로 인물 정보를 상세히 조회합니다.
-     * 카테고리와 댓글이 함께 로딩됩니다.
-     * @param categoryId 카테고리 ID
-     * @param figureName 인물 이름
-     */
     fun findByCategoryIdAndNameWithDetails(
         categoryId: String,
         figureName: String,
-    ): Figure? {
+    ): Figure {
         return figureRepository.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+            ?: throw EntityNotFoundException(
+                "Figure",
+                "$categoryId/$figureName",
+                "해당 인물을 찾을 수 없습니다."
+            )
     }
 
-    /**
-     * 인물 ID로 댓글 목록을 조회합니다.
-     * @param figureId 인물 ID
-     */
-    fun findCommentsByFigureId(figureId: Long): List<Comment> {
-        return commentRepository.findByFigureIdOrderByCreatedAtDesc(figureId)
-    }
 
     /**
      * 카테고리 ID로, 해당 카테고리에 속한 인물 목록을 조회합니다.
@@ -135,44 +129,37 @@ class FigureService(
             ?: throw IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: $categoryId")
     }
 
+    // 검색 메서드를 수정합니다
     fun searchByName(name: String): List<Figure> {
         try {
             return figureRepository.findByNameContaining(name)
         } catch (e: Exception) {
-            // 오류 발생 시 로그 남기고 빈 목록 반환
-            // 실제 환경에서는 로깅 프레임워크 사용 권장
             println("인물 검색 중 오류 발생: ${e.message}")
-            return emptyList()
+            throw RuntimeException("인물 '${name}' 검색 중 오류가 발생했습니다", e)
         }
     }
 
-    // FigureService.kt 파일의 searchByNameWithInitials 메서드 수정
+
     fun searchByNameWithInitials(query: String): List<Figure> {
-        // 쿼리가 비어있으면 빈 리스트 반환
         if (query.isBlank()) {
-            return emptyList()
+            throw IllegalArgumentException("검색어를 입력해주세요")
         }
 
         try {
-            // 모든 인물 목록 가져오기 (카테고리 함께 로딩)
+            // 로직은 유지
             val allFigures = figureRepository.findAllWithCategory()
-
-            // 초성이 포함된 쿼리인지 확인
             val hasChosung = query.any { it in CHOSUNG_MAP.keys }
 
             return if (hasChosung) {
-                // 초성 검색 로직
                 allFigures.filter { figure ->
                     HangeulUtil.matchesWithChosung(figure.name, query)
                 }
             } else {
-                // 일반 텍스트 검색 (기존 방식)
                 figureRepository.findByNameContaining(query)
             }
         } catch (e: Exception) {
-            // 오류 발생 시 로그 남기고 빈 목록 반환
             println("초성 검색 중 오류 발생: ${e.message}")
-            return emptyList()
+            throw RuntimeException("검색어 '${query}'로 초성 검색 중 오류가 발생했습니다", e)
         }
     }
 
@@ -291,5 +278,92 @@ class FigureService(
     ): Page<Comment> {
         val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
         return commentRepository.findByFigureId(figureId, pageable)
+    }
+
+    /**
+     * 댓글에 답글을 추가합니다.
+     * @param parentCommentId 부모 댓글 ID
+     * @param content 답글 내용
+     * @return 생성된 답글
+     */
+    @Transactional
+    fun addReply(
+        parentCommentId: Long,
+        content: String,
+    ): Comment {
+        val parentComment = commentRepository.findByIdOrNull(parentCommentId)
+            ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $parentCommentId")
+
+        // 최상위 부모(root) 댓글 ID 결정
+        val rootId = if (parentComment.isRootComment()) {
+            parentComment.id
+        } else {
+            parentComment.rootId
+        }
+
+        // 댓글 깊이 결정 (부모 댓글의 깊이 + 1)
+        val depth = parentComment.depth + 1
+
+        // 제한된 깊이 체크 (최대 3단계까지만 허용)
+        if (depth > 3) {
+            throw IllegalArgumentException("더 이상 답글을 달 수 없습니다. 최대 깊이에 도달했습니다.")
+        }
+
+        // 새 답글 생성
+        val reply = Comment(
+            figure = parentComment.figure,
+            content = content,
+            parent = parentComment,
+            depth = depth,
+            rootId = rootId,
+            commentType = CommentType.REPLY
+        )
+
+        // 부모 댓글에 답글 추가
+        parentComment.addReply(reply)
+
+        return commentRepository.save(reply)
+    }
+
+    /**
+     * 원 댓글과 그에 속한 모든 답글을 조회합니다.
+     * QueryDSL을 사용하여 한 번의 쿼리로 원 댓글과 답글들을 함께 가져옵니다.
+     *
+     * @param rootCommentId 원 댓글 ID
+     * @return 원 댓글과 모든 답글이 포함된 Comment 객체
+     */
+    fun getCommentWithReplies(rootCommentId: Long): Comment {
+        // QueryDSL을 사용하여 원 댓글과 답글을 함께 조회
+        val rootComment = commentRepository.findWithRepliesById(rootCommentId)
+            ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $rootCommentId")
+
+        // 원 댓글인지 확인
+        if (!rootComment.isRootComment())
+            throw IllegalArgumentException("이 댓글은 원 댓글이 아닙니다: $rootCommentId")
+
+        return rootComment
+    }
+
+    /**
+     * 특정 인물에 대한 댓글 트리(원 댓글과 답글)를 페이지 단위로 조회합니다.
+     * @param figureId 인물 ID
+     * @param page 페이지 번호
+     * @param size 페이지 크기
+     * @return 댓글 트리 목록
+     */
+    @Transactional(readOnly = true)
+    fun getCommentTreesByFigureId(
+        figureId: Long,
+        page: Int,
+        size: Int
+    ): Page<Comment> {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+
+        // 원 댓글만 페이징하여 조회
+        return commentRepository.findCommentsByFigureIdAndType(
+            figureId = figureId,
+            commentType = CommentType.ROOT,
+            pageable = pageable
+        )
     }
 }
