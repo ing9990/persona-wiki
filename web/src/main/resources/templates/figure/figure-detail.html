@@ -8,8 +8,9 @@
 
   <link rel="stylesheet" href="/css/comment-reply.css">
 
-  <!-- 추가 스타일 -->
+  <!-- 통합된 스타일 -->
   <style>
+    /* 프로필 헤더 스타일 */
     .profile-header {
       position: relative;
       height: 300px;
@@ -39,6 +40,7 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
+    /* 카드 및 UI 요소 스타일 */
     .badge-category {
       background: linear-gradient(135deg, #6366F1, #8B5CF6);
     }
@@ -59,34 +61,19 @@
       transform: translateY(-5px);
     }
 
+    /* 평판 측정기 */
     .reputation-meter {
       height: 8px;
       border-radius: 4px;
       overflow: hidden;
     }
 
-    /* 애니메이션 효과 */
-    .fade-in {
-      animation: fadeIn 0.6s ease-in;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* 카테고리 카드 스타일 */
+    /* 카테고리 카드 */
     .category-card {
       position: relative;
       border-radius: 0.5rem;
       overflow: hidden;
-      height: 120px; /* 높이 고정 */
+      height: 120px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -107,10 +94,26 @@
       padding: 1.5rem;
       background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
       color: white;
-      z-index: 10; /* 텍스트가 이미지 위에 확실히 표시되도록 */
+      z-index: 10;
     }
 
-    /* Hidden class - 답글 토글을 위한 명시적 스타일 */
+    /* 애니메이션 효과 */
+    .fade-in {
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 유틸리티 클래스 */
     .hidden {
       display: none !important;
     }
@@ -122,7 +125,6 @@
   <!-- 인물 프로필 헤더 -->
   <section class="profile-header mb-8 shadow-lg" th:attr="data-figure-id=${figure.id}">
     <img th:src="${figure.imageUrl}" th:alt="${figure.name}" class="profile-header-image">
-    <!-- 인물 프로필 헤더 내 수정 버튼 추가 -->
     <div class="profile-header-content">
       <div class="flex items-end justify-between w-full">
         <div class="flex items-end">
@@ -141,10 +143,6 @@
             </p>
           </div>
         </div>
-        <!--        <a th:href="@{'/edit-figure/' + ${figure.id}}"-->
-        <!--           class="bg-white bg-opacity-20 text-white px-4 py-2 rounded-md hover:bg-opacity-30 transition flex items-center">-->
-        <!--          <i class="fas fa-edit mr-1"></i> 수정-->
-        <!--        </a>-->
       </div>
     </div>
   </section>
@@ -253,7 +251,7 @@
                 <span th:text="${comment.dislikes}" class="dislike-count">0</span>
               </button>
 
-              <!-- 답글 버튼 - 소셜미디어 스타일로 수정 -->
+              <!-- 답글 버튼 -->
               <button
                   class="flex items-center text-gray-500 hover:text-indigo-500 transition reply-toggle-btn"
                   th:data-comment-id="${comment.id}">
@@ -297,11 +295,10 @@
               </form>
             </div>
 
-            <!-- 답글 목록 컨테이너 (지연 로드용) -->
+            <!-- 답글 목록 컨테이너 -->
             <div th:id="'replies-' + ${comment.id}"
                  class="mt-4 pl-6 border-l-2 border-indigo-100 space-y-4 replies-container"
                  style="display: none;">
-              <!-- 답글은 AJAX로 로드되어 여기에 삽입됩니다 -->
               <div class="text-center py-2 replies-loading">
                 <i class="fas fa-spinner fa-spin text-indigo-500"></i>
                 <span class="ml-2 text-gray-500">답글을 불러오는 중...</span>
@@ -313,7 +310,7 @@
         <!-- 페이지네이션 -->
         <div th:if="${commentPage.totalPages > 1}" class="mt-8 flex justify-center">
           <nav aria-label="댓글 페이지 탐색" class="pagination">
-            <!-- 기존 페이지네이션 코드 유지 -->
+            <!-- 페이지네이션 코드 -->
           </nav>
         </div>
       </section>
@@ -338,7 +335,7 @@
               </span>
               <span class="text-gray-600"
                     th:text="${figure.reputation.likeCount} + ' (' + ${#numbers.formatPercent(figure.reputation.likeRatio(), 0, 0)} + ')'">
-                0 (0%)ㄴ
+                0 (0%)
               </span>
             </div>
             <div class="reputation-meter bg-gray-200">
@@ -400,7 +397,6 @@
 
         <div class="p-4">
           <p class="text-gray-600 text-sm mb-4" th:text="${category.description}">카테고리 설명</p>
-
           <div class="mt-2">
             <a th:href="@{'/categories/' + ${category.id}}"
                class="text-indigo-600 hover:text-indigo-800 text-sm flex items-center">
@@ -437,7 +433,6 @@
   </div>
 </div>
 
-
 <!-- 답글 아이템 템플릿 -->
 <template id="reply-template">
   <div class="reply-item pb-4 mb-4 border-b border-gray-100">
@@ -462,39 +457,6 @@
         <i class="fas fa-thumbs-down mr-1"></i>
         <span class="reply-dislikes">0</span>
       </button>
-
-      <!-- 대댓글 버튼 -->
-      <button
-          class="flex items-center ml-3 text-gray-500 hover:text-indigo-500 transition reply-to-reply-btn">
-        <i class="fas fa-reply mr-1"></i>
-        <span>답글 달기</span>
-      </button>
-    </div>
-
-    <!-- 대댓글 작성 폼 (기본적으로 숨김) -->
-    <div class="reply-to-reply-form mt-3 pl-4 border-l-2 border-gray-200 hidden">
-      <form class="nested-reply-form">
-        <div class="mb-2">
-          <textarea name="content" rows="2"
-                    class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                    placeholder="답글을 입력하세요..."></textarea>
-        </div>
-        <div class="flex justify-end space-x-2">
-          <button type="button"
-                  class="text-gray-500 px-3 py-1 rounded text-sm cancel-nested-reply-btn">
-            취소
-          </button>
-          <button type="submit"
-                  class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition">
-            <i class="fas fa-reply mr-1"></i> 답글 작성
-          </button>
-        </div>
-      </form>
-    </div>
-
-    <!-- 중첩된 답글 컨테이너 -->
-    <div class="nested-replies mt-3 pl-4 border-l-2 border-gray-200 space-y-4 hidden">
-      <!-- 중첩된 답글이 여기에 로드됩니다 -->
     </div>
   </div>
 </template>
@@ -511,7 +473,6 @@
   <script src="/js/figure/notification-handler.js"></script>
 
   <script>
-    // 페이지 로드 시 핸들러 초기화
     document.addEventListener('DOMContentLoaded', () => {
       new CommentReplyHandler();
       new NotificationHandler();

@@ -40,7 +40,7 @@ data class CommentResponse(
             // 답글 목록도 포함할지 결정
             return if (includeReplies && comment.replies.isNotEmpty()) {
                 commentResponse.copy(
-                    replies = comment.replies.map { from(it, false) } // 재귀적 변환 방지
+                    replies = comment.replies.map { from(it, false) }
                 )
             } else {
                 commentResponse

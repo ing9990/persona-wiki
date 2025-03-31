@@ -327,17 +327,19 @@ class FigureService(
 
     /**
      * 원 댓글과 그에 속한 모든 답글을 조회합니다.
+     * QueryDSL을 사용하여 한 번의 쿼리로 원 댓글과 답글들을 함께 가져옵니다.
+     *
      * @param rootCommentId 원 댓글 ID
-     * @return 원 댓글과 모든 답글 목록
+     * @return 원 댓글과 모든 답글이 포함된 Comment 객체
      */
     fun getCommentWithReplies(rootCommentId: Long): Comment {
-        val rootComment = commentRepository.findByIdOrNull(rootCommentId)
+        // QueryDSL을 사용하여 원 댓글과 답글을 함께 조회
+        val rootComment = commentRepository.findWithRepliesById(rootCommentId)
             ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $rootCommentId")
 
-        if (!rootComment.isRootComment()) throw IllegalArgumentException("이 댓글은 원 댓글이 아닙니다: $rootCommentId")
-        // 이미 JPA의 지연 로딩에 의해 replies가 로드됨
-
-
+        // 원 댓글인지 확인
+        if (!rootComment.isRootComment())
+            throw IllegalArgumentException("이 댓글은 원 댓글이 아닙니다: $rootCommentId")
 
         return rootComment
     }

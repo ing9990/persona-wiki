@@ -3,6 +3,7 @@ package io.ing9990.domain.figure.repository
 import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.CommentType
 import io.ing9990.domain.figure.CommentType.ROOT
+import io.ing9990.domain.figure.repository.querydsl.CommentCustomRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -11,7 +12,8 @@ import org.springframework.data.jpa.repository.Query
 /**
  * 댓글 관련 데이터 액세스를 위한 Repository 인터페이스
  */
-interface CommentRepository : JpaRepository<Comment, Long> {
+interface CommentRepository : JpaRepository<Comment, Long>, CommentCustomRepository {
+
     /**
      * 인물 ID로 최상위 댓글(원 댓글)만 조회하고, 생성일 내림차순으로 정렬합니다.
      */
