@@ -6,6 +6,7 @@ spring:
     import:
       - "jpa.yml"
       - "actuator.yml"
+      - "authentication.yml"
 
   thymeleaf:
     cache: false
