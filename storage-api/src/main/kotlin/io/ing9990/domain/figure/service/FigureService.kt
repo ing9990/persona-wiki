@@ -11,6 +11,8 @@ import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.figure.repository.CategoryRepository
 import io.ing9990.domain.figure.repository.CommentRepository
 import io.ing9990.domain.figure.repository.FigureRepository
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -28,6 +30,8 @@ class FigureService(
     private val categoryRepository: CategoryRepository,
     private val commentRepository: CommentRepository,
 ) {
+    private val log: Logger = LoggerFactory.getLogger(FigureService::class.java)
+
     /**
      * 모든 인물 목록을 카테고리와 함께 조회합니다.
      * 이제 카테고리가 함께 로딩되므로 LazyInitializationException이 발생하지 않습니다.
@@ -333,18 +337,15 @@ class FigureService(
      * @param rootCommentId 원 댓글 ID
      * @return 원 댓글과 모든 답글이 포함된 Comment 객체
      */
-    fun getCommentWithReplies(rootCommentId: Long): Comment {
-        // QueryDSL을 사용하여 원 댓글과 답글을 함께 조회
-        val rootComment =
-            commentRepository.findWithRepliesById(rootCommentId)
-                ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $rootCommentId")
+    fun getCommentWithReplies(rootCommentId: Long): List<Comment> {
+        log.info("getCommentWithReplies: $rootCommentId -----------")
 
-        // 원 댓글인지 확인
-        if (!rootComment.isRootComment()) {
-            throw IllegalArgumentException("이 댓글은 원 댓글이 아닙니다: $rootCommentId")
-        }
+        val comment = commentRepository.findWithRepliesById(rootCommentId)
+            ?: throw EntityNotFoundException("Comment", "CommentId: $rootCommentId")
 
-        return rootComment
+        val replies = commentRepository.findRepliesByParentId(rootCommentId)
+
+        return replies;
     }
 
     /**

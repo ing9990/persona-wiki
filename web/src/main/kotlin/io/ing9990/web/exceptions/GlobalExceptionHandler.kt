@@ -78,6 +78,8 @@ class GlobalExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     fun handleApiException(e: ApiException): ResponseEntity<Map<String, String>> {
+        e.printStackTrace()
+
         return ResponseEntity
             .status(e.status ?: HttpStatus.BAD_REQUEST)
             .body(mapOf("error" to (e.message ?: "알 수 없는 오류가 발생했습니다")))

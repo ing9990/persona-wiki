@@ -9,12 +9,15 @@ import org.springframework.stereotype.Repository
 class CommentQueryDslRepository(
     private val queryFactory: JPAQueryFactory,
 ) : CommentCustomRepository {
+
     override fun findWithRepliesById(commentId: Long): Comment? {
         val comment = QComment.comment
+        val reply = QComment.comment
 
         return queryFactory
-            .selectFrom(comment)
-            .leftJoin(comment.replies).fetchJoin()
+            .selectDistinct(comment)
+            .from(comment)
+            .leftJoin(comment.replies, reply).fetchJoin()
             .where(comment.id.eq(commentId))
             .fetchOne()
     }

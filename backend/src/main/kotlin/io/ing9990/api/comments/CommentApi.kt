@@ -3,6 +3,7 @@ package io.ing9990.api.comments
 import io.ing9990.api.comments.dto.request.CommentRequest
 import io.ing9990.api.comments.dto.response.CommentPageResponse
 import io.ing9990.api.comments.dto.response.CommentResponse
+import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.service.FigureService
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,11 +30,10 @@ class CommentApi(
         @PathVariable figureId: Long,
         @RequestBody request: CommentRequest,
     ): ResponseEntity<CommentResponse> {
-        val comment =
-            figureService.addComment(
-                figureId = figureId,
-                content = request.content,
-            )
+        val comment = figureService.addComment(
+            figureId = figureId,
+            content = request.content,
+        )
 
         return ResponseEntity.ok(CommentResponse.from(comment))
     }
@@ -94,11 +94,10 @@ class CommentApi(
         @PathVariable commentId: Long,
         @RequestBody request: CommentRequest,
     ): ResponseEntity<CommentResponse> {
-        val reply =
-            figureService.addReply(
-                parentCommentId = commentId,
-                content = request.content,
-            )
+        val reply = figureService.addReply(
+            parentCommentId = commentId,
+            content = request.content,
+        )
 
         return ResponseEntity.ok(CommentResponse.from(reply))
     }
@@ -106,14 +105,15 @@ class CommentApi(
     /**
      * 댓글과 그에 달린 답글 목록을 조회합니다.
      */
-    @GetMapping("/comments/{commentId}/replies")
+    @GetMapping("/comments/{rootCommentId}/replies")
     fun getReplies(
-        @PathVariable commentId: Long,
+        @PathVariable rootCommentId: Long,
     ): ResponseEntity<List<CommentResponse>> {
-        val comment = figureService.getCommentWithReplies(commentId)
-        val replies = comment.replies.map { CommentResponse.from(it) }
+        val replies: List<Comment> = figureService.getCommentWithReplies(rootCommentId)
 
-        return ResponseEntity.ok(replies)
+        val repliesResponse = replies.map { CommentResponse.from(it) }
+
+        return ResponseEntity.ok(repliesResponse)
     }
 
     /**

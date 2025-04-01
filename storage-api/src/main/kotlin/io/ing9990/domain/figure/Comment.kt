@@ -35,7 +35,7 @@ class Comment(
     @Column(name = "dislikes")
     var dislikes: Int = 0,
     // 부모 댓글 참조 (자기 참조 관계)
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id")
     val parent: Comment? = null,
     // 댓글 깊이 (0: 원 댓글, 1: 답글, ...)
@@ -52,7 +52,7 @@ class Comment(
     @Column(name = "comment_type", nullable = false)
     val commentType: CommentType = ROOT,
     // 자식 댓글 목록 (답글들)
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("createdAt ASC")
     val replies: MutableList<Comment> = mutableListOf(),
 ) : BaseEntity() {
