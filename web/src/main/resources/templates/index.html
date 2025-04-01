@@ -168,8 +168,8 @@
           <!-- 카테고리 배지 -->
           <span th:if="${figure.category != null}" th:text="${figure.category.displayName}"
                 class="absolute top-4 right-4 bg-indigo-600 text-white text-sm px-3 py-1 rounded-full shadow-md">
-      카테고리
-    </span>
+          카테고리
+        </span>
         </div>
 
         <div class="p-5 flex flex-col flex-grow">
@@ -205,6 +205,33 @@
           </div>
         </div>
       </div>
+
+      <!-- 인물 추가 카드 -->
+      <a href="/add-figure"
+         class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover flex flex-col h-full border-2 border-dashed border-indigo-300 hover:border-indigo-500">
+        <div class="figure-image-container relative flex items-center justify-center bg-indigo-50">
+          <div class="text-center p-4">
+            <div
+                class="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center mb-2 shadow-md">
+              <i class="fas fa-user-plus text-indigo-600 text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-indigo-600">새 인물 등록</h3>
+          </div>
+        </div>
+
+        <div class="p-5 flex flex-col flex-grow">
+          <p class="text-gray-600 mb-4 flex-grow text-center">
+            알고 계신 공적 인물을 추가하고 다른 사용자들과 의견을 나눠보세요.
+          </p>
+
+          <div class="mt-auto flex justify-center">
+          <span
+              class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition text-sm">
+            <i class="fas fa-plus-circle mr-1"></i> 인물 추가하기
+          </span>
+          </div>
+        </div>
+      </a>
     </div>
   </section>
 </div>
