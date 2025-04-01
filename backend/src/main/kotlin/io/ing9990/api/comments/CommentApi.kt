@@ -30,10 +30,11 @@ class CommentApi(
         @PathVariable figureId: Long,
         @RequestBody request: CommentRequest,
     ): ResponseEntity<CommentResponse> {
-        val comment = figureService.addComment(
-            figureId = figureId,
-            content = request.content,
-        )
+        val comment =
+            figureService.addComment(
+                figureId = figureId,
+                content = request.content,
+            )
 
         return ResponseEntity.ok(CommentResponse.from(comment))
     }
@@ -94,10 +95,11 @@ class CommentApi(
         @PathVariable commentId: Long,
         @RequestBody request: CommentRequest,
     ): ResponseEntity<CommentResponse> {
-        val reply = figureService.addReply(
-            parentCommentId = commentId,
-            content = request.content,
-        )
+        val reply =
+            figureService.addReply(
+                parentCommentId = commentId,
+                content = request.content,
+            )
 
         return ResponseEntity.ok(CommentResponse.from(reply))
     }

@@ -10,5 +10,4 @@ interface CommentCustomRepository {
      * @return 답글이 초기화된 Comment 객체, 없으면 null
      */
     fun findWithRepliesById(commentId: Long): Comment?
-
 }

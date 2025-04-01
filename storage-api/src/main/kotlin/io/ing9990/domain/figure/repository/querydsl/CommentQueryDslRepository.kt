@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository
 class CommentQueryDslRepository(
     private val queryFactory: JPAQueryFactory,
 ) : CommentCustomRepository {
-
     override fun findWithRepliesById(commentId: Long): Comment? {
         val comment = QComment.comment
         val reply = QComment.comment

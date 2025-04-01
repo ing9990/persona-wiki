@@ -340,12 +340,13 @@ class FigureService(
     fun getCommentWithReplies(rootCommentId: Long): List<Comment> {
         log.info("getCommentWithReplies: $rootCommentId -----------")
 
-        val comment = commentRepository.findWithRepliesById(rootCommentId)
-            ?: throw EntityNotFoundException("Comment", "CommentId: $rootCommentId")
+        val comment =
+            commentRepository.findWithRepliesById(rootCommentId)
+                ?: throw EntityNotFoundException("Comment", "CommentId: $rootCommentId")
 
         val replies = commentRepository.findRepliesByParentId(rootCommentId)
 
-        return replies;
+        return replies
     }
 
     /**
