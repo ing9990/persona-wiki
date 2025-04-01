@@ -28,7 +28,7 @@ class Comment(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "figure_id")
     val figure: Figure,
-    @Column(name = "content", nullable = false)
+    @Column(name = "content", nullable = false, length = 1000)
     var content: String,
     @Column(name = "likes")
     var likes: Int = 0,

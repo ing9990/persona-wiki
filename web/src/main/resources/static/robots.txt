@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://인물사전.com/sitemap.xml
+Sitemap: https://국민사형투표.com/sitemap.xml

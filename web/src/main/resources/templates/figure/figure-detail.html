@@ -124,7 +124,7 @@
 <div layout:fragment="content">
   <!-- 인물 프로필 헤더 -->
   <section class="profile-header mb-8 shadow-lg" th:attr="data-figure-id=${figure.id}">
-    <img th:src="${figure.imageUrl}" th:alt="${figure.name}" class="profile-header-image">
+    <img th:src="${figure.category.imageUrl}" th:alt="${figure.name}" class="profile-header-image">
     <div class="profile-header-content">
       <div class="flex items-end justify-between w-full">
         <div class="flex items-end">
