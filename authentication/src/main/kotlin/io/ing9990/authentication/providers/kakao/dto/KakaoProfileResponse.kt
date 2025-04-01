@@ -1,17 +1,16 @@
 package io.ing9990.authentication.providers.kakao.dto
 
 import io.ing9990.authentication.OAuthProviderType
-import io.ing9990.authentication.OauthUserProfile
+import io.ing9990.authentication.OAuthUserProfile
 
 data class KakaoProfileResponse(
     val id: Long? = null,
-    val oAuthProviderType: OAuthProviderType? = null
-) : OauthUserProfile {
-
+    val oAuthProviderType: OAuthProviderType? = null,
+) : OAuthUserProfile {
     companion object {
         fun mergeOauthProviderName(
             response: KakaoProfileResponse,
-            oAuthProviderType: OAuthProviderType
+            oAuthProviderType: OAuthProviderType,
         ): KakaoProfileResponse {
             return KakaoProfileResponse(response.id, oAuthProviderType)
         }

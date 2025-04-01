@@ -1,6 +1,5 @@
 package io.ing9990.authentication
 
-interface OauthUserProfile {
-
+interface OAuthUserProfile {
     fun getSocialId(): String
 }

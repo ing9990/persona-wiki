@@ -7,5 +7,5 @@ data class NaverAuthProperties(
     var tokenUri: String = "",
     var clientId: String = "",
     var clientSecret: String = "",
-    var redirectUri: String = ""
+    var redirectUri: String = "",
 )

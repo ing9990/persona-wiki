@@ -6,5 +6,5 @@ data class NaverAccessTokenRequest(
     val clientId: String,
     val clientSecret: String,
     val redirectUri: String,
-    val state: String
+    val state: String,
 )

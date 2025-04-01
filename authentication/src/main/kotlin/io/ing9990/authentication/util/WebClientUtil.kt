@@ -11,7 +11,10 @@ import reactor.core.publisher.Mono
 
 @Component
 class WebClientUtil(private val webClient: WebClient) {
-    fun <T> get(url: String, responseType: Class<T>): Mono<T> {
+    fun <T> get(
+        url: String,
+        responseType: Class<T>,
+    ): Mono<T> {
         return webClient.get()
             .uri(url)
             .retrieve()
@@ -19,8 +22,9 @@ class WebClientUtil(private val webClient: WebClient) {
     }
 
     fun <T> get(
-        url: String, headers: MultiValueMap<String?, String?>,
-        responseType: Class<T>
+        url: String,
+        headers: MultiValueMap<String?, String?>,
+        responseType: Class<T>,
     ): Mono<T> {
         return webClient.get()
             .uri(url)
@@ -30,21 +34,24 @@ class WebClientUtil(private val webClient: WebClient) {
     }
 
     fun <T> getWithParams(
-        url: String, params: MultiValueMap<String?, String?>?,
-        responseType: Class<T>
+        url: String,
+        params: MultiValueMap<String?, String?>?,
+        responseType: Class<T>,
     ): Mono<T> {
         return webClient.get()
             .uri(
                 UriComponentsBuilder.fromHttpUrl(url)
-                    .queryParams(params).build().toUri()
+                    .queryParams(params).build().toUri(),
             )
             .retrieve()
             .bodyToMono(responseType)
     }
 
     fun <T> post(
-        url: String, requestBody: Any, mediaType: MediaType,
-        responseType: Class<T>
+        url: String,
+        requestBody: Any,
+        mediaType: MediaType,
+        responseType: Class<T>,
     ): Mono<T> {
         return webClient.post()
             .uri(url)
@@ -55,8 +62,10 @@ class WebClientUtil(private val webClient: WebClient) {
     }
 
     fun <T> post(
-        url: String, requestBody: Any, headers: MultiValueMap<String?, String?>,
-        responseType: Class<T>
+        url: String,
+        requestBody: Any,
+        headers: MultiValueMap<String?, String?>,
+        responseType: Class<T>,
     ): Mono<T> {
         return webClient.post()
             .uri(url)
@@ -67,8 +76,9 @@ class WebClientUtil(private val webClient: WebClient) {
     }
 
     fun <T> postFormData(
-        url: String, formData: MultiValueMap<String?, String?>,
-        responseType: Class<T>
+        url: String,
+        formData: MultiValueMap<String?, String?>,
+        responseType: Class<T>,
     ): Mono<T> {
         return webClient.post()
             .uri(url)
@@ -79,8 +89,10 @@ class WebClientUtil(private val webClient: WebClient) {
     }
 
     fun <T> postFormData(
-        url: String, formData: MultiValueMap<String?, String?>,
-        headers: MultiValueMap<String?, String?>, responseType: Class<T>
+        url: String,
+        formData: MultiValueMap<String?, String?>,
+        headers: MultiValueMap<String?, String?>,
+        responseType: Class<T>,
     ): Mono<T> {
         return webClient.post()
             .uri(url)
