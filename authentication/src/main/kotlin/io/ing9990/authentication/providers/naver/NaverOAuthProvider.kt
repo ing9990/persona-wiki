@@ -7,6 +7,7 @@ import io.ing9990.authentication.OAuthUserProfile
 import io.ing9990.authentication.providers.kakao.dto.KakaoAccessTokenResponse
 import io.ing9990.authentication.providers.naver.dto.NaverAccessTokenRequest
 import io.ing9990.authentication.providers.naver.dto.NaverProfileResponse
+import io.ing9990.authentication.util.WebClientUtil
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
