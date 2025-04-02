@@ -92,7 +92,7 @@ class GlobalExceptionHandler {
     fun handleUnauthorizedException(
         e: UnauthorizedException,
         model: Model,
-    ): String = "login/login"
+    ): String = "redirect:/login/login"
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): String {

@@ -7,7 +7,9 @@ tasks.getByName("jar") {
 }
 
 dependencies {
+
     implementation(project(":backend"))
+    implementation(project(":common"))
     implementation(project(":monitor"))
     implementation(project(":storage-api"))
     implementation(project(":admin"))
