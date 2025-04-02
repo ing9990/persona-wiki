@@ -4,40 +4,39 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import io.ing9990.authentication.OAuthUserProfile
 import io.ing9990.domain.user.OAuthProviderType
 
-data class Properties(
+data class Profile(
     @JsonProperty("nickname")
     val nickname: String? = null,
-    @JsonProperty("profile_image")
+    @JsonProperty("profile_image_url")
     val imageUrl: String? = null,
+)
+
+data class KakaoAccount(
+    @JsonProperty("profile")
+    val profile: Profile,
 )
 
 data class KakaoProfileResponse(
     val id: Long? = null,
-    val properties: Properties? = null,
+    @JsonProperty("kakao_account")
+    val account: KakaoAccount? = null,
     val oAuthProviderType: OAuthProviderType? = null,
 ) : OAuthUserProfile {
     companion object {
         fun mergeOauthProviderName(
             response: KakaoProfileResponse,
             oAuthProviderType: OAuthProviderType,
-        ): KakaoProfileResponse {
-            return KakaoProfileResponse(
+        ): KakaoProfileResponse =
+            KakaoProfileResponse(
                 response.id,
-                response.properties,
+                response.account,
                 oAuthProviderType,
             )
-        }
     }
 
-    override fun findSocialId(): String {
-        return id.toString()
-    }
+    override fun findSocialId(): String = id.toString()
 
-    override fun findUsername(): String {
-        return properties?.nickname ?: ""
-    }
+    override fun findUsername(): String = account?.profile?.nickname ?: ""
 
-    override fun findImageUrl(): String {
-        return properties?.imageUrl ?: ""
-    }
+    override fun findImageUrl(): String = account?.profile?.imageUrl ?: ""
 }

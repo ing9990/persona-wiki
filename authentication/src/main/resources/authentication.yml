@@ -9,7 +9,7 @@ kakao:
     client-id: "c085be75e3063d0cd6c5bfbac24038f4"
     redirect-uri: "http://localhost:8080/auth/kakao/callback"
   user:
-    profile-uri: "https://kapi.kakao.com/v2/user/me?property_keys=%5B%22properties.nickname%22%2C+%22properties.profile_image%22%5D+&secure_resource=false"
+    profile-uri: "https://kapi.kakao.com/v2/user/me?secure_resource=false&property_keys=%5B%22kakao_account.profile.profile_image%22%2C%22kakao_account.profile.nickname%22%5D"
 
 naver:
   auth:

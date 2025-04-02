@@ -27,4 +27,7 @@ interface UserRepository : JpaRepository<User, Long> {
      */
     @Query("select u from User u where u.nickname = ?1")
     fun findByNickname(nickname: String): User?
+
+    @Query("select u from User u where u.id = ?1")
+    fun findUserById(id: Long): User?
 }

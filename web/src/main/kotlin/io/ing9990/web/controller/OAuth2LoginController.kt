@@ -44,6 +44,7 @@ class OAuth2LoginController(
                     OAuthProviderType.valueOf(providerType.uppercase()),
                 )
 
+            session.setAttribute("userId", user.id)
             session.setAttribute("user", user)
             session.setAttribute("loggedIn", true)
 

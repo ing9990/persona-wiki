@@ -4,6 +4,8 @@ import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.figure.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
+import io.ing9990.domain.user.User
+import io.ing9990.web.aop.AuthorizedUser
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -51,8 +53,7 @@ class FigureController(
         }
 
         // 인물 찾기
-        val figure =
-            figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
 
         // 댓글 추가
         figureService.addComment(figure.id!!, content)
@@ -74,8 +75,7 @@ class FigureController(
         redirectAttributes: RedirectAttributes,
     ): String {
         // 인물 찾기
-        val figure =
-            figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
 
         // 감정 분석
         val sentimentEnum =
@@ -109,9 +109,7 @@ class FigureController(
     fun redirectFromLegacyUrl(
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
-    ): String {
-        return getRedirectUrl(categoryId, figureName)
-    }
+    ): String = getRedirectUrl(categoryId, figureName)
 
     /**
      * URL 인코딩을 적용한 리다이렉트 URL을 생성합니다.
@@ -124,30 +122,22 @@ class FigureController(
         return "redirect:/$categoryId/@$encodedFigureName"
     }
 
-    /**
-     * 인물 추가 페이지를 렌더링합니다.
-     * 검색 결과에서 넘어온 경우 name 파라미터로 검색어를 받아서 자동으로 채워줍니다.
-     */
     @GetMapping("/add-figure")
     fun addFigureForm(
+        @AuthorizedUser user: User,
         @RequestParam(required = false) category: String?,
         @RequestParam(required = false) name: String?,
         model: Model,
     ): String {
-        // 카테고리 목록을 모델에 추가
-        val categories = categoryService.getAllCategories()
-        model.addAttribute("categories", categories)
-
-        // 쿼리 파라미터로 카테고리 ID가 전달된 경우, 해당 카테고리를 선택된 상태로 설정
-        if (category != null) {
-            model.addAttribute("selectedCategoryId", category)
+        categoryService.getAllCategories().also {
+            model.addAttribute("categories", it)
         }
-
-        // 쿼리 파라미터로 이름이 전달된 경우, 해당 이름을 자동으로 채워줌
-        if (name != null) {
-            model.addAttribute("figureName", name)
+        category.let {
+            model.addAttribute("selectedCategoryId", it)
         }
-
+        name.let {
+            model.addAttribute("selectedFigureName", it)
+        }
         return "figure/add-figure"
     }
 

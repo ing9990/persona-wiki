@@ -1,3 +1,4 @@
+// web/src/main/kotlin/io/ing9990/web/config/WebConfig.kt 수정
 package io.ing9990.web.config
 
 import jakarta.servlet.http.HttpServletRequest

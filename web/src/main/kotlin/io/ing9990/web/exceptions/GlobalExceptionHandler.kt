@@ -8,6 +8,7 @@ import io.ing9990.web.exceptions.UnauthorizedException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.ui.Model
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
@@ -86,14 +87,17 @@ class GlobalExceptionHandler {
             .body(mapOf("error" to (e.message ?: "알 수 없는 오류가 발생했습니다")))
     }
 
-    @ExceptionHandler(
-        value = [
-            UnauthorizedException::class
-        ]
-    )
+    @ExceptionHandler(value = [UnauthorizedException::class])
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
-    fun handleUnauthorizedException(e: UnauthorizedException, model: Model): String {
-        return "login/login"
+    fun handleUnauthorizedException(
+        e: UnauthorizedException,
+        model: Model,
+    ): String = "login/login"
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): String {
+        e.printStackTrace()
+        return "error/500"
     }
 
     /**

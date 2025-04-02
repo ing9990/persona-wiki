@@ -1,6 +1,7 @@
 package io.ing9990.web.service
 
 import io.ing9990.authentication.OAuthUserProfile
+import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.User
 import io.ing9990.domain.user.repositories.UserRepository
@@ -9,7 +10,15 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Service
-class UserService(private val userRepository: UserRepository) {
+class UserService(
+    private val userRepository: UserRepository,
+) {
+    @Transactional(readOnly = true)
+    fun findUserById(id: Long): User? = userRepository.findUserById(id)
+
+    @Transactional(readOnly = true)
+    fun getUserById(userId: Long): User = findUserById(userId) ?: throw EntityNotFoundException("User", userId)
+
     /**
      * 소셜 로그인 정보를 기반으로 사용자를 저장하거나 업데이트합니다.
      * @param profile 소셜 로그인 제공자로부터 받은 사용자 프로필

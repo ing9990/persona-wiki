@@ -22,10 +22,10 @@ class User(
     @Column(name = "user_id")
     val id: Long? = null,
     @Column(name = "provider_id", nullable = false, unique = true)
-    val providerId: String,
+    var providerId: String? = null,
     @Enumerated(STRING)
     @Column(name = "oauth_provider", nullable = false)
-    val provider: OAuthProviderType,
+    var provider: OAuthProviderType? = null,
     @Column(name = "nickname", nullable = false, unique = true, length = 40)
     var nickname: String,
     @Column(name = "profile_image", nullable = true)
