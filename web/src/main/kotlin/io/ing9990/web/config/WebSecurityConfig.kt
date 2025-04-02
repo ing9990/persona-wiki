@@ -31,21 +31,19 @@ class WebSecurityConfig {
                         "/error/**",
                         "/favicon.ico",
                     ).permitAll()
-                    .anyRequest().permitAll()
-            }
-            .formLogin { login ->
+                    .anyRequest()
+                    .permitAll()
+            }.formLogin { login ->
                 login
                     .loginPage("/login")
                     .permitAll()
-            }
-            .logout { logout ->
+            }.logout { logout ->
                 logout
                     .logoutUrl("/auth/logout")
                     .logoutSuccessUrl("/?logout=true")
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")
-            }
-            .csrf { csrf -> csrf.disable() }
+            }.csrf { csrf -> csrf.disable() }
 
         return http.build()
     }

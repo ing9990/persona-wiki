@@ -25,16 +25,14 @@ class AuthorizedUserArgumentResolver(
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?,
-    ): User? {
-        val userId =
+    ): User {
+        val userId: Long =
             webRequest
                 .getNativeRequest(HttpServletRequest::class.java)
                 ?.session
-                ?.getAttribute("userId") as Long?
+                ?.getAttribute("userId") as? Long
                 ?: throw UnauthorizedException()
 
-        val user: User = userService.getUserById(userId = userId)
-
-        return user
+        return userService.getUserById(userId)
     }
 }

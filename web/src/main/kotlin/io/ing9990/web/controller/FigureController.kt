@@ -129,6 +129,8 @@ class FigureController(
         @RequestParam(required = false) name: String?,
         model: Model,
     ): String {
+        println(user)
+
         categoryService.getAllCategories().also {
             model.addAttribute("categories", it)
         }
