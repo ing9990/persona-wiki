@@ -1,5 +1,9 @@
 package io.ing9990.authentication
 
 interface OAuthUserProfile {
-    fun getSocialId(): String
+    fun findSocialId(): String
+
+    fun findUsername(): String
+
+    fun findImageUrl(): String
 }

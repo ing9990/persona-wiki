@@ -1,16 +1,39 @@
+# local
+spring:
+  config:
+    activate:
+      on-profile: local
 kakao:
   auth:
-    token-uri: https://kauth.kakao.com/oauth/token
-    client-id: ${KAKAO_CLIENT_ID}
-    client-secret: ${KAKAO_CLIENT_SECRET}
-    redirect-uri: http://localhost:3000/auth/kakao/callback
-
+    token-uri: "https://kauth.kakao.com/oauth/token"
+    client-id: "c085be75e3063d0cd6c5bfbac24038f4"
+    redirect-uri: "http://localhost:8080/auth/kakao/callback"
   user:
-    profile-uri: https://kapi.kakao.com/v2/user/me
+    profile-uri: "https://kapi.kakao.com/v2/user/me?property_keys=%5B%22properties.nickname%22%2C+%22properties.profile_image%22%5D+&secure_resource=false"
 
 naver:
   auth:
-    token-uri: https://nid.naver.com/oauth2.0/token
-    client-id: ${NAVER_CLIENT_ID}
-    client-secret: ${NAVER_CLIENT_SECRET}
-    redirect-uri: http://localhost:3000/auth/naver/callback
+    token-uri: "https://nid.naver.com/oauth2.0/token"
+    client-id: "naver-client-id"
+    redirect-uri: "http://localhost:8080/auth/naver/callback"
+
+---
+# prod
+spring:
+  config:
+    activate:
+      on-profile: prod
+kakao:
+  auth:
+    token-uri: "https://kauth.kakao.com/oauth/token"
+    client-id: "c085be75e3063d0cd6c5bfbac24038f4"
+    redirect-uri: "https://국민사형투표.com/auth/kakao/callback"
+
+  user:
+    profile-uri: "https://kapi.kakao.com/v2/user/me"
+
+naver:
+  auth:
+    token-uri: "https://nid.naver.com/oauth2.0/token"
+    client-id: "naver-prod-client"
+    redirect-uri: "https://국민사형투표.com/auth/naver/callback"

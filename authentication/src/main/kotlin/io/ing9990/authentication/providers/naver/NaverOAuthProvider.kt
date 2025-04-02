@@ -1,13 +1,13 @@
 package io.ing9990.authentication.providers.naver
 
 import io.ing9990.authentication.OAuthProvider
-import io.ing9990.authentication.OAuthProviderType
-import io.ing9990.authentication.OAuthProviderType.NAVER
 import io.ing9990.authentication.OAuthUserProfile
 import io.ing9990.authentication.providers.kakao.dto.KakaoAccessTokenResponse
 import io.ing9990.authentication.providers.naver.dto.NaverAccessTokenRequest
 import io.ing9990.authentication.providers.naver.dto.NaverProfileResponse
 import io.ing9990.authentication.util.WebClientUtil
+import io.ing9990.domain.user.OAuthProviderType
+import io.ing9990.domain.user.OAuthProviderType.NAVER
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -35,10 +35,8 @@ class NaverOAuthProvider(
     }
 
     override fun getUserProfile(code: String): OAuthUserProfile {
-        log.info("NaverAuthProperties : {}", naverAuthProperties.toString())
-        log.info("NaverUserProperties : {}", naverUserProperties.toString())
-
         val accessToken = requestNaverToken(code)
+
         return requestNaverUserInfo(accessToken)
     }
 

@@ -1,4 +1,4 @@
-package io.ing9990.authentication
+package io.ing9990.domain.user
 
 enum class OAuthProviderType {
     GOOGLE,

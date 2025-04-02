@@ -116,14 +116,14 @@
           Google로 계속하기
         </a>
 
-        <a href="/oauth2/authorization/naver" class="social-button bg-green-500 text-white">
-          <img src="https://www.naver.com/favicon.ico" alt="Naver" class="w-5 h-5 mr-3">
-          네이버로 계속하기
-        </a>
-
-        <a href="/oauth2/authorization/kakao" class="social-button bg-yellow-400 text-gray-800">
+        <a th:href="${kakaoAuthUrl}" class="social-button bg-yellow-400 text-gray-800">
           <img src="https://www.kakaocorp.com/page/favicon.ico" alt="Kakao" class="w-5 h-5 mr-3">
           카카오로 계속하기
+        </a>
+
+        <a th:href="${naverAuthUrl}" class="social-button bg-green-500 text-white">
+          <img src="https://www.naver.com/favicon.ico" alt="Naver" class="w-5 h-5 mr-3">
+          네이버로 계속하기
         </a>
       </div>
 

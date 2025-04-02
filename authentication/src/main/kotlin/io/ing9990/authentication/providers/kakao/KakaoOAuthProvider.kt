@@ -1,12 +1,13 @@
+package io.ing9990.authentication.providers.kakao
+
 import io.ing9990.authentication.OAuthProvider
-import io.ing9990.authentication.OAuthProviderType
 import io.ing9990.authentication.OAuthUserProfile
-import io.ing9990.authentication.providers.kakao.KakaoAuthProperties
-import io.ing9990.authentication.providers.kakao.KakaoUserProperties
 import io.ing9990.authentication.providers.kakao.dto.KakaoAccessTokenRequest
 import io.ing9990.authentication.providers.kakao.dto.KakaoAccessTokenResponse
 import io.ing9990.authentication.providers.kakao.dto.KakaoProfileResponse
 import io.ing9990.authentication.util.WebClientUtil
+import io.ing9990.domain.user.OAuthProviderType
+import io.ing9990.domain.user.OAuthProviderType.KAKAO
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -21,7 +22,7 @@ class KakaoOAuthProvider(
     private val kakaoUserProperties: KakaoUserProperties,
 ) : OAuthProvider {
     companion object {
-        private val PROVIDER_TYPE = OAuthProviderType.KAKAO
+        private val PROVIDER_TYPE = KAKAO
         private val log = LoggerFactory.getLogger(KakaoOAuthProvider::class.java)
     }
 
@@ -63,8 +64,11 @@ class KakaoOAuthProvider(
                     headers,
                     KakaoProfileResponse::class.java,
                 )
+                .log()
                 .doOnError { ex -> log.error("Error requesting Kakao User Info: {}", ex.message) }
                 .block() ?: throw RuntimeException("Failed to get Kakao user profile")
+
+        var var25 = true
 
         return KakaoProfileResponse.mergeOauthProviderName(response, PROVIDER_TYPE)
     }

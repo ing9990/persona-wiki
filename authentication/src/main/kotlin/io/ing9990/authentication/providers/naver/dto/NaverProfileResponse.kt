@@ -1,8 +1,8 @@
 package io.ing9990.authentication.providers.naver.dto
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import io.ing9990.authentication.OAuthProviderType
 import io.ing9990.authentication.OAuthUserProfile
+import io.ing9990.domain.user.OAuthProviderType
 
 data class NaverProfileResponse(
     @JsonProperty("resultcode")
@@ -27,12 +27,20 @@ data class NaverProfileResponse(
             response: NaverProfileResponse,
             oAuthProviderType: OAuthProviderType,
         ): NaverProfileResponse {
-            return NaverProfileResponse(response.getSocialId(), oAuthProviderType)
+            return NaverProfileResponse(response.findSocialId(), oAuthProviderType)
         }
     }
 
-    override fun getSocialId(): String {
+    override fun findSocialId(): String {
         return naverUserDetail?.id ?: ""
+    }
+
+    override fun findUsername(): String {
+        TODO("Not yet implemented")
+    }
+
+    override fun findImageUrl(): String {
+        TODO("Not yet implemented")
     }
 
     data class NaverUserDetail(

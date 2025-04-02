@@ -4,9 +4,16 @@ import io.ing9990.authentication.OAuthProvider
 import org.springframework.stereotype.Component
 
 @Component
-class OAuthProviders(private val providers: List<OAuthProvider>) {
+class OAuthProviders(
+    private val providers: List<OAuthProvider>,
+) {
     fun map(providerName: String): OAuthProvider {
-        return providers.find { it.isEqualTo(providerName) }
-            ?: throw IllegalArgumentException("Provider $providerName not found.")
+        var provider: OAuthProvider? =
+            providers
+                .findLast { it.isEqualTo(providerName) }
+
+        provider ?: throw IllegalArgumentException("Provider $providerName not found.")
+
+        return provider
     }
 }
