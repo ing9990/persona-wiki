@@ -8,14 +8,12 @@ import org.springframework.web.bind.annotation.GetMapping
  */
 @Controller
 class LoginController {
-
     /**
      * 소셜 로그인 페이지를 반환합니다.
      * 실제 소셜 로그인 처리는 향후 Spring Security OAuth2 Client에서 담당할 예정입니다.
      */
     @GetMapping("/login")
     fun loginPage(): String {
-
         return "login/login"
     }
 }
