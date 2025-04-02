@@ -31,11 +31,7 @@ class WebSecurityConfig {
                         "/error/**",
                         "/favicon.ico",
                     ).permitAll()
-                    .requestMatchers(
-                        "/add-figure",
-                        "/*/comment/**",
-                        "/*/vote/**",
-                    ).authenticated()
+                    .anyRequest().permitAll()
             }
             .formLogin { login ->
                 login

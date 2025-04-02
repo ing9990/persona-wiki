@@ -3,6 +3,7 @@ package io.ing9990.web.controller
 import io.ing9990.authentication.OAuthUserProfile
 import io.ing9990.authentication.providers.OAuthProviders
 import io.ing9990.domain.user.OAuthProviderType
+import io.ing9990.domain.user.User
 import io.ing9990.web.service.UserService
 import jakarta.servlet.http.HttpSession
 import org.springframework.stereotype.Controller
@@ -34,18 +35,15 @@ class OAuth2LoginController(
         redirectAttributes: RedirectAttributes,
     ): String {
         try {
-            // 소셜 로그인 제공자로부터 사용자 프로필 가져오기
             val provider = oAuthProviders.map(providerType.uppercase())
             val profile: OAuthUserProfile = provider.getUserProfile(code)
 
-            // 사용자 정보 저장 또는 업데이트
-            val user =
+            val user: User =
                 userService.saveOrUpdateUser(
                     profile,
                     OAuthProviderType.valueOf(providerType.uppercase()),
                 )
 
-            // 세션에 사용자 정보 저장
             session.setAttribute("user", user)
             session.setAttribute("loggedIn", true)
 
