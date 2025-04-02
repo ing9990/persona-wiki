@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component
 @Component
 class OAuthProviders(private val providers: List<OAuthProvider>) {
     fun map(providerName: String): OAuthProvider {
-        return providers.find { it.equals(providerName) }
+        return providers.find { it.isEqualTo(providerName) }
             ?: throw IllegalArgumentException("Provider $providerName not found.")
     }
 }

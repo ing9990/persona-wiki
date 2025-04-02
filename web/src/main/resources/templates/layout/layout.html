@@ -229,9 +229,7 @@
           </div>
         </form>
       </div>
-
-      <!-- web/src/main/resources/templates/layout/layout.html (네비게이션 부분 수정) -->
-
+      <!-- web/src/main/resources/templates/layout/layout.html의 네비게이션 부분 수정 -->
       <!-- 메인 메뉴 -->
       <div class="hidden md:flex items-center space-x-4">
         <a href="/figures" class="text-white hover:text-indigo-100 transition" aria-label="인물 목록">
@@ -249,14 +247,41 @@
           <span>추가</span>
         </a>
 
-        <!-- 알림 버튼 추가 -->
-        <button id="notification-btn" class="text-white hover:text-indigo-100 transition relative"
-                aria-label="알림">
-          <i class="fas fa-bell mr-1" aria-hidden="true"></i>
-          <span>알림</span>
-          <!-- 알림 배지는 동적으로 추가됨 -->
-        </button>
+        <!-- 로그인 메뉴 추가 -->
+        <a href="/login" class="text-white hover:text-indigo-100 transition" aria-label="로그인">
+          <i class="fas fa-sign-in-alt mr-1" aria-hidden="true"></i>
+          <span>로그인</span>
+        </a>
       </div>
+
+      <!-- 모바일 메뉴에도 추가 -->
+      <div id="mobileMenu" class="md:hidden mt-4 pb-2 hidden" aria-labelledby="mobileMenuButton">
+        <div class="flex flex-col space-y-2">
+          <a href="/figures"
+             class="text-white hover:text-indigo-100 transition py-2 px-3 rounded-md hover:bg-indigo-600">
+            <i class="fas fa-users mr-1" aria-hidden="true"></i>
+            <span>인물 목록</span>
+          </a>
+          <a href="/categories"
+             class="text-white hover:text-indigo-100 transition py-2 px-3 rounded-md hover:bg-indigo-600">
+            <i class="fas fa-th-large mr-1" aria-hidden="true"></i>
+            <span>카테고리 목록</span>
+          </a>
+          <a href="/add-figure"
+             class="text-white hover:text-indigo-100 transition py-2 px-3 rounded-md hover:bg-indigo-600">
+            <i class="fas fa-plus-circle mr-1" aria-hidden="true"></i>
+            <span>인물 추가</span>
+          </a>
+
+          <!-- 로그인 메뉴 추가 -->
+          <a href="/login"
+             class="text-white hover:text-indigo-100 transition py-2 px-3 rounded-md hover:bg-indigo-600">
+            <i class="fas fa-sign-in-alt mr-1" aria-hidden="true"></i>
+            <span>로그인</span>
+          </a>
+        </div>
+      </div>
+
 
       <!-- 모바일 메뉴 버튼 -->
       <button
@@ -268,27 +293,6 @@
         <i class="fas fa-bars text-xl" aria-hidden="true"></i>
       </button>
     </nav>
-
-    <!-- 모바일 메뉴 -->
-    <div id="mobileMenu" class="md:hidden mt-4 pb-2 hidden" aria-labelledby="mobileMenuButton">
-      <div class="flex flex-col space-y-2">
-        <a href="/figures"
-           class="text-white hover:text-indigo-100 transition py-2 px-3 rounded-md hover:bg-indigo-600">
-          <i class="fas fa-users mr-1" aria-hidden="true"></i>
-          <span>인물 목록</span>
-        </a>
-        <a href="/categories"
-           class="text-white hover:text-indigo-100 transition py-2 px-3 rounded-md hover:bg-indigo-600">
-          <i class="fas fa-th-large mr-1" aria-hidden="true"></i>
-          <span>카테고리 목록</span>
-        </a>
-        <a href="/add-figure"
-           class="text-white hover:text-indigo-100 transition py-2 px-3 rounded-md hover:bg-indigo-600">
-          <i class="fas fa-plus-circle mr-1" aria-hidden="true"></i>
-          <span>인물 추가</span>
-        </a>
-      </div>
-    </div>
   </div>
 </header>
 

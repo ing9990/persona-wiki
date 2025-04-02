@@ -29,7 +29,7 @@ class KakaoOAuthProvider(
         return PROVIDER_TYPE
     }
 
-    override fun equals(providerType: String): Boolean {
+    override fun isEqualTo(providerType: String): Boolean {
         return PROVIDER_TYPE == OAuthProviderType.of(providerType)
     }
 
