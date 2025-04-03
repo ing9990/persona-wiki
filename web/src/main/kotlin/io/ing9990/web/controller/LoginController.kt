@@ -73,19 +73,10 @@ class LoginController(
             require(redirectUri.isNotBlank()) { "NAVER: redirectUri must not be null or blank" }
         }
 
-        val fullUri =
-            with(naverAuthProperties) {
-                tokenUri +
-                    "?response_type=code" +
-                    "&grant_type=authorization_code" +
-                    "&client_id=$clientId" +
-                    "&client_secret=$clientSecret" +
-                    "&redirect_uri=$redirectUri" +
-                    "&state=STATE_STRING"
-            }
-
-        var var27 = true
-
-        return fullUri
+        return "https://nid.naver.com/oauth2.0/authorize" +
+            "?response_type=code" +
+            "&client_id=${naverAuthProperties.clientId}" +
+            "&redirect_uri=${naverAuthProperties.redirectUri}" +
+            "&state=STATE_STRING"
     }
 }

@@ -13,7 +13,8 @@ LOG_DIR="/root/persona-wiki/deploy-logs/"
 JVM_OPTS="-Xms256m -Xmx768m -XX:MetaspaceSize=96m -XX:MaxMetaspaceSize=192m -XX:+UseG1GC -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"
 
 # 로그 파일 생성
-DEPLOY_LOG="$LOG_DIR/deploy-$(date +%Y%m%d-%H%M%S).log"i
+DEPLOY_LOG="$LOG_DIR/deploy-$(date +%Y%m%d-%H%M%S).log"
+mkdir -p $LOG_DIR
 touch $DEPLOY_LOG
 
 # 로그 기록 함수
@@ -100,14 +101,21 @@ free -m | tee -a $DEPLOY_LOG
 # 새 버전 애플리케이션 실행
 # -------------------------------------
 log "🚀 새 버전 애플리케이션 실행 중 (포트 $IDLE_PORT)..."
+
+# 로그 파일 경로 설정
+NOHUP_LOG="$LOG_DIR/nohup-$IDLE_PORT.log"
+
+# nohup으로 백그라운드에서 Java 애플리케이션 실행
 nohup java $JVM_OPTS -jar "$JAR_PATH" \
   --spring.profiles.active=prod \
-  --server.port="$IDLE_PORT" \
-  --logging.file.name="$LOG_DIR/application-$IDLE_PORT.log" \
-  > "$LOG_DIR/nohup-$IDLE_PORT.log" 2>&1 &
+  --server.port="$IDLE_PORT" > "$NOHUP_LOG" 2>&1 &
 
+# 실행된 프로세스의 PID 저장
 NEW_PID=$!
 log "📝 새 애플리케이션 PID: $NEW_PID"
+
+# PID 파일에 저장 (필요시 나중에 참조할 수 있도록)
+echo $NEW_PID > "$LOG_DIR/$APP_NAME-$IDLE_PORT.pid"
 
 # JVM이 초기화될 시간을 주기 위해 잠시 대기
 log "⏳ 애플리케이션 초기화 대기 중..."
@@ -116,7 +124,7 @@ sleep 10
 # 프로세스가 여전히 실행 중인지 확인
 if ! ps -p $NEW_PID > /dev/null; then
   log "❌ 애플리케이션이 시작 후 비정상 종료됨. 로그 확인:"
-  tail -n 50 "$LOG_DIR/nohup-$IDLE_PORT.log" | tee -a $DEPLOY_LOG
+  tail -n 50 "$NOHUP_LOG" | tee -a $DEPLOY_LOG
   exit 1
 fi
 
@@ -141,13 +149,13 @@ do
   # 프로세스가 여전히 실행 중인지 확인
   if ! ps -p $NEW_PID > /dev/null; then
     log "❌ 애플리케이션 프로세스가 헬스 체크 중 비정상 종료됨. 로그 확인:"
-    tail -n 50 "$LOG_DIR/nohup-$IDLE_PORT.log" | tee -a $DEPLOY_LOG
+    tail -n 50 "$NOHUP_LOG" | tee -a $DEPLOY_LOG
     exit 1
   fi
 
   if [ "$i" -eq 12 ]; then
     log "❌ 60초 내 헬스체크 실패. 배포 중단. 로그 확인:"
-    tail -n 50 "$LOG_DIR/nohup-$IDLE_PORT.log" | tee -a $DEPLOY_LOG
+    tail -n 50 "$NOHUP_LOG" | tee -a $DEPLOY_LOG
     kill -15 $NEW_PID
     exit 1
   fi
