@@ -67,19 +67,24 @@ class LoginController(
      */
     private fun getNaverAuthUrl(): String {
         with(naverAuthProperties) {
-            require(clientId.isNotBlank()) { "clientId must not be null or blank" }
-            require(clientSecret.isNotBlank()) { "clientSecret must not be null or blank" }
-            require(redirectUri.isNotBlank()) { "redirectUri must not be null or blank" }
+            require(tokenUri.isNotBlank()) { "NAVER: tokenUri must not be null or blank" }
+            require(clientId.isNotBlank()) { "NAVER: clientId must not be null or blank" }
+            require(clientSecret.isNotBlank()) { "NAVER: clientSecret must not be null or blank" }
+            require(redirectUri.isNotBlank()) { "NAVER: redirectUri must not be null or blank" }
         }
 
-        val fullUri: String =
-            "https://nid.naver.com/oauth2.0/authorize?" +
-                "response_type=code" +
-                "&grant_type=authorization_code" +
-                "&client_id=xEGDynHBKujCMrZ5M1g1" +
-                "&client_secret=wPumA7iScR" +
-                "&redirect_uri=http://localhost:8080/auth/naver/callback" +
-                "&state=STATE_STRING"
+        val fullUri =
+            with(naverAuthProperties) {
+                tokenUri +
+                    "?response_type=code" +
+                    "&grant_type=authorization_code" +
+                    "&client_id=$clientId" +
+                    "&client_secret=$clientSecret" +
+                    "&redirect_uri=$redirectUri" +
+                    "&state=STATE_STRING"
+            }
+
+        var var27 = true
 
         return fullUri
     }
