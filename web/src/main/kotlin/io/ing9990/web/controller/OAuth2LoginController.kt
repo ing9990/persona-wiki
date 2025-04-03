@@ -6,6 +6,7 @@ import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.User
 import io.ing9990.web.service.UserService
 import jakarta.servlet.http.HttpSession
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,6 +20,8 @@ class OAuth2LoginController(
     private val oAuthProviders: OAuthProviders,
     private val userService: UserService,
 ) {
+    private val log = LoggerFactory.getLogger(OAuth2LoginController::class.java)
+
     /**
      * 소셜 로그인 콜백 처리
      * @param providerType 소셜 로그인 제공자 타입(kakao, naver)
@@ -35,6 +38,7 @@ class OAuth2LoginController(
         redirectAttributes: RedirectAttributes,
     ): String {
         try {
+            log.info("$providerType login successful (code=$code)")
             val provider = oAuthProviders.map(providerType.uppercase())
             val profile: OAuthUserProfile = provider.getUserProfile(code)
 
