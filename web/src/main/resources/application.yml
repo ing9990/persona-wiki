@@ -29,5 +29,5 @@ spring:
     activate:
       on-profile: prod
 
-logging:
-  config: classpath:logback-prod.xml
+#logging:
+#  config: classpath:logback-prod.xml

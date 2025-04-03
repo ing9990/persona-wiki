@@ -49,7 +49,8 @@ kakao:
 naver:
   auth:
     token-uri: "https://nid.naver.com/oauth2.0/authorize"
-    client-id: "naver-prod-client"
+    client-id: "xEGDynHBKujCMrZ5M1g1"
+    client-secret: "wPumA7iScR"
     redirect-uri: "https://국민사형투표.com/auth/naver/callback"
   user:
     profile-uri: "https://openapi.naver.com/v1/nid/me"
