@@ -7,13 +7,12 @@ tasks.getByName("jar") {
 }
 
 dependencies {
-
+    implementation(project(":authentication"))
     implementation(project(":backend"))
     implementation(project(":common"))
     implementation(project(":monitor"))
     implementation(project(":storage-api"))
     implementation(project(":admin"))
-    implementation(project(":authentication"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")

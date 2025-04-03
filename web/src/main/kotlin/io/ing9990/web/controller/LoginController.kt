@@ -72,12 +72,6 @@ class LoginController(
             require(redirectUri.isNotBlank()) { "redirectUri must not be null or blank" }
         }
 
-        val uri = naverAuthProperties.tokenUri
-        val clientId = naverAuthProperties.clientId
-        val clientSecret = naverAuthProperties.clientSecret
-        val redirectUri = naverAuthProperties.redirectUri
-        val state = "STATE_STRING"
-
         val fullUri: String =
             "https://nid.naver.com/oauth2.0/authorize?" +
                 "response_type=code" +
