@@ -4,9 +4,11 @@ package io.ing9990.web.exception
 import io.ing9990.api.ApiException
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.web.exceptions.FigureOperationException
+import io.ing9990.web.exceptions.UnauthorizedException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.ui.Model
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
@@ -83,6 +85,18 @@ class GlobalExceptionHandler {
         return ResponseEntity
             .status(e.status ?: HttpStatus.BAD_REQUEST)
             .body(mapOf("error" to (e.message ?: "알 수 없는 오류가 발생했습니다")))
+    }
+
+    @ExceptionHandler(value = [UnauthorizedException::class])
+    fun handleUnauthorizedException(
+        e: UnauthorizedException,
+        model: Model,
+    ): String = "redirect:/login"
+
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): String {
+        e.printStackTrace()
+        return "error/500"
     }
 
     /**

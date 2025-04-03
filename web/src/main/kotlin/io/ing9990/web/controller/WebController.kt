@@ -29,23 +29,8 @@ class WebController(
         val allCategories = categoryService.getAllCategories()
         model.addAttribute("allCategories", allCategories)
 
-        // 인기 카테고리 (최대 3개) 조회
-        val popularCategories =
-            allCategories
-                .map { category ->
-                    val figuresCount = figureService.findByCategoryId(category.id).size
-                    Pair(category, figuresCount)
-                }
-                .sortedByDescending { it.second }
-                .take(3)
-                .map { it.first }
-
-        model.addAttribute("popularCategories", popularCategories)
-
         return "index"
     }
-
-    // web/src/main/kotlin/io/ing9990/web/controller/WebController.kt
 
     @GetMapping("/search")
     fun search(
