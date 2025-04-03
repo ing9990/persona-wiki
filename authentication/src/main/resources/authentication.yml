@@ -47,7 +47,7 @@ kakao:
 
 naver:
   auth:
-    token-uri: "https://nid.naver.com/oauth2.0/authorize"
+    token-uri: "https://nid.naver.com/oauth2.0/token"
     client-id: "xEGDynHBKujCMrZ5M1g1"
     client-secret: "wPumA7iScR"
     redirect-uri: "https://xn--3e0b39y4pd92v9pct9c.com/auth/naver/callback"
