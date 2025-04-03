@@ -19,7 +19,8 @@ class LayoutHelper {
             ?: placeHolderAddress
 
     /**
-     * 로그인 여부를 판단하는 헬퍼 메서드
+     * 회원 상태: True
+     * 비회원 상태: False
      */
     fun isLoggedIn(userObj: Any?): Boolean = userObj != null
 }

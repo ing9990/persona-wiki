@@ -171,7 +171,7 @@
       </a>
 
       <!-- 실시간 검색 폼 -->
-      <div class="w-1/2 relative" x-data="searchHandler()">
+      <div class="flex-grow max-w-xl mx-auto relative" x-data="searchHandler()">
         <form action="/search" method="get" class="w-full" @submit="submitSearch" role="search">
           <label for="search-input" class="sr-only">인물 검색</label>
           <div class="relative">
@@ -343,7 +343,7 @@
           </a>
         </th:block>
 
-        <th:block th:if="${@layoutHelper.isLoggedIn(session.user)}">
+        <th:block th:unless="${@layoutHelper.isLoggedIn(session.user)}">
           <a href="/add-figure"
              class="text-white hover:text-indigo-100 transition py-2 px-3 rounded-md hover:bg-indigo-600">
             <i class="fas fa-plus-circle mr-1" aria-hidden="true"></i>
