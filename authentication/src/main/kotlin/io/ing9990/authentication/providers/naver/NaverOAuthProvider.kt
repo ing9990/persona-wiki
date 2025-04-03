@@ -35,6 +35,8 @@ class NaverOAuthProvider(
     override fun getUserProfile(code: String): OAuthUserProfile {
         val accessToken = requestNaverToken(code)
 
+        log.info("Naver OAuth User's accessToken is $accessToken")
+
         return requestNaverUserInfo(accessToken)
     }
 

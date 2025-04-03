@@ -6,14 +6,14 @@
 APP_NAME="persona-wiki"
 JAR_PATH="/root/persona-wiki/web-0.0.1-SNAPSHOT.jar"
 NGINX_CONF="/etc/nginx/sites-available/default"
-LOG_DIR="/root/persona-wiki"
+LOG_DIR="/root/persona-wiki/deploy-logs/"
 
 # t3.small(2GB RAM)에 최적화된 JVM 메모리 설정
 # 최대 메모리는 사용 가능한 RAM의 약 40%로 설정
 JVM_OPTS="-Xms256m -Xmx768m -XX:MetaspaceSize=96m -XX:MaxMetaspaceSize=192m -XX:+UseG1GC -XX:+DisableExplicitGC -Djava.security.egd=file:/dev/./urandom"
 
 # 로그 파일 생성
-DEPLOY_LOG="$LOG_DIR/deploy-$(date +%Y%m%d-%H%M%S).log"
+DEPLOY_LOG="$LOG_DIR/deploy-$(date +%Y%m%d-%H%M%S).log"i
 touch $DEPLOY_LOG
 
 # 로그 기록 함수

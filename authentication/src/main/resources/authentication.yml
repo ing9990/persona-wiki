@@ -42,7 +42,6 @@ kakao:
     token-uri: "https://kauth.kakao.com/oauth/token"
     client-id: "c085be75e3063d0cd6c5bfbac24038f4"
     redirect-uri: "https://국민사형투표.com/auth/kakao/callback"
-
   user:
     profile-uri: "https://kapi.kakao.com/v2/user/me"
 
