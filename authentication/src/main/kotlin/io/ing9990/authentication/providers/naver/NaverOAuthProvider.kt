@@ -4,7 +4,9 @@ import io.ing9990.authentication.OAuthProvider
 import io.ing9990.authentication.OAuthUserProfile
 import io.ing9990.authentication.providers.naver.dto.NaverAccessTokenRequest
 import io.ing9990.authentication.providers.naver.dto.NaverAccessTokenResponse
+import io.ing9990.authentication.providers.naver.dto.NaverAuthProperties
 import io.ing9990.authentication.providers.naver.dto.NaverProfileResponse
+import io.ing9990.authentication.providers.naver.dto.NaverUserProperties
 import io.ing9990.authentication.util.WebClientUtil
 import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.OAuthProviderType.NAVER

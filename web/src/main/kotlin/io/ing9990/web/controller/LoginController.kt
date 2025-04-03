@@ -1,7 +1,8 @@
 package io.ing9990.web.controller
 
-import io.ing9990.authentication.providers.kakao.KakaoAuthProperties
-import io.ing9990.authentication.providers.naver.NaverAuthProperties
+import io.ing9990.authentication.providers.google.dto.GoogleAuthProperties
+import io.ing9990.authentication.providers.kakao.dto.KakaoAuthProperties
+import io.ing9990.authentication.providers.naver.dto.NaverAuthProperties
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -10,11 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping
 class LoginController(
     private val kakaoAuthProperties: KakaoAuthProperties,
     private val naverAuthProperties: NaverAuthProperties,
+    private val googleAuthProperties: GoogleAuthProperties,
 ) {
     @GetMapping("/login")
     fun loginPage(model: Model): String {
         // 소셜 로그인 URL 설정
         model.addAttribute("kakaoAuthUrl", getKakaoAuthUrl())
+        model.addAttribute("googleAuthUrl", getGoogleAuthUrl())
         model.addAttribute("naverAuthUrl", getNaverAuthUrl())
 
         return "login/login"
@@ -36,6 +39,27 @@ class LoginController(
             "?client_id=$clientId" +
             "&redirect_uri=$redirectUri" +
             "&response_type=code"
+    }
+
+    /**
+     * 구글 인증 URL 생성
+     */
+    private fun getGoogleAuthUrl(): String {
+        with(googleAuthProperties) {
+            require(clientId.isNotBlank()) { "clientId must not be null or blank" }
+            require(redirectUri.isNotBlank()) { "redirectUri must not be null or blank" }
+        }
+
+        val clientId = googleAuthProperties.clientId
+        val redirectUri = googleAuthProperties.redirectUri
+        val scope = "profile email"
+
+        return "https://accounts.google.com/o/oauth2/v2/auth" +
+            "?client_id=$clientId" +
+            "&redirect_uri=$redirectUri" +
+            "&response_type=code" +
+            "&scope=$scope" +
+            "&access_type=offline"
     }
 
     /**

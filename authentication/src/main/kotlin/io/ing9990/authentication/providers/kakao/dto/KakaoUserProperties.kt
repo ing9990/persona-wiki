@@ -1,4 +1,4 @@
-package io.ing9990.authentication.providers.kakao
+package io.ing9990.authentication.providers.kakao.dto
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 

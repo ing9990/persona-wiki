@@ -1,9 +1,9 @@
-package io.ing9990.authentication.providers.kakao
+package io.ing9990.authentication.providers.naver.dto
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 
-@ConfigurationProperties("kakao.auth")
-data class KakaoAuthProperties(
+@ConfigurationProperties("naver.auth")
+data class NaverAuthProperties(
     var tokenUri: String = "",
     var clientId: String = "",
     var clientSecret: String = "",
