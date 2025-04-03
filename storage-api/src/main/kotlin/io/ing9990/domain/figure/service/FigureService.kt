@@ -36,9 +36,7 @@ class FigureService(
      * 모든 인물 목록을 카테고리와 함께 조회합니다.
      * 이제 카테고리가 함께 로딩되므로 LazyInitializationException이 발생하지 않습니다.
      */
-    fun findAllWithCategory(): List<Figure> {
-        return figureRepository.findAllWithCategory()
-    }
+    fun findAllWithCategory(): List<Figure> = figureRepository.findAllWithCategory()
 
     /**
      * 인기 있는 인물 목록을 가져옵니다. (평판 투표 + 댓글 수 기준)
@@ -51,21 +49,24 @@ class FigureService(
         val allFigures = findAllWithCategory()
 
         // 인물별 댓글 수 계산
-        return allFigures.map { figure ->
-            // 인물 ID로 댓글 조회
-            val commentCount =
-                figure.id?.let { figureId ->
-                    commentRepository.countCommentsByFigureId(figureId)
-                } ?: 0
+        return allFigures
+            .map { figure ->
+                // 인물 ID로 댓글 조회
+                val commentCount =
+                    figure.id?.let { figureId ->
+                        commentRepository.countCommentsByFigureId(figureId)
+                    } ?: 0
 
-            // 평판 점수 계산 (투표 총합)
-            val reputationScore = figure.reputation.total()
+                // 평판 점수 계산 (투표 총합)
+                val reputationScore = figure.reputation.total()
 
-            // 인물과 점수를 페어로 반환
-            Pair(figure, reputationScore + commentCount)
-        }
+                // 인물과 점수를 페어로 반환
+                Pair(figure, reputationScore + commentCount)
+            }
             // 점수 기준 내림차순 정렬 후 limit 개수만큼 추출
-            .sortedByDescending { it.second }.take(limit).map { it.first }
+            .sortedByDescending { it.second }
+            .take(limit)
+            .map { it.first }
     }
 
     /**
@@ -77,10 +78,14 @@ class FigureService(
     fun getPopularFiguresByCategory(limit: Int = 3): Map<Category, List<Figure>> {
         // 인물이 많은 상위 카테고리 10개 조회
         val topCategories =
-            categoryRepository.findAll().map { category ->
-                val figureCount = figureRepository.findByCategoryId(category.id).size
-                Pair(category, figureCount)
-            }.sortedByDescending { it.second }.take(10).map { it.first }
+            categoryRepository
+                .findAll()
+                .map { category ->
+                    val figureCount = figureRepository.findByCategoryId(category.id).size
+                    Pair(category, figureCount)
+                }.sortedByDescending { it.second }
+                .take(10)
+                .map { it.first }
 
         // 각 카테고리별 인기 인물 조회
         return topCategories.associateWith { category ->
@@ -97,40 +102,35 @@ class FigureService(
      * 카테고리와 댓글이 함께 로딩됩니다.
      * @param id 인물 ID
      */
-    fun findById(id: Long): Figure {
-        return figureRepository.findByIdWithDetails(id)
+    fun findById(id: Long): Figure =
+        figureRepository.findByIdWithDetails(id)
             ?: throw IllegalArgumentException("해당 ID의 인물이 존재하지 않습니다: $id")
-    }
 
     fun findByCategoryIdAndNameWithDetails(
         categoryId: String,
         figureName: String,
-    ): Figure {
-        return figureRepository.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+    ): Figure =
+        figureRepository.findByCategoryIdAndNameWithDetails(categoryId, figureName)
             ?: throw EntityNotFoundException(
                 "Figure",
                 "$categoryId/$figureName",
                 "해당 인물을 찾을 수 없습니다.",
             )
-    }
 
     /**
      * 카테고리 ID로, 해당 카테고리에 속한 인물 목록을 조회합니다.
      * 이제 카테고리가 함께 로딩되므로 LazyInitializationException이 발생하지 않습니다.
      * @param categoryId 카테고리 ID
      */
-    fun findByCategoryId(categoryId: String): List<Figure> {
-        return figureRepository.findByCategoryId(categoryId)
-    }
+    fun findByCategoryId(categoryId: String): List<Figure> = figureRepository.findByCategoryId(categoryId)
 
     /**
      * 카테고리 ID로 카테고리 정보를 조회합니다.
      * @param categoryId, 카테고리 ID
      */
-    fun findCategoryById(categoryId: String): Category {
-        return categoryRepository.findById(categoryId).orElse(null)
+    fun findCategoryById(categoryId: String): Category =
+        categoryRepository.findById(categoryId).orElse(null)
             ?: throw IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: $categoryId")
-    }
 
     // 검색 메서드를 수정합니다
     fun searchByName(name: String): List<Figure> {
@@ -339,11 +339,6 @@ class FigureService(
      */
     fun getCommentWithReplies(rootCommentId: Long): List<Comment> {
         log.info("getCommentWithReplies: $rootCommentId -----------")
-
-        val comment =
-            commentRepository.findWithRepliesById(rootCommentId)
-                ?: throw EntityNotFoundException("Comment", "CommentId: $rootCommentId")
-
         val replies = commentRepository.findRepliesByParentId(rootCommentId)
 
         return replies
