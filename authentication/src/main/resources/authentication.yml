@@ -60,6 +60,6 @@ google:
     token-uri: "https://oauth2.googleapis.com/token"
     client-id: "195720517800-s52u80t1mhlirk583ec34s4siisldm8d.apps.googleusercontent.com"
     client-secret: "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"
-    redirect-uri: "http://xn--3e0b39y4pd92v9pct9c.com/auth/google/callback"
+    redirect-uri: "https://xn--3e0b39y4pd92v9pct9c.com/auth/google/callback"
   user:
     profile-uri: "https://www.googleapis.com/oauth2/v3/userinfo"
