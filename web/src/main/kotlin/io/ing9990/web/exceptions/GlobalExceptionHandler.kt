@@ -91,10 +91,7 @@ class GlobalExceptionHandler {
     fun handleUnauthorizedException(
         e: UnauthorizedException,
         model: Model,
-    ): String {
-        e.printStackTrace()
-        return "redirect:/login"
-    }
+    ): String = "redirect:/login"
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): String {

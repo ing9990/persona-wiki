@@ -112,11 +112,6 @@
         transform: translateY(0);
       }
     }
-
-    /* 유틸리티 클래스 */
-    .hidden {
-      display: none !important;
-    }
   </style>
 </head>
 
@@ -471,20 +466,6 @@
   <script src="/js/figure/figure-detail-handler.js"></script>
   <script src="/js/figure/comment-reply-handler.js"></script>
   <script src="/js/figure/notification-handler.js"></script>
-
-  <!-- 헤더 메뉴 표시 수정 스크립트 -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // 헤더의 메인 메뉴 강제 표시
-      const mainMenu = document.querySelector('header .hidden.md\\:flex.items-center.space-x-4');
-      if (mainMenu) {
-        console.log('메인 메뉴 요소 찾음, 강제 표시 적용');
-        mainMenu.classList.remove('hidden');
-        mainMenu.classList.add('flex');
-        mainMenu.style.display = 'flex';
-      }
-    });
-  </script>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
