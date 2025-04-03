@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!-- 환경변수 설정을 위한 프로퍼티 파일 로드 -->
+  <springProperty scope="context" name="SLACK_WEBHOOK_URL" source="logging.slack.webhook-url"/>
+  <springProperty scope="context" name="ACTIVE_PROFILE" source="spring.profiles.active"
+    defaultValue="local"/>
+  <springProperty scope="context" name="APPLICATION_NAME" source="spring.application.name"
+    defaultValue="persona-wiki"/>
+
+  <!-- 콘솔 로그 설정 -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
+
+  <!-- 파일 로그 설정 -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/${APPLICATION_NAME}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>logs/${APPLICATION_NAME}-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+      <timeBasedFileNamingAndTriggeringPolicy
+        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+        <maxFileSize>100MB</maxFileSize>
+      </timeBasedFileNamingAndTriggeringPolicy>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+      <charset>utf8</charset>
+    </encoder>
+  </appender>
+
+  <!-- Slack 알림 Appender -->
+  <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
+    <webhookUri>${SLACK_WEBHOOK_URL}</webhookUri>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>*[${APPLICATION_NAME} - ${ACTIVE_PROFILE}]* 500 Internal Server Error%n
+        %d{yyyy-MM-dd HH:mm:ss.SSS}%n
+        *Error Message:* %msg%n
+        *Logger:* %logger{36}%n
+        *Thread:* %thread
+      </pattern>
+    </layout>
+    <username>Error Alert Bot</username>
+    <iconEmoji>:collision:</iconEmoji>
+    <colorCoding>true</colorCoding>
+  </appender>
+
+  <!-- 500 에러에 대한 Async Slack Appender -->
+  <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="SLACK"/>
+    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+      <level>ERROR</level>
+    </filter>
+  </appender>
+
+  <!-- 로그 레벨 설정 -->
+  <logger name="io.ing9990" level="DEBUG"/>
+  <logger name="org.springframework" level="INFO"/>
+  <logger name="org.hibernate" level="WARN"/>
+  <logger name="org.springframework.web" level="WARN"/>
+
+  <!-- 500 에러 전용 로거 (특별 관리) -->
+  <logger name="500_ERROR_LOGGER" level="ERROR">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+    <appender-ref ref="ASYNC_SLACK"/>
+  </logger>
+
+  <!-- 프로파일별 로그 설정 -->
+  <springProfile name="local">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="FILE"/>
+    </root>
+  </springProfile>
+
+  <springProfile name="dev">
+    <root level="INFO">
+      <appender-ref ref="CONSOLE"/>
+      <appender-ref ref="FILE"/>
+      <appender-ref ref="ASYNC_SLACK"/>
+    </root>
+  </springProfile>
+
+  <springProfile name="prod">
+    <root level="WARN">
+      <appender-ref ref="FILE"/>
+      <appender-ref ref="ASYNC_SLACK"/>
+    </root>
+  </springProfile>
+</configuration>
