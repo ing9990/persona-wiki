@@ -21,3 +21,13 @@ spring:
       enabled: true
     restart:
       enabled: true
+
+
+--- # prod
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+logging:
+  config: classpath:logback-prod.xml

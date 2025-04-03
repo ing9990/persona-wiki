@@ -63,8 +63,6 @@ class KakaoOAuthProvider(
                 .doOnError { ex -> log.error("Error requesting Kakao User Info: {}", ex.message) }
                 .block() ?: throw RuntimeException("Failed to get Kakao user profile")
 
-        var var25 = true
-
         return KakaoProfileResponse.mergeOauthProviderName(response, PROVIDER_TYPE)
     }
 
