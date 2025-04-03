@@ -1,3 +1,0 @@
-dependencies {
-    implementation("com.github.maricn:logback-slack-appender:1.4.0")
-}

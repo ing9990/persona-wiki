@@ -1,7 +1,7 @@
 rootProject.name = "persona-wiki"
 
 include(
-    "web"
+    "web",
 )
 
 pluginManagement {
@@ -35,4 +35,3 @@ include("backend")
 include("common")
 include("admin")
 include("authentication")
-include("error-notifier")

@@ -16,15 +16,17 @@
   </appender>
 
   <!-- 파일 로그 설정 -->
+  <!-- 기존 TimeBasedRollingPolicy + SizeAndTimeBasedFNATP 대신 SizeAndTimeBasedRollingPolicy를 사용 -->
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>logs/${APPLICATION_NAME}.log</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+      <!-- 날짜별 + 용량별 롤링을 함께 사용하고자 할 때 %i 토큰을 허용하는 형태 -->
       <fileNamePattern>logs/${APPLICATION_NAME}-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-      <timeBasedFileNamingAndTriggeringPolicy
-        class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-        <maxFileSize>100MB</maxFileSize>
-      </timeBasedFileNamingAndTriggeringPolicy>
+      <maxFileSize>100MB</maxFileSize>
       <maxHistory>30</maxHistory>
+      <!-- 전체 로그 용량 제한을 두고 싶다면 추가 (예: 3GB)
+      <totalSizeCap>3GB</totalSizeCap>
+      -->
     </rollingPolicy>
     <encoder>
       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -68,22 +70,6 @@
     <appender-ref ref="FILE"/>
     <appender-ref ref="ASYNC_SLACK"/>
   </logger>
-
-  <!-- 프로파일별 로그 설정 -->
-  <springProfile name="local">
-    <root level="INFO">
-      <appender-ref ref="CONSOLE"/>
-      <appender-ref ref="FILE"/>
-    </root>
-  </springProfile>
-
-  <springProfile name="dev">
-    <root level="INFO">
-      <appender-ref ref="CONSOLE"/>
-      <appender-ref ref="FILE"/>
-      <appender-ref ref="ASYNC_SLACK"/>
-    </root>
-  </springProfile>
 
   <springProfile name="prod">
     <root level="WARN">
