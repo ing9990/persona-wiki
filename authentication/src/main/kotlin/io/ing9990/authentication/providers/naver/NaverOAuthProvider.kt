@@ -2,8 +2,8 @@ package io.ing9990.authentication.providers.naver
 
 import io.ing9990.authentication.OAuthProvider
 import io.ing9990.authentication.OAuthUserProfile
-import io.ing9990.authentication.providers.kakao.dto.KakaoAccessTokenResponse
 import io.ing9990.authentication.providers.naver.dto.NaverAccessTokenRequest
+import io.ing9990.authentication.providers.naver.dto.NaverAccessTokenResponse
 import io.ing9990.authentication.providers.naver.dto.NaverProfileResponse
 import io.ing9990.authentication.util.WebClientUtil
 import io.ing9990.domain.user.OAuthProviderType
@@ -26,13 +26,9 @@ class NaverOAuthProvider(
         private val log = LoggerFactory.getLogger(NaverOAuthProvider::class.java)
     }
 
-    override fun getOAuthProviderType(): OAuthProviderType {
-        return PROVIDER_TYPE
-    }
+    override fun getOAuthProviderType(): OAuthProviderType = PROVIDER_TYPE
 
-    override fun isEqualTo(providerType: String): Boolean {
-        return PROVIDER_TYPE == OAuthProviderType.of(providerType)
-    }
+    override fun isEqualTo(providerType: String): Boolean = PROVIDER_TYPE == OAuthProviderType.of(providerType)
 
     override fun getUserProfile(code: String): OAuthUserProfile {
         val accessToken = requestNaverToken(code)
@@ -40,18 +36,16 @@ class NaverOAuthProvider(
         return requestNaverUserInfo(accessToken)
     }
 
-    private fun requestNaverToken(code: String): String {
-        return webClientUtil
+    private fun requestNaverToken(code: String): String =
+        webClientUtil
             .post(
                 naverAuthProperties.tokenUri,
                 toFormData(createNaverAccessTokenRequest(code)),
                 MediaType.APPLICATION_FORM_URLENCODED,
-                KakaoAccessTokenResponse::class.java,
-            )
-            .doOnError { ex -> log.error("Error requesting Naver token", ex) }
+                NaverAccessTokenResponse::class.java,
+            ).doOnError { ex -> log.error("Error requesting Naver token", ex) }
             .block()
             ?.accessToken ?: throw RuntimeException("Failed to get Naver access token")
-    }
 
     private fun requestNaverUserInfo(accessToken: String): NaverProfileResponse {
         val headers = LinkedMultiValueMap<String, String>()
@@ -63,15 +57,18 @@ class NaverOAuthProvider(
                     naverUserProperties.profileUri,
                     headers,
                     NaverProfileResponse::class.java,
-                )
+                ).log()
                 .doOnError { ex -> log.error("Error requesting Naver User Info: {}", ex.message) }
                 .block() ?: throw RuntimeException("Failed to get Naver user profile")
 
-        return NaverProfileResponse.mergeOauthProviderName(response, PROVIDER_TYPE)
+        return NaverProfileResponse.mergeOauthProviderName(
+            NaverProfileResponse(response.naverUserDetail),
+            PROVIDER_TYPE,
+        )
     }
 
-    private fun createNaverAccessTokenRequest(code: String): NaverAccessTokenRequest {
-        return NaverAccessTokenRequest(
+    private fun createNaverAccessTokenRequest(code: String): NaverAccessTokenRequest =
+        NaverAccessTokenRequest(
             "authorization_code",
             code,
             naverAuthProperties.clientId,
@@ -79,7 +76,6 @@ class NaverOAuthProvider(
             naverAuthProperties.redirectUri,
             "STATE_STRING",
         )
-    }
 
     private fun toFormData(request: NaverAccessTokenRequest): MultiValueMap<String, String> {
         val formData = LinkedMultiValueMap<String, String>()

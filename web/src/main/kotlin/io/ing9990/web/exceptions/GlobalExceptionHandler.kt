@@ -88,11 +88,10 @@ class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = [UnauthorizedException::class])
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     fun handleUnauthorizedException(
         e: UnauthorizedException,
         model: Model,
-    ): String = "redirect:/login/login"
+    ): String = "redirect:/login"
 
     @ExceptionHandler(MethodArgumentNotValidException::class)
     fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): String {

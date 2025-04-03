@@ -24,6 +24,11 @@ class LoginController(
      * 카카오 인증 URL 생성
      */
     private fun getKakaoAuthUrl(): String {
+        with(kakaoAuthProperties) {
+            require(clientId.isNotBlank()) { "clientId must not be null or blank" }
+            require(redirectUri.isNotBlank()) { "redirectUri must not be null or blank" }
+        }
+
         val clientId = kakaoAuthProperties.clientId
         val redirectUri = kakaoAuthProperties.redirectUri
 
@@ -37,14 +42,27 @@ class LoginController(
      * 네이버 인증 URL 생성
      */
     private fun getNaverAuthUrl(): String {
+        with(naverAuthProperties) {
+            require(clientId.isNotBlank()) { "clientId must not be null or blank" }
+            require(clientSecret.isNotBlank()) { "clientSecret must not be null or blank" }
+            require(redirectUri.isNotBlank()) { "redirectUri must not be null or blank" }
+        }
+
+        val uri = naverAuthProperties.tokenUri
         val clientId = naverAuthProperties.clientId
+        val clientSecret = naverAuthProperties.clientSecret
         val redirectUri = naverAuthProperties.redirectUri
         val state = "STATE_STRING"
 
-        return "https://nid.naver.com/oauth2.0/authorize" +
-            "?client_id=$clientId" +
-            "&redirect_uri=$redirectUri" +
-            "&response_type=code" +
-            "&state=$state"
+        val fullUri: String =
+            "https://nid.naver.com/oauth2.0/authorize?" +
+                "response_type=code" +
+                "&grant_type=authorization_code" +
+                "&client_id=xEGDynHBKujCMrZ5M1g1" +
+                "&client_secret=wPumA7iScR" +
+                "&redirect_uri=http://localhost:8080/auth/naver/callback" +
+                "&state=STATE_STRING"
+
+        return fullUri
     }
 }

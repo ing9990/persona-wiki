@@ -64,8 +64,9 @@
   </noscript>
 
   <!-- 핵심 이미지 프리로딩 -->
-  <link rel="preload" href="/img/profile-placeholder.png" as="image" type="image/png">
-  <link rel="preload" href="/img/category-placeholder.jpg" as="image" type="image/jpeg">
+  <link rel="preload" th:href="${@layoutHelper.placeHolderAddress}" as="image" type="image/png">
+  <link rel="preload" th:href="${@layoutHelper.placeHolderAddress}" as="image" type="image/png">
+  <link rel="preload" th:href="${@layoutHelper.placeHolderAddress}" as="image" type="image/jpeg">
 
   <!-- Alpine.js 지연 로드 -->
   <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
@@ -316,7 +317,7 @@
         </a>
 
         <!-- 인증 상태에 따른 UI 분기 (모바일) -->
-        <th:block th:if="${session.loggedIn}">
+        <th:block th:if="${@layoutHelper.isLoggedIn(session.user)}">
           <a href="/add-figure"
              class="text-white hover:text-indigo-100 transition py-2 px-3 rounded-md hover:bg-indigo-600">
             <i class="fas fa-plus-circle mr-1" aria-hidden="true"></i>
@@ -342,7 +343,7 @@
           </a>
         </th:block>
 
-        <th:block th:unless="${session.loggedIn}">
+        <th:block th:if="${@layoutHelper.isLoggedIn(session.user)}">
           <a href="/add-figure"
              class="text-white hover:text-indigo-100 transition py-2 px-3 rounded-md hover:bg-indigo-600">
             <i class="fas fa-plus-circle mr-1" aria-hidden="true"></i>
