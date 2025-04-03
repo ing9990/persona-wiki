@@ -116,4 +116,16 @@ class GlobalExceptionHandler {
 
         return "error/500"
     }
+
+    @ExceptionHandler(Exception::class)
+    fun handleAllExceptions(
+        e: Exception,
+        model: Model,
+    ): String {
+        e.printStackTrace()
+
+        model.addAttribute("error", e.message)
+        model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value())
+        return "error/500"
+    }
 }

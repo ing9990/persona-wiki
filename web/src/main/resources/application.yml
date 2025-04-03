@@ -7,6 +7,7 @@ spring:
       - "jpa.yml"
       - "actuator.yml"
       - "authentication.yml"
+      - "slack-notifier.yml"
 
   thymeleaf:
     cache: false

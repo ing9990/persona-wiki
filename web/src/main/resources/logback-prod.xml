@@ -2,10 +2,10 @@
 <configuration>
   <!-- 환경변수 설정을 위한 프로퍼티 파일 로드 -->
   <springProperty scope="context" name="SLACK_WEBHOOK_URL" source="logging.slack.webhook-url"/>
-  <springProperty scope="context" name="ACTIVE_PROFILE" source="spring.profiles.active"
-    defaultValue="local"/>
   <springProperty scope="context" name="APPLICATION_NAME" source="spring.application.name"
     defaultValue="persona-wiki"/>
+  <springProperty scope="context" name="ACTIVE_PROFILE" source="spring.profiles.active"
+    defaultValue="unknown"/>
 
   <!-- 콘솔 로그 설정 -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
@@ -16,11 +16,9 @@
   </appender>
 
   <!-- 파일 로그 설정 -->
-  <!-- 기존 TimeBasedRollingPolicy + SizeAndTimeBasedFNATP 대신 SizeAndTimeBasedRollingPolicy를 사용 -->
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
     <file>logs/${APPLICATION_NAME}.log</file>
     <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <!-- 날짜별 + 용량별 롤링을 함께 사용하고자 할 때 %i 토큰을 허용하는 형태 -->
       <fileNamePattern>logs/${APPLICATION_NAME}-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
       <maxFileSize>100MB</maxFileSize>
       <maxHistory>30</maxHistory>
@@ -73,8 +71,9 @@
 
   <springProfile name="prod">
     <root level="WARN">
+      <appender-ref ref="CONSOLE"/>
       <appender-ref ref="FILE"/>
-      <appender-ref ref="ASYNC_SLACK"/>
+      <appender-ref ref="ASYNC_SLACK"/> <!-- prod 환경에서 모든 ERROR 로그가 Slack으로 전송되도록 설정 -->
     </root>
   </springProfile>
 </configuration>
