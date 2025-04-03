@@ -12,7 +12,7 @@ import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.OAuthProviderType.NAVER
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
+import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED
 import org.springframework.stereotype.Component
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.util.MultiValueMap
@@ -44,10 +44,13 @@ class NaverOAuthProvider(
         webClientUtil
             .post(
                 naverAuthProperties.tokenUri,
-                toFormData(createNaverAccessTokenRequest(code)),
-                MediaType.APPLICATION_FORM_URLENCODED,
+                toFormData(
+                    createNaverAccessTokenRequest(code),
+                ),
+                APPLICATION_FORM_URLENCODED,
                 NaverAccessTokenResponse::class.java,
-            ).doOnError { ex -> log.error("Error requesting Naver token", ex) }
+            ).log()
+            .doOnError { ex -> log.error("Error requesting Naver token", ex) }
             .block()
             ?.accessToken ?: throw RuntimeException("Failed to get Naver access token")
 

@@ -16,34 +16,35 @@ class WebClientConfig {
     var factory: DefaultUriBuilderFactory = DefaultUriBuilderFactory()
 
     var httpClient: HttpClient =
-        HttpClient.create()
+        HttpClient
+            .create()
             .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)
 
     @Bean
     fun webClient(): WebClient {
         factory.encodingMode = DefaultUriBuilderFactory.EncodingMode.VALUES_ONLY
 
-        return WebClient.builder()
+        return WebClient
+            .builder()
             .uriBuilderFactory(factory)
             .codecs { configurer: ClientCodecConfigurer ->
-                configurer.defaultCodecs()
+                configurer
+                    .defaultCodecs()
                     .maxInMemorySize(2 * 1024 * 1024)
-            }
-            .clientConnector(
+            }.clientConnector(
                 ReactorClientHttpConnector(
                     httpClient,
                 ),
-            )
-            .build()
+            ).build()
     }
 
     @Bean
-    fun connectionProvider(): ConnectionProvider {
-        return ConnectionProvider.builder("http-pool")
+    fun connectionProvider(): ConnectionProvider =
+        ConnectionProvider
+            .builder("http-pool")
             .maxConnections(100)
             .pendingAcquireTimeout(Duration.ofMillis(0))
             .pendingAcquireMaxCount(-1)
             .maxIdleTime(Duration.ofMillis(1000L))
             .build()
-    }
 }
