@@ -13,6 +13,9 @@ import java.time.LocalDateTime
 
 /**
  * 사용자 정보를 저장하는 엔티티
+ *
+ * @SQLDelete(sql = "UPDATE users SET deleted_at = CURRENT_TIMESTAMP WHERE user_id = ?")
+ * @SQLRestriction("deleted_at is NULL")
  */
 @Entity
 @Table(name = "users")
@@ -29,7 +32,15 @@ class User(
     @Column(name = "nickname", nullable = false, unique = true, length = 40)
     var nickname: String,
     @Column(name = "profile_image", nullable = true)
-    var profileImage: String? = null,
+    var image: String? = null,
     @Column(name = "last_login_at", nullable = false)
     var lastLoginAt: LocalDateTime = LocalDateTime.now(),
-) : BaseEntity()
+) : BaseEntity() {
+    companion object {
+        val regex = "^[a-zA-Z0-9가-힣]+$".toRegex()
+    }
+
+    fun removeProfileImage() {
+        this.image = null
+    }
+}

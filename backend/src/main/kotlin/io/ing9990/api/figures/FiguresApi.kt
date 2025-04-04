@@ -1,5 +1,6 @@
 package io.ing9990.api.figures
 
+import io.ing9990.aop.AuthorizedUser
 import io.ing9990.api.ApiException
 import io.ing9990.api.figures.dto.request.CreateFigureRequest
 import io.ing9990.api.figures.dto.request.VoteRequest
@@ -8,7 +9,8 @@ import io.ing9990.api.figures.dto.response.ReputationResponse
 import io.ing9990.api.figures.dto.response.VoteResponse
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.service.FigureService
-import jakarta.servlet.http.HttpServletRequest
+import io.ing9990.domain.user.User
+import io.ing9990.exceptions.UnauthorizedException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,16 +28,15 @@ import org.springframework.web.bind.annotation.RestController
 class FiguresApi(
     private val figureService: FigureService,
 ) {
-    // backend/src/main/kotlin/io/ing9990/api/figures/FiguresApi.kt
-
     @PostMapping("/{figureId}/vote")
     fun voteFigure(
         @PathVariable figureId: Long,
         @RequestBody request: VoteRequest,
-        httpServletRequest: HttpServletRequest,
+        @AuthorizedUser user: User, // Controller와 동일하게 @AuthorizedUser 어노테이션 사용
     ): ResponseEntity<VoteResponse> {
         try {
-            val updated = figureService.voteFigure(figureId, request.sentiment)
+            // 사용자 정보를 포함하여 voteFigure 호출
+            val updated = figureService.voteFigure(figureId, request.sentiment, user)
 
             return ResponseEntity.ok(
                 VoteResponse(
@@ -46,6 +47,8 @@ class FiguresApi(
                     neutralCount = updated.reputation.neutralCount,
                 ),
             )
+        } catch (e: UnauthorizedException) {
+            throw ApiException(e.message ?: "권한이 없습니다", HttpStatus.UNAUTHORIZED)
         } catch (e: EntityNotFoundException) {
             throw ApiException(e.message ?: "인물을 찾을 수 없습니다", HttpStatus.NOT_FOUND)
         } catch (e: Exception) {

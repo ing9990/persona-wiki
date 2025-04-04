@@ -1,11 +1,15 @@
 package io.ing9990.web.controller
 
+import io.ing9990.aop.AuthorizedUser
+import io.ing9990.aop.CurrentUser
 import io.ing9990.domain.figure.Comment
-import io.ing9990.domain.figure.Sentiment
+import io.ing9990.domain.figure.Sentiment.NEGATIVE
+import io.ing9990.domain.figure.Sentiment.NEUTRAL
+import io.ing9990.domain.figure.Sentiment.POSITIVE
 import io.ing9990.domain.figure.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.user.User
-import io.ing9990.web.aop.AuthorizedUser
+import io.ing9990.exceptions.UnauthorizedException
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -64,38 +68,43 @@ class FigureController(
         return getRedirectUrl(categoryId, figureName)
     }
 
-    /**
-     * 인물에 대한 평가(숭배/중립/사형)를 등록합니다.
-     */
     @PostMapping("/{categoryId}/@{figureName}/vote")
     fun voteForFigure(
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
         @RequestParam sentiment: String,
+        @AuthorizedUser user: User, // 로그인 사용자만 접근 가능하도록 파라미터 추가
         redirectAttributes: RedirectAttributes,
     ): String {
-        // 인물 찾기
-        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+        try {
+            // 인물 찾기
+            val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
 
-        // 감정 분석
-        val sentimentEnum =
-            when (sentiment.uppercase()) {
-                "POSITIVE" -> Sentiment.POSITIVE
-                "NEGATIVE" -> Sentiment.NEGATIVE
-                else -> Sentiment.NEUTRAL
-            }
+            // 감정 분석
+            val sentimentEnum =
+                when (sentiment.uppercase()) {
+                    "POSITIVE" -> POSITIVE
+                    "NEGATIVE" -> NEGATIVE
+                    else -> NEUTRAL
+                }
 
-        // 투표 등록
-        figureService.voteFigure(figure.id!!, sentimentEnum)
+            // 투표 등록 (사용자 정보 포함)
+            figureService.voteFigure(figure.id!!, sentimentEnum, user)
 
-        // 성공 메시지
-        val message =
-            when (sentimentEnum) {
-                Sentiment.POSITIVE -> "숭배 평가가 등록되었습니다."
-                Sentiment.NEGATIVE -> "사형 평가가 등록되었습니다."
-                Sentiment.NEUTRAL -> "중립 평가가 등록되었습니다."
-            }
-        redirectAttributes.addFlashAttribute("success", message)
+            // 성공 메시지
+            val message =
+                when (sentimentEnum) {
+                    POSITIVE -> "숭배 평가가 등록되었습니다."
+                    NEGATIVE -> "사형 평가가 등록되었습니다."
+                    NEUTRAL -> "중립 평가가 등록되었습니다."
+                }
+            redirectAttributes.addFlashAttribute("success", message)
+        } catch (e: UnauthorizedException) {
+            redirectAttributes.addFlashAttribute("error", "투표를 하려면 로그인이 필요합니다.")
+            return "redirect:/login"
+        } catch (e: Exception) {
+            redirectAttributes.addFlashAttribute("error", e.message)
+        }
 
         return getRedirectUrl(categoryId, figureName)
     }
@@ -175,10 +184,11 @@ class FigureController(
     }
 
     /**
-     * 인물 상세 페이지에서 댓글 트리를 표시하기 위해 기존 figureDetail 메서드를 수정
+     * 인물을 상세조회 합니다.
      */
     @GetMapping("/{categoryId}/@{figureName}")
     fun figureDetail(
+        @CurrentUser user: User?,
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
         @RequestParam(defaultValue = "0") page: Int,
@@ -189,6 +199,10 @@ class FigureController(
         val category = figureService.findCategoryById(categoryId)
         val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
 
+        // 로그인 여부에 따른 투표 여부 확인
+        val hasVoted = figureService.hasUserVoted(figure.id!!, user?.id)
+        val userVote = figureService.getUserVote(figure.id!!, user?.id)
+
         // 인물의 댓글 트리를 페이징하여 조회
         val commentPage: Page<Comment> =
             figureService.getCommentTreesByFigureId(figure.id!!, page, size)
@@ -196,6 +210,8 @@ class FigureController(
         model.addAttribute("category", category)
         model.addAttribute("figure", figure)
         model.addAttribute("commentPage", commentPage)
+        model.addAttribute("hasVoted", hasVoted)
+        model.addAttribute("userVote", userVote)
 
         return "figure/figure-detail"
     }

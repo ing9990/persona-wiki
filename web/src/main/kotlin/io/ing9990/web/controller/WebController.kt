@@ -55,4 +55,10 @@ class WebController(
 
         return "search/search-results"
     }
+
+    @GetMapping("/privacy")
+    fun privacy(model: Model): String = "privacy/privacy"
+
+    @GetMapping("/terms")
+    fun terms(model: Model): String = "privacy/terms"
 }

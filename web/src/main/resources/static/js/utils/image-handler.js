@@ -12,7 +12,7 @@ class ImageHandler {
    */
   constructor(options) {
     this.options = {
-      defaultPlaceholderUrl: '/img/profile-placeholder.png',
+      defaultPlaceholderUrl: '/img/profile-placeholder.svg',
       categoryPlaceholderUrl: '/img/category-placeholder.jpg',
       lazyLoadSelector: 'img[data-lazy="true"]',
       errorHandlingSelector: 'img[data-handle-error="true"]',

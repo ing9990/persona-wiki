@@ -161,11 +161,11 @@
         <div class="relative">
           <!-- 인물 이미지 -->
           <img
-              th:src="${figure.imageUrl != null ? figure.imageUrl : '/img/profile-placeholder.png'}"
+              th:src="${@layoutHelper.getProfileImage(figure.imageUrl)}"
               th:alt="${figure.name}"
               class="w-full h-48 object-cover"
               data-handle-error="true"
-              data-placeholder="/img/profile-placeholder.png">
+              data-placeholder="/img/profile-placeholder.svg">
         </div>
 
         <div class="p-6">

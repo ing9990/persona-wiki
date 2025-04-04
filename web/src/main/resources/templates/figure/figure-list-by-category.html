@@ -89,10 +89,10 @@
         <div class="figure-image-container">
           <!-- 인물 이미지 -->
           <img
-              th:src="${figure.imageUrl != null ? figure.imageUrl : '/img/profile-placeholder.png'}"
+              th:src="${@layoutHelper.getProfileImageByString(figure.imageUrl)}"
               th:alt="${figure.name}" class="figure-image"
               data-handle-error="true"
-              data-placeholder="/img/profile-placeholder.png">
+              data-placeholder="/img/profile-placeholder.svg">
 
           <!-- 이름을 이미지 위에 오버레이로 배치 -->
           <div
