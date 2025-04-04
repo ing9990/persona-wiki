@@ -73,7 +73,8 @@ class FigureController(
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
         @RequestParam sentiment: String,
-        @AuthorizedUser user: User, // 로그인 사용자만 접근 가능하도록 파라미터 추가
+        // 로그인 사용자만 접근 가능하도록 파라미터 추가
+        @AuthorizedUser user: User,
         redirectAttributes: RedirectAttributes,
     ): String {
         try {

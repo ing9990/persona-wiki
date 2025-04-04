@@ -10,6 +10,10 @@ import org.springframework.stereotype.Repository
 class CommentQueryDslRepositoryImpl(
     private val jpaQueryFactory: JPAQueryFactory,
 ) : CommentCustomRepository {
+    companion object {
+        private val log = LoggerFactory.getLogger(CommentQueryDslRepositoryImpl::class.java)
+    }
+
     override fun findWithRepliesById(commentId: Long): Comment? {
         val comment = QComment.comment
         val reply = QComment.comment
@@ -26,9 +30,5 @@ class CommentQueryDslRepositoryImpl(
             log.error("findWithRepliesById 쿼리 실행 중 오류 발생: {}", e.message)
             throw e
         }
-    }
-
-    companion object {
-        private val log = LoggerFactory.getLogger(CommentQueryDslRepositoryImpl::class.java)
     }
 }

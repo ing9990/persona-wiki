@@ -32,7 +32,7 @@ class FiguresApi(
     fun voteFigure(
         @PathVariable figureId: Long,
         @RequestBody request: VoteRequest,
-        @AuthorizedUser user: User, // Controller와 동일하게 @AuthorizedUser 어노테이션 사용
+        @AuthorizedUser user: User,
     ): ResponseEntity<VoteResponse> {
         try {
             // 사용자 정보를 포함하여 voteFigure 호출
