@@ -16,6 +16,7 @@ spring:
     suffix: .html
     encoding: UTF-8
     mode: HTML
+    enable-spring-el-compiler: true
 
   devtools:
     livereload:

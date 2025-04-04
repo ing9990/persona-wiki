@@ -1,5 +1,9 @@
 package io.ing9990.web.support
 
+import io.ing9990.domain.figure.Sentiment
+import io.ing9990.domain.figure.Sentiment.NEGATIVE
+import io.ing9990.domain.figure.Sentiment.NEUTRAL
+import io.ing9990.domain.figure.Sentiment.POSITIVE
 import io.ing9990.domain.user.User
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -58,4 +62,16 @@ class LayoutHelper {
             ?.nickname
             ?.let { "/users/$it" }
             ?: "#"
+
+    fun getSentimentBadge(sentiment: Sentiment): String =
+        when (sentiment) {
+            POSITIVE ->
+                """<span class="vote-sentiment-badge sentiment-positive"><i class="fas fa-crown mr-1"></i> 숭배</span>"""
+
+            NEUTRAL ->
+                """<span class="vote-sentiment-badge sentiment-neutral"><i class="fas fa-balance-scale mr-1"></i> 중립</span>"""
+
+            NEGATIVE ->
+                """<span class="vote-sentiment-badge sentiment-negative"><i class="fas fa-skull mr-1"></i> 사형</span>"""
+        }
 }
