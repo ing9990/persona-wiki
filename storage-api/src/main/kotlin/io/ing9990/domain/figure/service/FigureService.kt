@@ -262,10 +262,10 @@ class FigureService(
      */
     fun getUserVote(
         figureId: Long,
-        userId: Long,
+        userId: Long?,
     ): Vote? {
         val figure = findById(figureId)
-        return figure.getUserVote(userId)
+        return userId?.let { id -> figure.getUserVote(id) }
     }
 
     /**
@@ -273,10 +273,10 @@ class FigureService(
      */
     fun hasUserVoted(
         figureId: Long,
-        userId: Long,
+        userId: Long?,
     ): Boolean {
         val figure = findById(figureId)
-        return figure.hasVoted(userId)
+        return userId?.let { id -> figure.hasVoted(id) } ?: false
     }
 
     /**

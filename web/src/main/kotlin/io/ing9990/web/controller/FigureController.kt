@@ -1,6 +1,7 @@
 package io.ing9990.web.controller
 
 import io.ing9990.aop.AuthorizedUser
+import io.ing9990.aop.CurrentUser
 import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.Sentiment.NEGATIVE
 import io.ing9990.domain.figure.Sentiment.NEUTRAL
@@ -183,10 +184,11 @@ class FigureController(
     }
 
     /**
-     * 인물 상세 페이지에서 댓글 트리를 표시하기 위해 기존 figureDetail 메서드를 수정
+     * 인물을 상세조회 합니다.
      */
     @GetMapping("/{categoryId}/@{figureName}")
     fun figureDetail(
+        @CurrentUser user: User?,
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
         @RequestParam(defaultValue = "0") page: Int,
@@ -197,6 +199,10 @@ class FigureController(
         val category = figureService.findCategoryById(categoryId)
         val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
 
+        // 로그인 여부에 따른 투표 여부 확인
+        val hasVoted = figureService.hasUserVoted(figure.id!!, user?.id)
+        val userVote = figureService.getUserVote(figure.id!!, user?.id)
+
         // 인물의 댓글 트리를 페이징하여 조회
         val commentPage: Page<Comment> =
             figureService.getCommentTreesByFigureId(figure.id!!, page, size)
@@ -204,6 +210,8 @@ class FigureController(
         model.addAttribute("category", category)
         model.addAttribute("figure", figure)
         model.addAttribute("commentPage", commentPage)
+        model.addAttribute("hasVoted", hasVoted)
+        model.addAttribute("userVote", userVote)
 
         return "figure/figure-detail"
     }
