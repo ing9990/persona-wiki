@@ -48,7 +48,7 @@ class FigureController(
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
         @RequestParam content: String,
-        @AuthorizedUser user: User, // 사용자 정보 추가
+        @AuthorizedUser user: User,
         redirectAttributes: RedirectAttributes,
     ): String {
         if (content.isBlank()) {

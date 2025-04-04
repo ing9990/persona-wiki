@@ -30,13 +30,13 @@ class CommentApi(
     fun addComment(
         @PathVariable figureId: Long,
         @RequestBody request: CommentRequest,
-        @AuthorizedUser user: User, // 사용자 정보 추가
+        @AuthorizedUser user: User,
     ): ResponseEntity<CommentResponse> {
         val comment =
             figureService.addComment(
                 figureId = figureId,
                 content = request.content,
-                user = user, // 사용자 정보 전달
+                user = user,
             )
 
         return ResponseEntity.ok(CommentResponse.from(comment))

@@ -59,7 +59,7 @@ class Comment(
     // 추가: 사용자 정보
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
-    val user: User? = null, // 수정: 사용자 정보 추가
+    val user: User? = null,
 ) : BaseEntity() {
     /**
      * 이 댓글이 답글인지 확인합니다.

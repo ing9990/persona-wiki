@@ -230,7 +230,7 @@ class FigureService(
             Comment(
                 figure = figure,
                 content = content,
-                user = user, // 사용자 정보 설정
+                user = user,
             )
 
         return commentRepository.save(comment)
