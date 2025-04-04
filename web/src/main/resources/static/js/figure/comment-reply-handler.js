@@ -20,7 +20,6 @@ class CommentReplyHandler {
   initialize() {
     console.log('CommentReplyHandler 초기화 시작');
     this.initializeElements();
-    this.addEventListeners();
     console.log('CommentReplyHandler 초기화 완료');
   }
 
@@ -28,18 +27,6 @@ class CommentReplyHandler {
    * DOM 요소 초기화
    */
   initializeElements() {
-    // 답글 토글 버튼
-    this.replyToggleButtons = document.querySelectorAll('.reply-toggle-btn');
-    console.log(`답글 토글 버튼 수: ${this.replyToggleButtons.length}`);
-
-    // 답글 취소 버튼
-    this.cancelReplyButtons = document.querySelectorAll('.cancel-reply-btn');
-    console.log(`답글 취소 버튼 수: ${this.cancelReplyButtons.length}`);
-
-    // 답글 보기 버튼
-    this.viewRepliesButtons = document.querySelectorAll('.view-replies-btn');
-    console.log(`답글 보기 버튼 수: ${this.viewRepliesButtons.length}`);
-
     // 답글 템플릿
     this.replyTemplate = document.getElementById('reply-template');
     console.log(`답글 템플릿 찾음: ${this.replyTemplate !== null}`);
@@ -55,35 +42,55 @@ class CommentReplyHandler {
         console.log(`템플릿 ${index + 1} ID: ${template.id || '(ID 없음)'}`);
       });
     }
+
+    // 이벤트 위임 설정
+    this.setupEventDelegation();
   }
 
   /**
-   * 이벤트 리스너 추가
+   * 이벤트 위임 설정 - 동적으로 생성되는 요소에도 이벤트 적용
    */
-  addEventListeners() {
-    // 답글 작성 폼 토글 이벤트
-    this.replyToggleButtons.forEach(button => {
-      button.addEventListener('click', this.toggleReplyForm.bind(this));
-    });
+  setupEventDelegation() {
+    // 문서 전체에 클릭 이벤트 위임
+    document.addEventListener('click', (e) => {
+      // 답글 토글 버튼
+      const replyToggleBtn = e.target.closest('.reply-toggle-btn');
+      if (replyToggleBtn) {
+        this.toggleReplyForm(replyToggleBtn);
+      }
 
-    // 답글 취소 버튼 이벤트
-    this.cancelReplyButtons.forEach(button => {
-      button.addEventListener('click', this.cancelReply.bind(this));
-    });
+      // 답글 취소 버튼
+      const cancelReplyBtn = e.target.closest('.cancel-reply-btn');
+      if (cancelReplyBtn) {
+        this.cancelReply(cancelReplyBtn);
+      }
 
-    // 답글 보기 버튼 이벤트
-    this.viewRepliesButtons.forEach(button => {
-      button.addEventListener('click', this.toggleReplies.bind(this));
-      console.log(`답글 보기 버튼 이벤트 리스너 추가: ${button.textContent.trim()}`);
+      // 답글 보기 버튼
+      const viewRepliesBtn = e.target.closest('.view-replies-btn');
+      if (viewRepliesBtn) {
+        this.toggleReplies(viewRepliesBtn);
+      }
+
+      // 좋아요 버튼 (동적으로 추가된 답글에 대해서도 작동)
+      const replyLikeBtn = e.target.closest('.reply-like-btn');
+      if (replyLikeBtn) {
+        this.handleReplyInteraction(replyLikeBtn, true);
+      }
+
+      // 싫어요 버튼 (동적으로 추가된 답글에 대해서도 작동)
+      const replyDislikeBtn = e.target.closest('.reply-dislike-btn');
+      if (replyDislikeBtn) {
+        this.handleReplyInteraction(replyDislikeBtn, false);
+      }
     });
   }
 
   /**
    * 답글 작성 폼 토글
-   * @param {Event} event - 클릭 이벤트
+   * @param {HTMLElement} button - 클릭된 버튼
    */
-  toggleReplyForm(event) {
-    const commentId = event.currentTarget.dataset.commentId;
+  toggleReplyForm(button) {
+    const commentId = button.dataset.commentId;
     const replyForm = document.getElementById(`reply-form-${commentId}`);
 
     if (replyForm) {
@@ -103,10 +110,10 @@ class CommentReplyHandler {
 
   /**
    * 답글 작성 취소
-   * @param {Event} event - 클릭 이벤트
+   * @param {HTMLElement} button - 클릭된 버튼
    */
-  cancelReply(event) {
-    const commentId = event.currentTarget.dataset.commentId;
+  cancelReply(button) {
+    const commentId = button.dataset.commentId;
     const replyForm = document.getElementById(`reply-form-${commentId}`);
 
     if (replyForm) {
@@ -121,10 +128,9 @@ class CommentReplyHandler {
 
   /**
    * 답글 목록 토글 및 로드
-   * @param {Event} event - 클릭 이벤트
+   * @param {HTMLElement} button - 클릭된 버튼
    */
-  toggleReplies(event) {
-    const button = event.currentTarget;
+  toggleReplies(button) {
     const commentId = button.dataset.commentId;
     const repliesContainer = document.getElementById(`replies-${commentId}`);
 
@@ -279,17 +285,15 @@ class CommentReplyHandler {
 
       // 좋아요 버튼
       const likeBtn = document.createElement('button');
-      likeBtn.className = 'flex items-center mr-4 text-gray-500 hover:text-green-500 transition';
+      likeBtn.className = 'flex items-center mr-4 text-gray-500 hover:text-green-500 transition reply-like-btn';
       likeBtn.innerHTML = `<i class="fas fa-thumbs-up mr-1"></i><span>${reply.likes}</span>`;
       likeBtn.dataset.replyId = reply.id;
-      likeBtn.addEventListener('click', this.handleReplyLike.bind(this));
 
       // 싫어요 버튼
       const dislikeBtn = document.createElement('button');
-      dislikeBtn.className = 'flex items-center text-gray-500 hover:text-red-500 transition';
+      dislikeBtn.className = 'flex items-center text-gray-500 hover:text-red-500 transition reply-dislike-btn';
       dislikeBtn.innerHTML = `<i class="fas fa-thumbs-down mr-1"></i><span>${reply.dislikes}</span>`;
       dislikeBtn.dataset.replyId = reply.id;
-      dislikeBtn.addEventListener('click', this.handleReplyDislike.bind(this));
 
       actionsDiv.appendChild(likeBtn);
       actionsDiv.appendChild(dislikeBtn);
@@ -329,27 +333,16 @@ class CommentReplyHandler {
     replyElement.querySelector('.reply-likes').textContent = reply.likes;
     replyElement.querySelector('.reply-dislikes').textContent = reply.dislikes;
 
-    // 좋아요/싫어요 버튼 이벤트 연결
+    // 좋아요/싫어요 버튼에 데이터 속성 추가
     const likeButton = replyElement.querySelector('.reply-like-btn');
     const dislikeButton = replyElement.querySelector('.reply-dislike-btn');
 
     if (likeButton) {
       likeButton.dataset.replyId = reply.id;
-      likeButton.addEventListener('click', this.handleReplyLike.bind(this));
     }
 
     if (dislikeButton) {
       dislikeButton.dataset.replyId = reply.id;
-      dislikeButton.addEventListener('click',
-          this.handleReplyDislike.bind(this));
-    }
-
-    // 대댓글 버튼 이벤트 연결 (필요한 경우)
-    const replyToReplyBtn = replyElement.querySelector('.reply-to-reply-btn');
-    if (replyToReplyBtn) {
-      replyToReplyBtn.dataset.replyId = reply.id;
-      replyToReplyBtn.addEventListener('click',
-          this.toggleNestedReplyForm.bind(this));
     }
 
     // 컨테이너에 추가
@@ -357,30 +350,12 @@ class CommentReplyHandler {
   }
 
   /**
-   * 답글 좋아요 처리
-   * @param {Event} event - 클릭 이벤트
-   */
-  handleReplyLike(event) {
-    const replyId = event.currentTarget.dataset.replyId;
-    this.handleReplyInteraction(replyId, true, event.currentTarget);
-  }
-
-  /**
-   * 답글 싫어요 처리
-   * @param {Event} event - 클릭 이벤트
-   */
-  handleReplyDislike(event) {
-    const replyId = event.currentTarget.dataset.replyId;
-    this.handleReplyInteraction(replyId, false, event.currentTarget);
-  }
-
-  /**
    * 답글 상호작용(좋아요/싫어요) 처리
-   * @param {string} replyId - 답글 ID
-   * @param {boolean} isLike - 좋아요(true) 또는 싫어요(false)
    * @param {HTMLElement} button - 클릭된 버튼
+   * @param {boolean} isLike - 좋아요(true) 또는 싫어요(false)
    */
-  handleReplyInteraction(replyId, isLike, button) {
+  handleReplyInteraction(button, isLike) {
+    const replyId = button.dataset.replyId;
     const actionEndpoint = isLike ? 'like' : 'dislike';
     const countElement = button.querySelector('span');
 
@@ -411,25 +386,7 @@ class CommentReplyHandler {
       }
     });
   }
-
-  /**
-   * 대댓글 폼 토글
-   * @param {Event} event - 클릭 이벤트
-   */
-  toggleNestedReplyForm(event) {
-    const replyElement = event.currentTarget.closest('.reply-item');
-    const nestedForm = replyElement.querySelector('.reply-to-reply-form');
-
-    if (nestedForm) {
-      nestedForm.classList.toggle('hidden');
-
-      // 폼이 표시되면 텍스트 영역에 포커스
-      if (!nestedForm.classList.contains('hidden')) {
-        const textarea = nestedForm.querySelector('textarea');
-        if (textarea) {
-          textarea.focus();
-        }
-      }
-    }
-  }
 }
+
+// 전역 객체로 내보내기
+window.CommentReplyHandler = CommentReplyHandler;

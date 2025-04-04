@@ -301,7 +301,8 @@
         <!-- 비로그인 상태: 로그인 알림과 비활성화 버튼 표시 -->
         <div th:unless="${@layoutHelper.isLoggedIn(session.user)}">
           <!-- 로그인 알림 배너 (반응형) -->
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex flex-col sm:flex-row items-center sm:justify-between">
+          <div
+              class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex flex-col sm:flex-row items-center sm:justify-between">
             <div class="flex items-center mb-2 sm:mb-0">
               <i class="fas fa-info-circle text-blue-500 text-xl mr-2"></i>
               <p class="text-gray-700 text-sm sm:text-base">
@@ -318,19 +319,22 @@
           <!-- 비활성화된 투표 버튼들 (3개) -->
           <div class="grid grid-cols-3 gap-4">
             <!-- 숭배 버튼 (비활성화) -->
-            <div class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
+            <div
+                class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
               <i class="fas fa-crown text-3xl text-green-400 mb-2"></i>
               <span class="font-bold text-lg text-green-500">숭배</span>
               <p class="text-xs text-gray-400 mt-2 text-center">이 인물은 존경받아 마땅합니다</p>
             </div>
             <!-- 중립 버튼 (비활성화) -->
-            <div class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
+            <div
+                class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
               <i class="fas fa-balance-scale text-3xl text-blue-400 mb-2"></i>
               <span class="font-bold text-lg text-blue-500">중립</span>
               <p class="text-xs text-gray-400 mt-2 text-center">이 인물에 대해 중립적입니다</p>
             </div>
             <!-- 사형 버튼 (비활성화) -->
-            <div class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
+            <div
+                class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
               <i class="fas fa-skull text-3xl text-red-400 mb-2"></i>
               <span class="font-bold text-lg text-red-500">사형</span>
               <p class="text-xs text-gray-400 mt-2 text-center">이 인물은 비판받아 마땅합니다</p>
@@ -350,7 +354,8 @@
 
         <!-- 댓글 작성 폼: 로그인한 사용자 -->
         <div th:if="${@layoutHelper.isLoggedIn(session.user)}">
-          <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/comment'}" method="post" class="mb-8">
+          <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/comment'}"
+                method="post" class="mb-8">
             <div class="mb-3">
         <textarea name="content" rows="3"
                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 comment-box"
@@ -366,7 +371,8 @@
         </div>
         <!-- 댓글 작성 폼: 로그인하지 않은 사용자 (반응형 로그인 프롬프트) -->
         <div th:unless="${@layoutHelper.isLoggedIn(session.user)}" class="mb-8">
-          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex flex-col md:flex-row items-center">
+          <div
+              class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex flex-col md:flex-row items-center">
             <i class="fas fa-info-circle text-blue-500 text-xl mb-2 md:mb-0 mr-0 md:mr-3"></i>
             <p class="text-gray-700 text-center md:text-left flex-grow">
               댓글 작성은 로그인이 필요합니다.
@@ -418,14 +424,17 @@
               </button>
               <!-- 답글 달기 버튼: 로그인한 사용자는 활성화, 비로그인 사용자는 비활성화 -->
               <div th:if="${@layoutHelper.isLoggedIn(session.user)}">
-                <button class="flex items-center text-gray-500 hover:text-indigo-500 transition reply-toggle-btn"
-                        th:data-comment-id="${comment.id}">
+                <button
+                    class="flex items-center text-gray-500 hover:text-indigo-500 transition reply-toggle-btn"
+                    th:data-comment-id="${comment.id}">
                   <i class="fas fa-reply mr-1"></i>
                   <span>답글 달기</span>
                 </button>
               </div>
               <div th:unless="${@layoutHelper.isLoggedIn(session.user)}">
-                <button class="flex items-center text-gray-500 opacity-60 cursor-not-allowed transition" disabled>
+                <button
+                    class="flex items-center text-gray-500 opacity-60 cursor-not-allowed transition"
+                    disabled>
                   <i class="fas fa-reply mr-1"></i>
                   <span>답글 달기</span>
                 </button>
@@ -445,8 +454,9 @@
                  class="mt-4 pl-6 border-l-2 border-gray-200 reply-form"
                  style="display: none;">
               <div th:if="${@layoutHelper.isLoggedIn(session.user)}">
-                <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/comment/' + ${comment.id} + '/reply'}"
-                      method="post" class="reply-form-content">
+                <form
+                    th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/comment/' + ${comment.id} + '/reply'}"
+                    method="post" class="reply-form-content">
                   <div class="mb-2">
               <textarea name="content" rows="2"
                         class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
@@ -465,7 +475,8 @@
                   </div>
                 </form>
               </div>
-              <div th:unless="${@layoutHelper.isLoggedIn(session.user)}" class="p-2 text-center text-gray-500">
+              <div th:unless="${@layoutHelper.isLoggedIn(session.user)}"
+                   class="p-2 text-center text-gray-500">
                 <a href="/login" class="text-indigo-600 hover:underline">로그인 후 답글 작성 가능합니다.</a>
               </div>
             </div>
@@ -658,14 +669,16 @@
       </button>
       <button
           class="flex items-center text-gray-500 hover:text-red-500 transition reply-dislike-btn">
-        <i class="fas fa-thumbs-down부 mr-1"></i>
+        <i class="fas fa-thumbs-down mr-1"></i>
         <span class="reply-dislikes">0</span>
       </button>
     </div>
   </div>
 </template>
 <!-- 페이지 자바스크립트 -->
-<th layout="script">
+
+<!-- 수정 코드 -->
+<th:block layout:fragment="script">
   <!-- 공통 유틸리티 -->
   <script src="/js/utils/utils.js"></script>
   <script src="/js/utils/toast-manager.js"></script>
@@ -679,6 +692,6 @@
       new NotificationHandler();
     });
   </script>
-</th>
+</th:block>
 </body>
 </html>
