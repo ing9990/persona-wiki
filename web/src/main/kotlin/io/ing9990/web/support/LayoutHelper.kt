@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class LayoutHelper {
-    val placeHolderAddress: String = "/img/profile-placeholder.png"
+    val placeHolderAddress: String = "/img/profile-placeholder.svg"
 
     /**
      * 프로필 이미지를 가져옵니다.
@@ -14,9 +14,11 @@ class LayoutHelper {
      */
     fun getProfileImage(userObj: Any?): String =
         (userObj as? User)
-            ?.profileImage
+            ?.image
             ?.takeIf { it.isNotBlank() }
             ?: placeHolderAddress
+
+    fun getProfileImageByString(imageUrl: String?): String = imageUrl ?: placeHolderAddress
 
     /**
      * 회원 상태: True

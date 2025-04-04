@@ -153,7 +153,7 @@ function initImageErrorHandling() {
   document.querySelectorAll(
       '.figure-image, .profile-header-image, .profile-image').forEach(img => {
     img.onerror = function () {
-      this.src = '/img/profile-placeholder.png';
+      this.src = '/img/profile-placeholder.svg';
     };
   });
 }

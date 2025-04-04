@@ -16,7 +16,7 @@ class CategoryFiguresHandler {
     images.forEach(img => {
       img.addEventListener('error', () => {
         const placeholderSrc = img.getAttribute('data-placeholder')
-            || '/img/profile-placeholder.png';
+            || '/img/profile-placeholder.svg';
         img.src = placeholderSrc;
       });
     });
