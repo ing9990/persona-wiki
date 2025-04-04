@@ -51,15 +51,13 @@ class UserController(
         redirectAttributes: RedirectAttributes,
     ): String {
         try {
-            if (nickname.isNotBlank()) {
-                userService.updateNickname(user.id!!, nickname)
-                redirectAttributes.addFlashAttribute("success", "닉네임이 업데이트되었습니다.")
-            } else {
-                redirectAttributes.addFlashAttribute("error", "닉네임은 비워둘 수 없습니다.")
-            }
+            userService.updateNickname(user.id, nickname)
+            redirectAttributes.addFlashAttribute("success", "닉네임이 업데이트되었습니다.")
         } catch (e: Exception) {
-            redirectAttributes.addFlashAttribute("error", "닉네임 업데이트 중 오류가 발생했습니다: ${e.message}")
+            redirectAttributes.addFlashAttribute("error", e.message)
+            return "redirect:/me"
         }
+
         return "redirect:/me"
     }
 }

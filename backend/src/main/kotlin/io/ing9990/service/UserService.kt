@@ -4,6 +4,7 @@ import io.ing9990.authentication.OAuthUserProfile
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.User
+import io.ing9990.domain.user.User.Companion.regex
 import io.ing9990.domain.user.repositories.UserRepository
 import io.ing9990.exceptions.UnauthorizedException
 import org.springframework.stereotype.Service
@@ -79,11 +80,38 @@ class UserService(
 
     @Transactional
     fun updateNickname(
-        userId: Long,
+        userId: Long?,
         nickname: String,
-    ): User {
-        val user = getUserById(userId)
-        user.nickname = nickname
-        return userRepository.save(user)
+    ): User =
+        userId?.let {
+            val user = getUserById(it)
+            updateNickNameValidation(user, nickname)
+            user.nickname = nickname
+            return user
+        } ?: throw UnauthorizedException()
+
+    private fun updateNickNameValidation(
+        user: User,
+        nickname: String,
+    ) {
+        // 닉네임이 공백일 수 없음 (비어있으면 안 됨)
+        check(nickname.isNotBlank()) {
+            "닉네임을 비워둘 수 없습니다."
+        }
+
+        // 닉네임 길이가 2자리 ~ 12자리 인지 검증
+        check(nickname.length in 2..12) {
+            "닉네임은 2자리 ~ 12자리 사이여야 합니다."
+        }
+
+        // 닉네임이 영문, 숫자, 한글만 포함하는지 검증
+        check(nickname.matches(regex)) {
+            "닉네임은 영문, 숫자, 한글만 사용할 수 있습니다."
+        }
+
+        // 자기 자신을 제외하고 동일한 닉네임이 있는지 확인
+        check(!userRepository.hasDuplicatedNickname(user, nickname)) {
+            "중복된 닉네임입니다: [$nickname]"
+        }
     }
 }

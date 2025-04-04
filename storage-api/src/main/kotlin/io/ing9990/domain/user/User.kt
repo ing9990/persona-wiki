@@ -36,6 +36,10 @@ class User(
     @Column(name = "last_login_at", nullable = false)
     var lastLoginAt: LocalDateTime = LocalDateTime.now(),
 ) : BaseEntity() {
+    companion object {
+        val regex = "^[a-zA-Z0-9가-힣]+$".toRegex()
+    }
+
     fun removeProfileImage() {
         this.image = null
     }
