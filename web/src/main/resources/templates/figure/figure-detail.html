@@ -403,11 +403,31 @@
                class="border-b border-gray-200 pb-6 comment-item fade-in"
                th:id="'comment-' + ${comment.id}">
             <div class="flex justify-between mb-2">
-              <div class="text-sm text-gray-500">
-                <i class="fas fa-user-circle mr-1"></i>
-                <span>익명</span>
-                <span class="ml-3"
-                      th:text="${@layoutHelper.toRelative(comment.createdAt)}">날짜</span>
+              <div class="flex items-center">
+                <!-- 사용자 프로필 이미지 추가 -->
+                <a th:if="${comment.user != null}"
+                   th:href="@{'/users/' + ${comment.user.nickname}}">
+                  <img th:src="${@layoutHelper.getProfileImage(comment.user)}"
+                       alt="프로필 이미지"
+                       class="w-8 h-8 rounded-full mr-2"
+                       onerror="this.src='/img/profile-placeholder.svg';">
+                </a>
+                <img th:unless="${comment.user != null}"
+                     src="/img/profile-placeholder.svg"
+                     alt="익명"
+                     class="w-8 h-8 rounded-full mr-2">
+
+                <div class="text-sm">
+                  <!-- 사용자 닉네임 표시 -->
+                  <a th:if="${comment.user != null}"
+                     th:href="@{'/users/' + ${comment.user.nickname}}"
+                     class="font-medium text-gray-900 hover:text-indigo-600 transition">
+                    <span th:text="${comment.user.nickname}">사용자 닉네임</span>
+                  </a>
+                  <span th:unless="${comment.user != null}" class="text-gray-500">익명</span>
+                  <span class="text-gray-500 ml-3"
+                        th:text="${@layoutHelper.toRelative(comment.createdAt)}">날짜</span>
+                </div>
               </div>
             </div>
             <p class="text-gray-800 mb-3" th:text="${comment.content}">댓글 내용</p>
@@ -652,16 +672,28 @@
 <template id="reply-template">
   <div class="reply-item pb-4 mb-4 border-b border-gray-100">
     <div class="flex justify-between mb-1">
-      <div class="text-sm text-gray-500">
-        <i class="fas fa-user-circle mr-1"></i>
-        <span class="reply-author">익명</span>
-        <span class="ml-3 reply-date">날짜</span>
+      <div class="flex items-center">
+        <!-- 프로필 사진 -->
+        <a class="user-profile-link" href="#">
+          <img class="reply-profile-image w-8 h-8 rounded-full mr-2"
+               src="/img/profile-placeholder.svg"
+               alt="프로필 이미지"
+               onerror="this.src='/img/profile-placeholder.svg';">
+        </a>
+        <div class="text-sm">
+          <!-- 사용자 닉네임 -->
+          <a class="reply-author-link font-medium text-gray-900 hover:text-indigo-600 transition"
+             href="#">
+            <span class="reply-author">사용자 닉네임</span>
+          </a>
+          <span class="text-gray-500 ml-3 reply-date">날짜</span>
+        </div>
       </div>
     </div>
-    <p class="text-gray-800 mb-2 reply-content">답글 내용</p>
+    <p class="text-gray-800 mb-2 pl-10 reply-content">답글 내용</p>
 
     <!-- 좋아요/싫어요 버튼 -->
-    <div class="flex items-center text-sm">
+    <div class="flex items-center text-sm pl-10">
       <button
           class="flex items-center mr-4 text-gray-500 hover:text-green-500 transition reply-like-btn">
         <i class="fas fa-thumbs-up mr-1"></i>

@@ -86,6 +86,47 @@ class CommentReplyHandler {
   }
 
   /**
+   * 상대적 시간 표시 (~초 전, ~분 전 등)
+   * @param {string} dateString - ISO 형식의 날짜 문자열
+   * @returns {string} - 상대적 시간 문자열
+   */
+  formatRelativeTime(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+
+    if (seconds < 30) {
+      return "방금";
+    }
+    if (seconds < 60) {
+      return `${seconds}초 전`;
+    }
+
+    const minutes = Math.floor(seconds / 60);
+    if (minutes < 60) {
+      return `${minutes}분 전`;
+    }
+
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) {
+      return `${hours}시간 전`;
+    }
+
+    const days = Math.floor(hours / 24);
+    if (days < 7) {
+      return `${days}일 전`;
+    }
+
+    const weeks = Math.floor(days / 7);
+    if (weeks < 4) {
+      return `${weeks}주일 전`;
+    }
+
+    const months = Math.floor(days / 30);
+    return `${months}달 전`;
+  }
+
+  /**
    * 답글 작성 폼 토글
    * @param {HTMLElement} button - 클릭된 버튼
    */
@@ -252,36 +293,62 @@ class CommentReplyHandler {
       replyItem.className = 'reply-item pb-4 mb-4 border-b border-gray-100';
       replyItem.dataset.replyId = reply.id;
 
-      // 메타 정보
+      // 메타 정보 (프로필 사진과 사용자 정보 포함)
       const metaDiv = document.createElement('div');
       metaDiv.className = 'flex justify-between mb-1';
 
-      const authorDiv = document.createElement('div');
-      authorDiv.className = 'text-sm text-gray-500';
-      authorDiv.innerHTML = `
-        <i class="fas fa-user-circle mr-1"></i>
-        <span>익명</span>
-        <span class="ml-3">${new Date(reply.createdAt).toLocaleString('ko-KR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit'
-      })}</span>
-      `;
+      const userInfoDiv = document.createElement('div');
+      userInfoDiv.className = 'flex items-center';
 
-      metaDiv.appendChild(authorDiv);
+      // 프로필 이미지 추가
+      const profileLink = document.createElement('a');
+      profileLink.href = reply.userNickname ? `/users/${reply.userNickname}`
+          : '#';
+
+      const profileImg = document.createElement('img');
+      profileImg.src = reply.userProfileImage || '/img/profile-placeholder.svg';
+      profileImg.alt = '프로필 이미지';
+      profileImg.className = 'w-8 h-8 rounded-full mr-2';
+      profileImg.onerror = "this.src='/img/profile-placeholder.svg'";
+
+      profileLink.appendChild(profileImg);
+      userInfoDiv.appendChild(profileLink);
+
+      // 사용자 정보 (닉네임 + 날짜)
+      const userTextDiv = document.createElement('div');
+      userTextDiv.className = 'text-sm';
+
+      // 닉네임 링크
+      const authorLink = document.createElement('a');
+      authorLink.href = reply.userNickname ? `/users/${reply.userNickname}`
+          : '#';
+      authorLink.className = 'font-medium text-gray-900 hover:text-indigo-600 transition';
+
+      const authorSpan = document.createElement('span');
+      authorSpan.textContent = reply.userNickname || '익명';
+
+      authorLink.appendChild(authorSpan);
+      userTextDiv.appendChild(authorLink);
+
+      // 날짜 추가 - 상대적 시간 표시로 변경
+      const dateSpan = document.createElement('span');
+      dateSpan.className = 'ml-3 text-gray-500';
+      dateSpan.textContent = this.formatRelativeTime(reply.createdAt);
+
+      userTextDiv.appendChild(dateSpan);
+      userInfoDiv.appendChild(userTextDiv);
+      metaDiv.appendChild(userInfoDiv);
       replyItem.appendChild(metaDiv);
 
       // 내용
       const content = document.createElement('p');
-      content.className = 'text-gray-800 mb-2';
+      content.className = 'text-gray-800 mb-2 pl-10';
       content.textContent = reply.content;
       replyItem.appendChild(content);
 
       // 액션 버튼
       const actionsDiv = document.createElement('div');
-      actionsDiv.className = 'flex items-center text-sm';
+      actionsDiv.className = 'flex items-center text-sm pl-10';
 
       // 좋아요 버튼
       const likeBtn = document.createElement('button');
@@ -322,16 +389,32 @@ class CommentReplyHandler {
     // 데이터 바인딩
     replyElement.dataset.replyId = reply.id;
     replyElement.querySelector('.reply-content').textContent = reply.content;
-    replyElement.querySelector('.reply-date').textContent =
-        new Date(reply.createdAt).toLocaleString('ko-KR', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
+
+    // 상대적 시간 표시로 변경
+    replyElement.querySelector(
+        '.reply-date').textContent = this.formatRelativeTime(reply.createdAt);
+
     replyElement.querySelector('.reply-likes').textContent = reply.likes;
     replyElement.querySelector('.reply-dislikes').textContent = reply.dislikes;
+
+    // 사용자 정보 바인딩
+    if (reply.userNickname) {
+      replyElement.querySelector(
+          '.reply-author').textContent = reply.userNickname;
+
+      // 사용자 프로필 링크 설정
+      const profileLink = `/users/${reply.userNickname}`;
+      replyElement.querySelector('.user-profile-link').href = profileLink;
+      replyElement.querySelector('.reply-author-link').href = profileLink;
+
+      // 프로필 이미지 설정
+      if (reply.userProfileImage) {
+        replyElement.querySelector(
+            '.reply-profile-image').src = reply.userProfileImage;
+      }
+    } else {
+      replyElement.querySelector('.reply-author').textContent = '익명';
+    }
 
     // 좋아요/싫어요 버튼에 데이터 속성 추가
     const likeButton = replyElement.querySelector('.reply-like-btn');
@@ -374,9 +457,7 @@ class CommentReplyHandler {
 
       // 성공 메시지 표시
       if (window.ToastManager) {
-        window.ToastManager.show(
-            isLike ? '좋아요를 표시했습니다.' : '싫어요를 표시했습니다.'
-        );
+        window.ToastManager.show(isLike ? '좋아요를 표시했습니다.' : '싫어요를 표시했습니다.');
       }
     })
     .catch(error => {

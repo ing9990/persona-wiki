@@ -48,9 +48,9 @@ class FigureController(
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
         @RequestParam content: String,
+        @AuthorizedUser user: User, // 사용자 정보 추가
         redirectAttributes: RedirectAttributes,
     ): String {
-        // 내용이 비어있는지 확인
         if (content.isBlank()) {
             redirectAttributes.addFlashAttribute("error", "댓글 내용을 입력해주세요.")
             return getRedirectUrl(categoryId, figureName)
@@ -59,8 +59,8 @@ class FigureController(
         // 인물 찾기
         val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
 
-        // 댓글 추가
-        figureService.addComment(figure.id!!, content)
+        // 댓글 추가 (사용자 정보 전달)
+        figureService.addComment(figure.id!!, content, user)
 
         // 성공 메시지
         redirectAttributes.addFlashAttribute("success", "댓글이 성공적으로 등록되었습니다.")
@@ -162,6 +162,7 @@ class FigureController(
         @PathVariable figureName: String,
         @PathVariable commentId: Long,
         @RequestParam content: String,
+        @AuthorizedUser user: User,
         redirectAttributes: RedirectAttributes,
     ): String {
         // 내용이 비어있는지 확인
@@ -171,8 +172,8 @@ class FigureController(
         }
 
         try {
-            // 답글 추가
-            figureService.addReply(commentId, content)
+            // 답글 추가 (사용자 정보 전달)
+            figureService.addReply(commentId, content, user)
 
             // 성공 메시지
             redirectAttributes.addFlashAttribute("success", "답글이 성공적으로 등록되었습니다.")

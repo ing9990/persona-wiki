@@ -20,6 +20,9 @@ data class CommentResponse(
     val rootId: Long?,
     val replyCount: Int,
     val replies: List<CommentResponse>? = null,
+    val userId: Long?,
+    val userNickname: String?,
+    val userProfileImage: String?,
 ) {
     companion object {
         fun from(
@@ -39,6 +42,9 @@ data class CommentResponse(
                     parentId = comment.parent?.id,
                     rootId = comment.rootId,
                     replyCount = comment.repliesCount,
+                    userId = comment.user?.id,
+                    userNickname = comment.user?.nickname,
+                    userProfileImage = comment.user?.image,
                 )
 
             // 답글 목록도 포함할지 결정

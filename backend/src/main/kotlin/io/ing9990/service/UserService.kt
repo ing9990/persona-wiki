@@ -21,6 +21,9 @@ class UserService(
     @Transactional(readOnly = true)
     fun getUserById(userId: Long): User = findUserById(userId) ?: throw EntityNotFoundException("User", userId)
 
+    @Transactional(readOnly = true)
+    fun findByNickname(nickname: String): User? = userRepository.findByNickname(nickname)
+
     /**
      * 소셜 로그인 정보를 기반으로 사용자를 저장하거나 업데이트합니다.
      * @param profile 소셜 로그인 제공자로부터 받은 사용자 프로필

@@ -47,4 +47,15 @@ class LayoutHelper {
             else -> "${seconds / 2592000}달 전"
         }
     }
+
+    /**
+     * 사용자 프로필 링크를 가져옵니다.
+     * - 유저 객체가 없으면 # 반환
+     * - 그렇지 않으면 /users/{nickname} 경로 반환
+     */
+    fun getUserProfileLink(userObj: Any?): String =
+        (userObj as? User)
+            ?.nickname
+            ?.let { "/users/$it" }
+            ?: "#"
 }

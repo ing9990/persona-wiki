@@ -216,11 +216,13 @@ class FigureService(
      * 새로운 댓글을 추가합니다.
      * @param figureId 인물 ID
      * @param content 댓글 내용
+     * @param user 댓글 작성자
      */
     @Transactional
     fun addComment(
         figureId: Long,
         content: String,
+        user: User,
     ): Comment {
         val figure = findById(figureId)
 
@@ -228,6 +230,7 @@ class FigureService(
             Comment(
                 figure = figure,
                 content = content,
+                user = user, // 사용자 정보 설정
             )
 
         return commentRepository.save(comment)
@@ -300,12 +303,14 @@ class FigureService(
      * 댓글에 답글을 추가합니다.
      * @param parentCommentId 부모 댓글 ID
      * @param content 답글 내용
+     * @param user 답글 작성자
      * @return 생성된 답글
      */
     @Transactional
     fun addReply(
         parentCommentId: Long,
         content: String,
+        user: User,
     ): Comment {
         val parentComment =
             commentRepository.findByIdOrNull(parentCommentId)
@@ -336,6 +341,7 @@ class FigureService(
                 depth = depth,
                 rootId = rootId,
                 commentType = CommentType.REPLY,
+                user = user,
             )
 
         // 부모 댓글에 답글 추가
@@ -352,10 +358,8 @@ class FigureService(
      * @return 원 댓글과 모든 답글이 포함된 Comment 객체
      */
     fun getCommentWithReplies(rootCommentId: Long): List<Comment> {
-        log.info("getCommentWithReplies: $rootCommentId -----------")
-        val replies = commentRepository.findRepliesByParentId(rootCommentId)
-
-        return replies
+        val comment = commentRepository.findWithRepliesById(rootCommentId)
+        return comment?.replies ?: emptyList()
     }
 
     /**
@@ -380,4 +384,13 @@ class FigureService(
             pageable = pageable,
         )
     }
+
+    /**
+     * 부모 댓글 ID로 모든 답글을 사용자 정보와 함께 조회합니다.
+     * QueryDSL을 사용하여 사용자 정보를 함께 로딩합니다.
+     *
+     * @param parentId 부모 댓글 ID
+     * @return 사용자 정보가 로드된 답글 목록
+     */
+    fun getRepliesWithUserByParentId(parentId: Long): List<Comment> = commentRepository.findRepliesWithUserByParentId(parentId)
 }

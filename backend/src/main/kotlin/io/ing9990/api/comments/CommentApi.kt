@@ -1,10 +1,11 @@
 package io.ing9990.api.comments
 
+import io.ing9990.aop.AuthorizedUser
 import io.ing9990.api.comments.dto.request.CommentRequest
 import io.ing9990.api.comments.dto.response.CommentPageResponse
 import io.ing9990.api.comments.dto.response.CommentResponse
-import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.service.FigureService
+import io.ing9990.domain.user.User
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -29,11 +30,13 @@ class CommentApi(
     fun addComment(
         @PathVariable figureId: Long,
         @RequestBody request: CommentRequest,
+        @AuthorizedUser user: User, // 사용자 정보 추가
     ): ResponseEntity<CommentResponse> {
         val comment =
             figureService.addComment(
                 figureId = figureId,
                 content = request.content,
+                user = user, // 사용자 정보 전달
             )
 
         return ResponseEntity.ok(CommentResponse.from(comment))
@@ -85,8 +88,6 @@ class CommentApi(
         return ResponseEntity.ok(mapOf("likes" to comment.likes, "dislikes" to comment.dislikes))
     }
 
-    // backend/src/main/kotlin/io/ing9990/api/comments/CommentApi.kt에 추가할 메서드
-
     /**
      * 댓글에 답글을 추가합니다.
      */
@@ -94,11 +95,13 @@ class CommentApi(
     fun addReply(
         @PathVariable commentId: Long,
         @RequestBody request: CommentRequest,
+        @AuthorizedUser user: User,
     ): ResponseEntity<CommentResponse> {
         val reply =
             figureService.addReply(
                 parentCommentId = commentId,
                 content = request.content,
+                user = user,
             )
 
         return ResponseEntity.ok(CommentResponse.from(reply))
@@ -111,7 +114,8 @@ class CommentApi(
     fun getReplies(
         @PathVariable rootCommentId: Long,
     ): ResponseEntity<List<CommentResponse>> {
-        val replies: List<Comment> = figureService.getCommentWithReplies(rootCommentId)
+        // 기존 메서드 대신 QueryDSL을 사용한 메서드 호출
+        val replies = figureService.getRepliesWithUserByParentId(rootCommentId)
 
         val repliesResponse = replies.map { CommentResponse.from(it) }
 

@@ -2,6 +2,7 @@
 package io.ing9990.domain.figure
 
 import io.ing9990.domain.figure.CommentType.ROOT
+import io.ing9990.domain.user.User
 import io.ing9990.model.BaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -55,6 +56,10 @@ class Comment(
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("createdAt ASC")
     val replies: MutableList<Comment> = mutableListOf(),
+    // 추가: 사용자 정보
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_id")
+    val user: User? = null, // 수정: 사용자 정보 추가
 ) : BaseEntity() {
     /**
      * 이 댓글이 답글인지 확인합니다.
