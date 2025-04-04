@@ -241,7 +241,14 @@ class FigureDetailHandler {
    * @param {Event} event - 클릭 이벤트
    */
   handleVote(event) {
-    const sentiment = event.currentTarget.dataset.sentiment;
+    const sentiment = event.currentTarget.querySelector(
+        'input[name="sentiment"]')?.value;
+
+    if (!sentiment) {
+      console.error('투표 감정 데이터를 찾을 수 없습니다.');
+      window.ToastManager.show('투표 처리 중 오류가 발생했습니다.', true);
+      return;
+    }
 
     fetch(`/api/figures/${this.figureId}/vote`, {
       method: 'POST',
@@ -251,12 +258,26 @@ class FigureDetailHandler {
       body: JSON.stringify({sentiment})
     })
     .then(response => {
+      if (response.status === 401) {
+        // 401 Unauthorized 응답 처리 - 로그인 페이지로 리다이렉트
+        window.ToastManager.show('투표하려면 로그인이 필요합니다.', true);
+
+        // 현재 페이지 URL을 저장 (로그인 후 돌아오기 위해)
+        const currentUrl = encodeURIComponent(window.location.href);
+        // 로그인 페이지로 리다이렉트
+        setTimeout(() => {
+          window.location.href = `/login?redirect=${currentUrl}`;
+        }, 1000);
+
+        throw new Error('로그인이 필요합니다.');
+      }
+
       if (!response.ok) {
         throw new Error('투표 등록에 실패했습니다.');
       }
       return response.json();
     })
-    .then(() => {
+    .then(data => {
       // 투표 내역 localStorage에 저장
       localStorage.setItem(`voted_${this.figureId}`, sentiment);
 
@@ -282,7 +303,9 @@ class FigureDetailHandler {
     })
     .catch(error => {
       console.error('투표 등록 실패:', error);
-      window.ToastManager.show(error.message, true);
+      if (error.message !== '로그인이 필요합니다.') {
+        window.ToastManager.show(error.message, true);
+      }
     });
   }
 

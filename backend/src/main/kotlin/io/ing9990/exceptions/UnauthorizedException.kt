@@ -1,3 +1,7 @@
 package io.ing9990.exceptions
 
-class UnauthorizedException : RuntimeException()
+class UnauthorizedException(
+    val bindMessage: String,
+) : RuntimeException(bindMessage) {
+    constructor() : this("UnauthorizedException")
+}

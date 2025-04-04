@@ -8,9 +8,11 @@ import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.CommentType
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.Sentiment
+import io.ing9990.domain.figure.Vote
 import io.ing9990.domain.figure.repository.CategoryRepository
 import io.ing9990.domain.figure.repository.CommentRepository
 import io.ing9990.domain.figure.repository.FigureRepository
+import io.ing9990.domain.user.User
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -31,6 +33,39 @@ class FigureService(
     private val commentRepository: CommentRepository,
 ) {
     private val log: Logger = LoggerFactory.getLogger(FigureService::class.java)
+
+    /**
+     * ID로 인물 정보를 상세히 조회합니다.
+     * QueryDSL의 fetch join으로 votes 컬렉션이 함께 로딩됩니다.
+     */
+    fun findById(id: Long): Figure =
+        figureRepository.findByIdWithVotes(id)
+            ?: throw IllegalArgumentException("해당 ID의 인물이 존재하지 않습니다: $id")
+
+    fun findByCategoryIdAndNameWithDetails(
+        categoryId: String,
+        figureName: String,
+    ): Figure =
+        figureRepository.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+            ?: throw EntityNotFoundException(
+                "Figure",
+                "$categoryId/$figureName",
+                "해당 인물을 찾을 수 없습니다.",
+            )
+
+    // 투표 관련 메서드 - 트랜잭션 내에서 관계 엔티티에 안전하게 접근
+    @Transactional
+    fun voteFigure(
+        figureId: Long,
+        sentiment: Sentiment,
+        user: User,
+    ): Figure {
+        val figure = findById(figureId)
+
+        figure.addOrUpdateVote(user, sentiment)
+
+        return figureRepository.save(figure)
+    }
 
     /**
      * 모든 인물 목록을 카테고리와 함께 조회합니다.
@@ -96,26 +131,6 @@ class FigureService(
             figures.sortedByDescending { it.reputation.total() }.take(limit)
         }
     }
-
-    /**
-     * ID로 인물 정보를 상세히 조회합니다.
-     * 카테고리와 댓글이 함께 로딩됩니다.
-     * @param id 인물 ID
-     */
-    fun findById(id: Long): Figure =
-        figureRepository.findByIdWithDetails(id)
-            ?: throw IllegalArgumentException("해당 ID의 인물이 존재하지 않습니다: $id")
-
-    fun findByCategoryIdAndNameWithDetails(
-        categoryId: String,
-        figureName: String,
-    ): Figure =
-        figureRepository.findByCategoryIdAndNameWithDetails(categoryId, figureName)
-            ?: throw EntityNotFoundException(
-                "Figure",
-                "$categoryId/$figureName",
-                "해당 인물을 찾을 수 없습니다.",
-            )
 
     /**
      * 카테고리 ID로, 해당 카테고리에 속한 인물 목록을 조회합니다.
@@ -243,26 +258,25 @@ class FigureService(
     }
 
     /**
-     * 인물에 대한 평가(숭배/중립/사형)를 등록합니다.
-     * @param figureId 인물 ID
-     * @param sentiment 평가 감정 (POSITIVE, NEUTRAL, NEGATIVE)
-     * @return 업데이트된 인물 객체
+     * 사용자의 투표 정보를 가져옵니다.
      */
-    @Transactional
-    fun voteFigure(
+    fun getUserVote(
         figureId: Long,
-        sentiment: Sentiment,
-    ): Figure {
+        userId: Long,
+    ): Vote? {
         val figure = findById(figureId)
+        return figure.getUserVote(userId)
+    }
 
-        // 평가 타입에 따라 적절한 카운터 증가
-        when (sentiment) {
-            Sentiment.POSITIVE -> figure.reputation.likeCount++
-            Sentiment.NEUTRAL -> figure.reputation.neutralCount++
-            Sentiment.NEGATIVE -> figure.reputation.dislikeCount++
-        }
-
-        return figureRepository.save(figure)
+    /**
+     * 사용자가 특정 인물에 대해 이미 투표했는지 확인합니다.
+     */
+    fun hasUserVoted(
+        figureId: Long,
+        userId: Long,
+    ): Boolean {
+        val figure = findById(figureId)
+        return figure.hasVoted(userId)
     }
 
     /**

@@ -112,6 +112,78 @@
         transform: translateY(0);
       }
     }
+
+    /* 투표 버튼 스타일 */
+    .vote-button {
+      transition: all 0.3s ease;
+    }
+
+    .vote-button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .vote-button-disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .vote-button-disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* 로그인 프롬프트 */
+    .login-prompt {
+      background-color: #EFF6FF;
+      border: 1px solid #DBEAFE;
+      border-radius: 0.5rem;
+      padding: 1.5rem;
+      text-align: center;
+    }
+
+    .login-button {
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+      transition: all 0.3s ease;
+    }
+
+    .login-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+    }
+
+    /* 투표 결과 표시 */
+    .vote-result {
+      background-color: #F9FAFB;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      text-align: center;
+      margin-top: 1rem;
+      border: 1px solid #E5E7EB;
+    }
+
+    .vote-sentiment-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 600;
+    }
+
+    .sentiment-positive {
+      background-color: #D1FAE5;
+      color: #047857;
+    }
+
+    .sentiment-neutral {
+      background-color: #DBEAFE;
+      color: #1D4ED8;
+    }
+
+    .sentiment-negative {
+      background-color: #FEE2E2;
+      color: #B91C1C;
+    }
   </style>
 </head>
 
@@ -124,7 +196,9 @@
       <div class="flex items-end justify-between w-full">
         <div class="flex items-end">
           <img th:src="${figure.imageUrl}" th:alt="${figure.name}"
-               class="w-24 h-24 rounded-full profile-image object-cover mr-6">
+               class="w-24 h-24 rounded-full profile-image object-cover mr-6"
+               data-handle-error="true"
+               data-placeholder="/img/profile-placeholder.svg">
           <div>
             <div class="flex items-center mb-2">
               <h1 class="text-4xl font-bold mr-3" th:text="${figure.name}">인물 이름</h1>
@@ -151,37 +225,118 @@
           <i class="fas fa-vote-yea text-indigo-500 mr-2"></i>
           <span>인물 평가</span>
         </h2>
-        <div class="text-gray-700 mb-4">
-          이 인물에 대한 평가를 선택해 주세요. 한 번 투표하면 변경할 수 없습니다.
+
+        <!-- 로그인 상태 -->
+        <div th:if="${@layoutHelper.isLoggedIn(session.user)}">
+          <!-- 이미 투표한 경우: 투표 결과 표시 -->
+          <div th:if="${hasVoted}" class="vote-result">
+            <p class="text-gray-700 mb-2">이 인물에 대해 다음과 같이 평가하셨습니다:</p>
+
+            <div th:with="vote=${userVote}">
+        <span th:if="${vote.sentiment == T(io.ing9990.domain.figure.Sentiment).POSITIVE}"
+              class="vote-sentiment-badge sentiment-positive">
+          <i class="fas fa-crown mr-1"></i> 숭배
+        </span>
+              <span th:if="${vote.sentiment == T(io.ing9990.domain.figure.Sentiment).NEUTRAL}"
+                    class="vote-sentiment-badge sentiment-neutral">
+          <i class="fas fa-balance-scale mr-1"></i> 중립
+        </span>
+              <span th:if="${vote.sentiment == T(io.ing9990.domain.figure.Sentiment).NEGATIVE}"
+                    class="vote-sentiment-badge sentiment-negative">
+          <i class="fas fa-skull mr-1"></i> 사형
+        </span>
+            </div>
+
+            <p class="text-sm text-gray-500 mt-3">
+              <i class="fas fa-clock mr-1"></i>
+              평가일: <span
+                th:text="${#temporals.format(userVote.updatedAt, 'yyyy-MM-dd HH:mm')}"></span>
+            </p>
+          </div>
+
+          <!-- 아직 투표하지 않은 경우: 투표 버튼 표시 -->
+          <div th:unless="${hasVoted}" class="text-gray-700 mb-4">
+            <p class="mb-4">이 인물에 대한 평가를 선택해 주세요. 한 번 투표하면 변경할 수 없습니다.</p>
+
+            <div class="grid grid-cols-3 gap-4">
+              <!-- 숭배 버튼 -->
+              <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/vote'}"
+                    method="post">
+                <input type="hidden" name="sentiment" value="POSITIVE">
+                <button type="submit"
+                        class="vote-button w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-green-200 hover:border-green-500 hover:bg-green-50 transition-all">
+                  <i class="fas fa-crown text-3xl text-green-500 mb-2"></i>
+                  <span class="font-bold text-lg text-green-600">숭배</span>
+                  <p class="text-xs text-gray-500 mt-2 text-center">이 인물은 존경받아 마땅합니다</p>
+                </button>
+              </form>
+
+              <!-- 중립 버튼 -->
+              <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/vote'}"
+                    method="post">
+                <input type="hidden" name="sentiment" value="NEUTRAL">
+                <button type="submit"
+                        class="vote-button w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-blue-200 hover:border-blue-500 hover:bg-blue-50 transition-all">
+                  <i class="fas fa-balance-scale text-3xl text-blue-500 mb-2"></i>
+                  <span class="font-bold text-lg text-blue-600">중립</span>
+                  <p class="text-xs text-gray-500 mt-2 text-center">이 인물에 대해 중립적입니다</p>
+                </button>
+              </form>
+
+              <!-- 사형 버튼 -->
+              <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/vote'}"
+                    method="post">
+                <input type="hidden" name="sentiment" value="NEGATIVE">
+                <button type="submit"
+                        class="vote-button w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-red-200 hover:border-red-500 hover:bg-red-50 transition-all">
+                  <i class="fas fa-skull text-3xl text-red-500 mb-2"></i>
+                  <span class="font-bold text-lg text-red-600">사형</span>
+                  <p class="text-xs text-gray-500 mt-2 text-center">이 인물은 비판받아 마땅합니다</p>
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
 
-        <div class="grid grid-cols-3 gap-4">
-          <!-- 숭배 버튼 -->
-          <button
-              class="vote-button flex flex-col items-center justify-center p-6 rounded-lg border-2 border-green-200 hover:border-green-500 hover:bg-green-50 transition-all"
-              data-sentiment="POSITIVE">
-            <i class="fas fa-crown text-3xl text-green-500 mb-2"></i>
-            <span class="font-bold text-lg text-green-600">숭배</span>
-            <p class="text-xs text-gray-500 mt-2 text-center">이 인물은 존경받아 마땅합니다</p>
-          </button>
+        <!-- 비로그인 상태: 로그인 알림과 비활성화 버튼 표시 -->
+        <div th:unless="${@layoutHelper.isLoggedIn(session.user)}">
+          <!-- 로그인 알림 배너 -->
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex items-center">
+            <i class="fas fa-info-circle text-blue-500 text-xl mr-3"></i>
+            <p class="text-gray-700">인물에 대한 평가를 하려면 로그인이 필요합니다.</p>
+            <a href="/login"
+               class="ml-auto bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition-colors duration-200 flex items-center">
+              <i class="fas fa-sign-in-alt mr-2"></i>
+              로그인하기
+            </a>
+          </div>
 
-          <!-- 중립 버튼 -->
-          <button
-              class="vote-button flex flex-col items-center justify-center p-6 rounded-lg border-2 border-blue-200 hover:border-blue-500 hover:bg-blue-50 transition-all"
-              data-sentiment="NEUTRAL">
-            <i class="fas fa-balance-scale text-3xl text-blue-500 mb-2"></i>
-            <span class="font-bold text-lg text-blue-600">중립</span>
-            <p class="text-xs text-gray-500 mt-2 text-center">이 인물에 대해 중립적입니다</p>
-          </button>
+          <!-- 비활성화된 투표 버튼 -->
+          <div class="grid grid-cols-3 gap-4">
+            <!-- 비활성화된 숭배 버튼 -->
+            <div
+                class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
+              <i class="fas fa-crown text-3xl text-green-400 mb-2"></i>
+              <span class="font-bold text-lg text-green-500">숭배</span>
+              <p class="text-xs text-gray-400 mt-2 text-center">이 인물은 존경받아 마땅합니다</p>
+            </div>
 
-          <!-- 사형 버튼 -->
-          <button
-              class="vote-button flex flex-col items-center justify-center p-6 rounded-lg border-2 border-red-200 hover:border-red-500 hover:bg-red-50 transition-all"
-              data-sentiment="NEGATIVE">
-            <i class="fas fa-skull text-3xl text-red-500 mb-2"></i>
-            <span class="font-bold text-lg text-red-600">사형</span>
-            <p class="text-xs text-gray-500 mt-2 text-center">이 인물은 비판받아 마땅합니다</p>
-          </button>
+            <!-- 비활성화된 중립 버튼 -->
+            <div
+                class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
+              <i class="fas fa-balance-scale text-3xl text-blue-400 mb-2"></i>
+              <span class="font-bold text-lg text-blue-500">중립</span>
+              <p class="text-xs text-gray-400 mt-2 text-center">이 인물에 대해 중립적입니다</p>
+            </div>
+
+            <!-- 비활성화된 사형 버튼 -->
+            <div
+                class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
+              <i class="fas fa-skull text-3xl text-red-400 mb-2"></i>
+              <span class="font-bold text-lg text-red-500">사형</span>
+              <p class="text-xs text-gray-400 mt-2 text-center">이 인물은 비판받아 마땅합니다</p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -305,7 +460,36 @@
         <!-- 페이지네이션 -->
         <div th:if="${commentPage.totalPages > 1}" class="mt-8 flex justify-center">
           <nav aria-label="댓글 페이지 탐색" class="pagination">
-            <!-- 페이지네이션 코드 -->
+            <!-- 이전 페이지 링크 -->
+            <ul class="inline-flex rounded-md shadow">
+              <li th:classappend="${commentPage.first} ? 'disabled' : ''">
+                <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name} + '?page=' + ${commentPage.number - 1}}"
+                   class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+                   th:classappend="${commentPage.first} ? 'pointer-events-none opacity-50' : ''">
+                  이전
+                </a>
+              </li>
+
+              <!-- 페이지 번호 -->
+              <li th:each="i : ${#numbers.sequence(0, commentPage.totalPages - 1)}"
+                  th:classappend="${commentPage.number == i} ? 'active' : ''">
+                <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name} + '?page=' + ${i}}"
+                   th:text="${i + 1}"
+                   class="px-3 py-2 border-t border-b border-gray-300"
+                   th:classappend="${commentPage.number == i} ? 'bg-indigo-50 text-indigo-600' : 'bg-white text-gray-500 hover:bg-gray-50'">
+                  1
+                </a>
+              </li>
+
+              <!-- 다음 페이지 링크 -->
+              <li th:classappend="${commentPage.last} ? 'disabled' : ''">
+                <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name} + '?page=' + ${commentPage.number + 1}}"
+                   class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
+                   th:classappend="${commentPage.last} ? 'pointer-events-none opacity-50' : ''">
+                  다음
+                </a>
+              </li>
+            </ul>
           </nav>
         </div>
       </section>
@@ -449,30 +633,27 @@
       </button>
       <button
           class="flex items-center text-gray-500 hover:text-red-500 transition reply-dislike-btn">
-        <i class="fas fa-thumbs-down mr-1"></i>
+        <i class="fas fa-thumbs-down부 mr-1"></i>
         <span class="reply-dislikes">0</span>
       </button>
     </div>
   </div>
 </template>
-
 <!-- 페이지 자바스크립트 -->
-<th:block layout:fragment="script">
+<th layout="script">
   <!-- 공통 유틸리티 -->
   <script src="/js/utils/utils.js"></script>
   <script src="/js/utils/toast-manager.js"></script>
-
   <!-- 페이지별 스크립트 -->
   <script src="/js/figure/figure-detail-handler.js"></script>
   <script src="/js/figure/comment-reply-handler.js"></script>
   <script src="/js/figure/notification-handler.js"></script>
-
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       new CommentReplyHandler();
       new NotificationHandler();
     });
   </script>
-</th:block>
+</th>
 </body>
 </html>
