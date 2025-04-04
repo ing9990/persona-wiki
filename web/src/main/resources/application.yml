@@ -17,6 +17,7 @@ spring:
     encoding: UTF-8
     mode: HTML
     enable-spring-el-compiler: true
+    expose-context-beans: true
 
   devtools:
     livereload:

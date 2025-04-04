@@ -3,7 +3,8 @@
       lang="ko">
 <head>
   <!-- 공통 헤드 태그 -->
-  <th:block th:replace="fragments/common :: head(title=${title}, description=${metaDescription})"></th:block>
+  <th:block
+      th:replace="fragments/common :: head(title=${title}, description=${metaDescription})"></th:block>
 
   <!-- 페이지별 CSS 확장 -->
   <th:block layout:fragment="css"></th:block>
