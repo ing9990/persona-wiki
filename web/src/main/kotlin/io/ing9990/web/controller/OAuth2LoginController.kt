@@ -4,7 +4,7 @@ import io.ing9990.authentication.OAuthUserProfile
 import io.ing9990.authentication.providers.OAuthProviders
 import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.User
-import io.ing9990.web.service.UserService
+import io.ing9990.service.UserService
 import jakarta.servlet.http.HttpSession
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller

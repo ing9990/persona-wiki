@@ -3,8 +3,8 @@ package io.ing9990.web.exception
 
 import io.ing9990.api.ApiException
 import io.ing9990.domain.EntityNotFoundException
-import io.ing9990.web.exceptions.FigureOperationException
-import io.ing9990.web.exceptions.UnauthorizedException
+import io.ing9990.exceptions.FigureOperationException
+import io.ing9990.exceptions.UnauthorizedException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.ui.Model

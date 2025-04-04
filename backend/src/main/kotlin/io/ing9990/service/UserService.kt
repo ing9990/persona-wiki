@@ -1,11 +1,11 @@
-package io.ing9990.web.service
+package io.ing9990.service
 
 import io.ing9990.authentication.OAuthUserProfile
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.User
 import io.ing9990.domain.user.repositories.UserRepository
-import io.ing9990.web.exceptions.UnauthorizedException
+import io.ing9990.exceptions.UnauthorizedException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime

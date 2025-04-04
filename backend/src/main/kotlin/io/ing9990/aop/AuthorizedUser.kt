@@ -1,4 +1,4 @@
-package io.ing9990.web.aop
+package io.ing9990.aop
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)

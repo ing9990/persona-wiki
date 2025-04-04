@@ -1,11 +1,11 @@
 package io.ing9990.web.controller
 
+import io.ing9990.aop.AuthorizedUser
 import io.ing9990.domain.figure.Comment
 import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.figure.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.user.User
-import io.ing9990.web.aop.AuthorizedUser
 import org.springframework.data.domain.Page
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model

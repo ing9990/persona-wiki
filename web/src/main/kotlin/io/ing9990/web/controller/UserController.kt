@@ -1,8 +1,8 @@
 package io.ing9990.web.controller
 
+import io.ing9990.aop.AuthorizedUser
 import io.ing9990.domain.user.User
-import io.ing9990.web.aop.AuthorizedUser
-import io.ing9990.web.service.UserService
+import io.ing9990.service.UserService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping

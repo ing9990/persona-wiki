@@ -4,6 +4,7 @@ dependencies {
 
     implementation(project(":monitor"))
     implementation(project(":storage-api"))
+    implementation(project(":authentication"))
 
     testImplementation(kotlin("test"))
 }
