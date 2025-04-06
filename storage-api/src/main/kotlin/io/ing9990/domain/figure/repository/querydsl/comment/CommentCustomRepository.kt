@@ -1,6 +1,8 @@
 package io.ing9990.domain.figure.repository.querydsl.comment
 
 import io.ing9990.domain.figure.Comment
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
 
 /**
  * QueryDSL을 활용한 Comment 조회 커스텀 인터페이스
@@ -15,4 +17,15 @@ interface CommentCustomRepository {
      * 부모 댓글 ID로 모든 답글을 사용자 정보와 함께 조회합니다.
      */
     fun findRepliesWithUserByParentId(parentId: Long): List<Comment>
+
+    fun findCommentsWithUserInteractions(
+        figureId: Long,
+        userId: Long?,
+        pageable: Pageable,
+    ): Page<Comment>
+
+    fun findRepliesWithUserInteractions(
+        parentId: Long,
+        userId: Long?,
+    ): List<Comment>
 }

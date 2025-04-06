@@ -1,7 +1,9 @@
 package io.ing9990.api.comments
 
 import io.ing9990.aop.AuthorizedUser
+import io.ing9990.aop.CurrentUser
 import io.ing9990.api.comments.dto.request.CommentRequest
+import io.ing9990.api.comments.dto.response.CommentInteractionResponse
 import io.ing9990.api.comments.dto.response.CommentPageResponse
 import io.ing9990.api.comments.dto.response.CommentResponse
 import io.ing9990.domain.figure.service.FigureService
@@ -42,20 +44,19 @@ class CommentApi(
         return ResponseEntity.ok(CommentResponse.from(comment))
     }
 
-    /**
-     * 인물에 대한 댓글을 페이지 단위로 조회합니다.
-     */
     @GetMapping("/figure/{figureId}/comments")
     fun getComments(
         @PathVariable figureId: Long,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "10") size: Int,
+        @CurrentUser user: User?,
     ): ResponseEntity<CommentPageResponse> {
-        val commentPage = figureService.getCommentsByFigureId(figureId, page, size)
+        val commentPage =
+            figureService.getCommentsByFigureIdWithUserInteractions(figureId, user?.id, page, size)
 
         return ResponseEntity.ok(
             CommentPageResponse(
-                content = commentPage.content.map { CommentResponse.from(it) },
+                content = commentPage.content.map { CommentResponse.from(it, user?.id) },
                 totalPages = commentPage.totalPages,
                 totalElements = commentPage.totalElements,
                 currentPage = commentPage.number,
@@ -66,26 +67,36 @@ class CommentApi(
         )
     }
 
-    /**
-     * 댓글에 좋아요를 추가합니다.
-     */
     @PostMapping("/comments/{commentId}/like")
     fun likeComment(
         @PathVariable commentId: Long,
-    ): ResponseEntity<Map<String, Int>> {
-        val comment = figureService.likeOrDislikeComment(commentId, true)
-        return ResponseEntity.ok(mapOf("likes" to comment.likes, "dislikes" to comment.dislikes))
+        @AuthorizedUser user: User,
+    ): ResponseEntity<CommentInteractionResponse> {
+        val comment = figureService.likeOrDislikeComment(commentId, true, user)
+        val interaction = comment.getUserInteraction(user.id!!)
+
+        return ResponseEntity.ok(
+            CommentInteractionResponse.from(
+                commentId = commentId,
+                interactionType = interaction?.interactionType,
+            ),
+        )
     }
 
-    /**
-     * 댓글에 싫어요를 추가합니다.
-     */
     @PostMapping("/comments/{commentId}/dislike")
     fun dislikeComment(
         @PathVariable commentId: Long,
-    ): ResponseEntity<Map<String, Int>> {
-        val comment = figureService.likeOrDislikeComment(commentId, false)
-        return ResponseEntity.ok(mapOf("likes" to comment.likes, "dislikes" to comment.dislikes))
+        @AuthorizedUser user: User,
+    ): ResponseEntity<CommentInteractionResponse> {
+        val comment = figureService.likeOrDislikeComment(commentId, false, user)
+        val interaction = comment.getUserInteraction(user.id!!)
+
+        return ResponseEntity.ok(
+            CommentInteractionResponse.from(
+                commentId = commentId,
+                interactionType = interaction?.interactionType,
+            ),
+        )
     }
 
     /**
@@ -113,11 +124,11 @@ class CommentApi(
     @GetMapping("/comments/{rootCommentId}/replies")
     fun getReplies(
         @PathVariable rootCommentId: Long,
+        @CurrentUser user: User?,
     ): ResponseEntity<List<CommentResponse>> {
-        // 기존 메서드 대신 QueryDSL을 사용한 메서드 호출
-        val replies = figureService.getRepliesWithUserByParentId(rootCommentId)
+        val replies = figureService.getRepliesWithUserInteractions(rootCommentId, user?.id)
 
-        val repliesResponse = replies.map { CommentResponse.from(it) }
+        val repliesResponse = replies.map { CommentResponse.from(it, user?.id) }
 
         return ResponseEntity.ok(repliesResponse)
     }

@@ -161,7 +161,7 @@
         <div class="relative">
           <!-- 인물 이미지 -->
           <img
-              th:src="${@layoutHelper.getProfileImage(figure.imageUrl)}"
+              th:src="${@layoutHelper.getProfileImageByString(figure.imageUrl)}"
               th:alt="${figure.name}"
               class="w-full h-48 object-cover"
               data-handle-error="true"

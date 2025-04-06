@@ -5,11 +5,14 @@ import io.ing9990.common.HangeulUtil.Companion.CHOSUNG_MAP
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.Category
 import io.ing9990.domain.figure.Comment
+import io.ing9990.domain.figure.CommentInteraction
 import io.ing9990.domain.figure.CommentType
 import io.ing9990.domain.figure.Figure
+import io.ing9990.domain.figure.InteractionType
 import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.figure.Vote
 import io.ing9990.domain.figure.repository.CategoryRepository
+import io.ing9990.domain.figure.repository.CommentInteractionRepository
 import io.ing9990.domain.figure.repository.CommentRepository
 import io.ing9990.domain.figure.repository.FigureRepository
 import io.ing9990.domain.user.User
@@ -31,6 +34,7 @@ class FigureService(
     private val figureRepository: FigureRepository,
     private val categoryRepository: CategoryRepository,
     private val commentRepository: CommentRepository,
+    private val commentInteractionRepository: CommentInteractionRepository,
 ) {
     private val log: Logger = LoggerFactory.getLogger(FigureService::class.java)
 
@@ -245,20 +249,56 @@ class FigureService(
     fun likeOrDislikeComment(
         commentId: Long,
         isLike: Boolean,
+        user: User,
     ): Comment {
         val comment =
-            commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException(
-                "해당 ID의 댓글이 존재하지 않습니다: $commentId",
-            )
+            commentRepository.findByIdOrNull(commentId)
+                ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $commentId")
 
-        if (isLike) {
-            comment.likes++
+        val interactionType = if (isLike) InteractionType.LIKE else InteractionType.DISLIKE
+
+        // 기존 상호작용 검색
+        val existingInteraction = commentInteractionRepository.findByUserIdAndCommentId(user.id!!, commentId)
+
+        if (existingInteraction != null) {
+            // 이미 같은 타입이면 아무것도 하지 않음
+            if (existingInteraction.interactionType == interactionType) {
+                return comment
+            }
+
+            // 다른 타입이면 업데이트
+            comment.updateInteraction(user.id!!, interactionType)
         } else {
-            comment.dislikes++
+            // 새 상호작용 추가
+            val interaction =
+                CommentInteraction(
+                    user = user,
+                    comment = comment,
+                    interactionType = interactionType,
+                )
+            comment.addInteraction(interaction)
         }
 
         return comment
     }
+
+    // 새 메서드 추가
+    @Transactional(readOnly = true)
+    fun getCommentsByFigureIdWithUserInteractions(
+        figureId: Long,
+        userId: Long?,
+        page: Int,
+        size: Int,
+    ): Page<Comment> {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        return commentRepository.findCommentsWithUserInteractions(figureId, userId, pageable)
+    }
+
+    @Transactional(readOnly = true)
+    fun getRepliesWithUserInteractions(
+        parentId: Long,
+        userId: Long?,
+    ): List<Comment> = commentRepository.findRepliesWithUserInteractions(parentId, userId)
 
     /**
      * 사용자의 투표 정보를 가져옵니다.
