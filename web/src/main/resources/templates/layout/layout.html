@@ -179,7 +179,7 @@
         <div class="flex items-center">
 
           <!-- 비로그인: 모바일에서만 (md:hidden) 햄버거 + 로그인 아이콘 표시 -->
-          <th:block th:unless="${@layoutHelper.isLoggedIn(session.user)}">
+          <th:block th:if="${current.notLoggedIn()}">
             <div class="md:hidden flex items-center">
               <!-- 햄버거 버튼 (모바일 메뉴 열기) -->
               <button
@@ -201,14 +201,14 @@
           </th:block>
 
           <!-- 로그인: 모바일에서만 프로필 아이콘 (드롭다운) -->
-          <th:block th:if="${@layoutHelper.isLoggedIn(session.user)}">
+          <th:block th:if="${current.loggedIn()}">
             <div class="relative md:hidden" x-data="{ openMobileProfile: false }">
               <button
                   @click="openMobileProfile = !openMobileProfile"
                   class="flex items-center focus:outline-none ml-2"
                   aria-haspopup="true"
                   aria-expanded="false">
-                <img th:src="${@layoutHelper.getProfileImage(session.user)}"
+                <img th:src="${current.image()}"
                      alt="프로필 이미지"
                      class="w-8 h-8 rounded-full border-2 border-white object-cover"
                      onerror="this.src='/img/profile-placeholder.svg';">
@@ -320,7 +320,7 @@
         </a>
 
         <!-- PC: 로그인 상태 -->
-        <th:block th:if="${@layoutHelper.isLoggedIn(session.user)}">
+        <th:block th:if="${current.loggedIn()}">
           <a href="/add-figure" class="text-white hover:text-indigo-100 transition"
              aria-label="인물 추가">
             <i class="fas fa-plus-circle mr-1" aria-hidden="true"></i>
@@ -331,7 +331,7 @@
           <div class="relative" x-data="{ open: false }">
             <button @click="open = !open" class="flex items-center focus:outline-none"
                     aria-haspopup="true" aria-expanded="false">
-              <img th:src="${@layoutHelper.getProfileImage(session.user)}"
+              <img th:src="${current.image()}"
                    alt="프로필 이미지"
                    class="w-8 h-8 rounded-full border-2 border-white object-cover"
                    onerror="this.src='/img/profile-placeholder.svg';">
@@ -354,7 +354,7 @@
         </th:block>
 
         <!-- PC: 비로그인 상태 -->
-        <th:block th:unless="${@layoutHelper.isLoggedIn(session.user)}">
+        <th:block th:if="${current.notLoggedIn()}">
           <a href="/add-figure" class="text-white hover:text-indigo-100 transition"
              aria-label="인물 추가">
             <i class="fas fa-plus-circle mr-1" aria-hidden="true"></i>
@@ -406,7 +406,7 @@
           </div>
 
           <!-- 로그인 상태 -->
-          <th:block th:if="${@layoutHelper.isLoggedIn(session.user)}">
+          <th:block th:if="${current.loggedIn()}">
             <div class="mt-6 pt-6 border-t border-gray-200">
               <h3 class="text-xs font-semibold text-gray-500 mb-3 uppercase tracking-wider">
                 내 메뉴
@@ -427,7 +427,7 @@
           </th:block>
 
           <!-- 비로그인 상태 -->
-          <th:block th:unless="${@layoutHelper.isLoggedIn(session.user)}">
+          <th:block th:if="${current.notLoggedIn()}">
             <div class="mt-6 pt-6 border-t border-gray-200">
               <a href="/login"
                  class="flex items-center justify-center py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">

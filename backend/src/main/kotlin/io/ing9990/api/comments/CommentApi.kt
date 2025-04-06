@@ -2,9 +2,9 @@ package io.ing9990.api.comments
 
 import io.ing9990.aop.AuthorizedUser
 import io.ing9990.aop.CurrentUser
+import io.ing9990.aop.resolver.CurrentUserDto
 import io.ing9990.api.comments.dto.request.CommentRequest
 import io.ing9990.api.comments.dto.response.CommentInteractionResponse
-import io.ing9990.api.comments.dto.response.CommentPageResponse
 import io.ing9990.api.comments.dto.response.CommentResponse
 import io.ing9990.domain.comment.service.CommentService
 import io.ing9990.domain.figure.service.FigureService
@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 /**
  * 댓글 및 평가 관련 REST API를 제공하는 컨트롤러
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 class CommentApi(
     private val figureService: FigureService,
     private val commentService: CommentService,
@@ -44,29 +43,6 @@ class CommentApi(
             )
 
         return ResponseEntity.ok(CommentResponse.from(comment))
-    }
-
-    @GetMapping("/figure/{figureId}/comments")
-    fun getComments(
-        @PathVariable figureId: Long,
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
-        @CurrentUser user: User?,
-    ): ResponseEntity<CommentPageResponse> {
-        val commentPage =
-            figureService.getCommentsByFigureIdWithUserInteractions(figureId, user?.id, page, size)
-
-        return ResponseEntity.ok(
-            CommentPageResponse(
-                content = commentPage.content.map { CommentResponse.from(it, user?.id) },
-                totalPages = commentPage.totalPages,
-                totalElements = commentPage.totalElements,
-                currentPage = commentPage.number,
-                size = commentPage.size,
-                isFirst = commentPage.isFirst,
-                isLast = commentPage.isLast,
-            ),
-        )
     }
 
     @PostMapping("/comments/{commentId}/like")
@@ -106,15 +82,15 @@ class CommentApi(
      */
     @PostMapping("/comments/{commentId}/replies")
     fun addReply(
+        @AuthorizedUser user: User,
         @PathVariable commentId: Long,
         @RequestBody request: CommentRequest,
-        @AuthorizedUser user: User,
     ): ResponseEntity<CommentResponse> {
         val reply =
-            figureService.addReply(
+            commentService.addReply(
+                user = user,
                 parentCommentId = commentId,
                 content = request.content,
-                user = user,
             )
 
         return ResponseEntity.ok(CommentResponse.from(reply))
@@ -126,11 +102,15 @@ class CommentApi(
     @GetMapping("/comments/{rootCommentId}/replies")
     fun getReplies(
         @PathVariable rootCommentId: Long,
-        @CurrentUser user: User?,
+        @CurrentUser currentUser: CurrentUserDto,
     ): ResponseEntity<List<CommentResponse>> {
-        val replies = figureService.getRepliesWithUserInteractions(rootCommentId, user?.id)
+        val replies =
+            figureService.getRepliesWithUserInteractions(
+                rootCommentId,
+                currentUser.currentUser?.id ?: -1,
+            )
 
-        val repliesResponse = replies.map { CommentResponse.from(it, user?.id) }
+        val repliesResponse = replies.map { CommentResponse.from(it, currentUser.getUserIdOrDefault()) }
 
         return ResponseEntity.ok(repliesResponse)
     }

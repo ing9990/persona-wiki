@@ -7,7 +7,9 @@ import org.springframework.data.jpa.repository.Query
 /**
  * 카테고리 관련 데이터 액세스를 위한 Repository 인터페이스
  */
-interface CategoryRepository : JpaRepository<Category, String> {
+interface CategoryRepository :
+    JpaRepository<Category, String>,
+    CategoryCustomRepository {
     /**
      * 카테고리 표시 이름으로 카테고리를 조회합니다.
      */

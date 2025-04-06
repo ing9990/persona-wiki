@@ -122,4 +122,67 @@ class CommentService(
 
         return comment
     }
+
+    /**
+     * 댓글에 답글을 추가합니다.
+     * @param parentCommentId 부모 댓글 ID
+     * @param content 답글 내용
+     * @param user 답글 작성자
+     * @return 생성된 답글
+     */
+    @Transactional
+    fun addReply(
+        parentCommentId: Long,
+        content: String,
+        user: User,
+    ): Comment {
+        val parentComment =
+            commentRepository.findByIdOrNull(parentCommentId)
+                ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $parentCommentId")
+
+        // 최상위 부모(root) 댓글 ID 결정
+        val rootId =
+            if (parentComment.isRootComment()) {
+                parentComment.id
+            } else {
+                parentComment.rootId
+            }
+
+        // 댓글 깊이 결정 (부모 댓글의 깊이 + 1)
+        val depth = parentComment.depth + 1
+
+        // 제한된 깊이 체크 (최대 3단계까지만 허용)
+        if (depth > 3) {
+            throw IllegalArgumentException("더 이상 답글을 달 수 없습니다. 최대 깊이에 도달했습니다.")
+        }
+
+        // 새 답글 생성
+        val reply =
+            Comment(
+                figure = parentComment.figure,
+                content = content,
+                parent = parentComment,
+                depth = depth,
+                rootId = rootId,
+                commentType = CommentType.REPLY,
+                user = user,
+            )
+
+        // 부모 댓글에 답글 추가
+        parentComment.addReply(reply)
+
+        return commentRepository.save(reply)
+    }
+
+    // 새 메서드 추가
+    @Transactional(readOnly = true)
+    fun getCommentsByFigureIdWithUserInteractions(
+        figureId: Long,
+        userId: Long?,
+        page: Int,
+        size: Int,
+    ): Page<Comment> {
+        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        return commentRepository.findCommentsWithUserInteractions(figureId, userId, pageable)
+    }
 }

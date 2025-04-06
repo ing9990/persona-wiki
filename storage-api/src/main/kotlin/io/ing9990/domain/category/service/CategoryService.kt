@@ -3,6 +3,7 @@ package io.ing9990.domain.category.service
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.category.Category
 import io.ing9990.domain.category.repository.CategoryRepository
+import io.ing9990.domain.figure.service.dto.PopularFiguresByCategoriesResult
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -25,6 +26,22 @@ class CategoryService(
         categoryRepository.findById(id).orElseThrow {
             EntityNotFoundException("Category", id, "해당 ID의 카테고리가 존재하지 않습니다: $id")
         }
+
+    /**
+     * 인물이 많은 카테고리를 상위 (topCount) 개 만큼 가져옵니다.
+     * 각 카테고리에서 투표 수가 가장 많은 인물을 (figuresCount)개 만큼 가져옵니다.
+     */
+    @Transactional(readOnly = true)
+    fun getPopularFiguresByCategory(
+        topCount: Long = 5L,
+        figuresCount: Long = 3L,
+    ): PopularFiguresByCategoriesResult {
+        val topCategories =
+            categoryRepository
+                .getPopularFiguresByCategoryTop(topCount, figuresCount)
+
+        return topCategories
+    }
 
     /**
      * 새 카테고리 생성

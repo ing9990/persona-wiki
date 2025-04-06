@@ -2,12 +2,10 @@ package io.ing9990.domain.figure
 
 import io.ing9990.domain.category.Category
 import io.ing9990.domain.comment.Comment
-import io.ing9990.domain.user.User
 import io.ing9990.domain.vote.Vote
 import io.ing9990.model.BaseEntity
 import jakarta.persistence.CascadeType.ALL
 import jakarta.persistence.Column
-import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
@@ -31,53 +29,30 @@ import java.util.Locale
 )
 @Entity(name = "figure")
 class Figure(
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "figure_id")
-    val id: Long? = null,
-    @Column(name = "name", nullable = false)
-    var name: String,
-    @Column(name = "image_url")
-    var imageUrl: String? = null,
-    @Column(name = "biography")
-    var bio: String? = null,
-    @Embedded
-    val reputation: Reputation = Reputation(),
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    var category: Category,
-    @OneToMany(mappedBy = "figure", cascade = [ALL], orphanRemoval = true)
-    val votes: MutableList<Vote> = mutableListOf(),
-    @OneToMany(mappedBy = "figure", cascade = [ALL], orphanRemoval = true)
-    val comments: MutableList<Comment> = mutableListOf(),
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "figure_id") val id: Long? = null,
+    @Column(name = "name", nullable = false) var name: String,
+    @Column(name = "image_url", nullable = false) var imageUrl: String,
+    @Column(name = "biography") var bio: String? = null,
+    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(
+        name = "category_id",
+        nullable = false,
+    ) var category: Category,
+    @OneToMany(
+        mappedBy = "figure",
+        cascade = [ALL],
+        orphanRemoval = true,
+    ) val votes: MutableSet<Vote> = mutableSetOf(),
+    @OneToMany(
+        mappedBy = "figure",
+        cascade = [ALL],
+        orphanRemoval = true,
+    ) val comments: MutableList<Comment> = mutableListOf(),
 ) : BaseEntity() {
     /**
-     * 사용자의 투표를 추가하거나 업데이트합니다.
+     * Vote를 추가합니다.
      */
-    fun addOrUpdateVote(
-        user: User,
-        sentiment: Sentiment,
-    ): Vote {
-        // 기존 투표가 있는지 확인
-        val existingVote = votes.find { it.user.id == user.id }
-
-        return if (existingVote != null) {
-            // 기존 투표 업데이트
-            existingVote.sentiment = sentiment
-            existingVote
-        } else {
-            // 새 투표 추가
-            val vote = Vote(user = user, figure = this, sentiment = sentiment)
-            votes.add(vote)
-
-            // Reputation 업데이트
-            when (sentiment) {
-                Sentiment.POSITIVE -> reputation.likeCount++
-                Sentiment.NEUTRAL -> reputation.neutralCount++
-                Sentiment.NEGATIVE -> reputation.dislikeCount++
-            }
-            vote
-        }
+    fun addVote(savedVote: Vote) {
+        votes.add(savedVote)
     }
 
     /**

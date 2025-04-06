@@ -1,9 +1,15 @@
 package io.ing9990.domain.figure.repository.querydsl
 
 import com.querydsl.jpa.impl.JPAQueryFactory
+import io.ing9990.domain.category.querydsl.QCategory
+import io.ing9990.domain.comment.querydsl.QComment
+import io.ing9990.domain.comment.querydsl.QComment.comment
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.querydsl.QFigure
+import io.ing9990.domain.figure.service.dto.FigureCardResult
+import io.ing9990.domain.figure.service.dto.FigureMicroResult
 import io.ing9990.domain.vote.querydsl.QVote
+import io.ing9990.domain.vote.querydsl.QVote.vote
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 
@@ -13,10 +19,68 @@ import org.springframework.stereotype.Repository
  */
 @Repository
 class FigureRepositoryImpl(
-    private val jpaQueryFactory: JPAQueryFactory,
+    private val query: JPAQueryFactory,
 ) : FigureCustomRepository {
     companion object {
         private val log = LoggerFactory.getLogger(FigureRepositoryImpl::class.java)
+    }
+
+    override fun searchByName(name: String): List<FigureMicroResult> {
+        val figure = QFigure.figure
+        val category = QCategory.category
+
+        return query
+            .selectFrom(figure)
+            .leftJoin(category)
+            .fetchJoin()
+            .where(figure.name.like("%$name%"))
+            .limit(5)
+            .fetch()
+            .map {
+                FigureMicroResult(
+                    categoryName = it.category.displayName,
+                    figureName = it.name,
+                    figureImage = it.imageUrl,
+                    categoryId = it.category.id,
+                )
+            }
+    }
+
+    override fun findPopularFigues(): List<FigureCardResult> {
+        val figure = QFigure.figure
+        val vote = QVote.vote
+        val comment = QComment.comment
+
+        val fetch: List<Figure> =
+            query
+                .select(figure)
+                .from(figure)
+                .leftJoin(figure.votes, vote)
+                .leftJoin(figure.comments, comment)
+                .groupBy(figure)
+                .orderBy(
+                    vote.count().add(comment.count()).desc(),
+                ).limit(5)
+                .fetch()
+
+        return fetch.map { FigureCardResult.from(it) }
+    }
+
+    override fun findAllWithCategoryPopularOrder(): List<Figure> {
+        val figure = QFigure.figure
+        val category = QCategory.category
+
+        try {
+            return query
+                .selectFrom(figure)
+                .leftJoin(category)
+                .fetchJoin()
+                .orderBy(figure.votes.size().asc())
+                .fetch()
+        } catch (e: Exception) {
+            log.error("findAllWithCategoryPopularOrder failed ", e)
+            throw e
+        }
     }
 
     override fun findByIdWithVotes(id: Long): Figure? {
@@ -24,7 +88,7 @@ class FigureRepositoryImpl(
         val vote = QVote.vote
 
         try {
-            return jpaQueryFactory
+            return query
                 .selectFrom(figure)
                 .leftJoin(figure.votes, vote)
                 .fetchJoin() // votes 컬렉션 함께 로드
@@ -43,7 +107,7 @@ class FigureRepositoryImpl(
         val vote = QVote.vote
 
         try {
-            return jpaQueryFactory
+            return query
                 .selectFrom(figure)
                 .leftJoin(figure.category)
                 .fetchJoin()
@@ -65,7 +129,7 @@ class FigureRepositoryImpl(
         val vote = QVote.vote
 
         try {
-            return jpaQueryFactory
+            return query
                 .selectFrom(figure)
                 .leftJoin(figure.category)
                 .fetchJoin()

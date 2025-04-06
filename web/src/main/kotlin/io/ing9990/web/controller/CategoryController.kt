@@ -67,7 +67,6 @@ class CategoryController(
         model: Model,
     ): String {
         val category = categoryService.getCategoryById(categoryId)
-
         val figures = figureService.findByCategoryId(categoryId)
 
         // 관련 카테고리 목록 조회 (현재 카테고리를 제외한 다른 카테고리들)

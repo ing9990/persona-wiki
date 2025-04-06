@@ -12,9 +12,9 @@ dependencies {
     implementation(project(":common"))
     implementation(project(":monitor"))
     implementation(project(":storage-api"))
-    implementation(project(":admin"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")

@@ -15,12 +15,6 @@ interface FigureRepository :
     JpaRepository<Figure, Long>,
     FigureCustomRepository {
     /**
-     * 카테고리와 함께 모든 인물을 조회합니다.
-     */
-    @Query("SELECT f FROM figure f LEFT JOIN FETCH f.category ORDER BY f.reputation.likeCount + f.reputation.dislikeCount DESC")
-    fun findAllWithCategory(): List<Figure>
-
-    /**
      * 카테고리 ID로 인물 목록을 조회합니다.
      */
     @Query("SELECT f FROM figure f JOIN FETCH f.category WHERE f.category.id = :categoryId")
@@ -34,19 +28,6 @@ interface FigureRepository :
         categoryId: String,
         name: String,
     ): Boolean
-
-    /**
-     * 이름에 특정 문자열이 포함된 인물을 조회합니다.
-     */
-    @Query(
-        """
-        SELECT f 
-        FROM figure f 
-        LEFT JOIN FETCH f.category 
-        WHERE f.name LIKE CONCAT('%', :name, '%')
-    """,
-    )
-    fun findByNameContaining(name: String): List<Figure>
 
     /**
      * 카테고리를 JOIN FETCH로 함께 로드하여 인물 목록 조회

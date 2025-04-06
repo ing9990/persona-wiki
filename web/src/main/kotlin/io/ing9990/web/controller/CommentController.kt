@@ -62,7 +62,7 @@ class CommentController(
         }
 
         try {
-            figureService.addReply(commentId, content, user)
+            commentService.addReply(commentId, content, user)
             redirectAttributes.addFlashAttribute("success", "답글이 성공적으로 등록되었습니다.")
         } catch (e: Exception) {
             redirectAttributes.addFlashAttribute("error", e.message ?: "답글 등록에 실패했습니다.")

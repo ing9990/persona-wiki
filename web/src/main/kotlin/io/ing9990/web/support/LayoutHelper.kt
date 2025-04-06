@@ -58,4 +58,9 @@ class LayoutHelper {
             ?.nickname
             ?.let { "/users/$it" }
             ?: "#"
+
+    fun toDetail(
+        categoryId: String,
+        figureName: String,
+    ): String = "/$categoryId/@$figureName"
 }

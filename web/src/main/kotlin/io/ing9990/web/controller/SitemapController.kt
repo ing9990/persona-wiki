@@ -19,7 +19,7 @@ class SitemapController(
     @ResponseBody
     fun getSitemap(request: HttpServletRequest): String {
         val baseUrl = getBaseUrl(request)
-        val figures = figureService.findAllWithCategory()
+        val figures = figureService.findAllWithCategorySITEMAP()
         val categories = categoryService.getAllCategories()
 
         val dateFormatter = DateTimeFormatter.ISO_INSTANT

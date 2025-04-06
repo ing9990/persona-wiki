@@ -1,6 +1,6 @@
 package io.ing9990.api.comments.dto.request
 
-import io.ing9990.domain.figure.Sentiment
+import io.ing9990.domain.vote.Sentiment
 
 /**
  * 댓글 요청을 위한 DTO

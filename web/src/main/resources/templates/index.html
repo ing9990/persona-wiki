@@ -154,7 +154,7 @@
         <div class="figure-image-container relative">
           <!-- 인물 이미지 -->
           <img
-              th:src="${figure.imageUrl != null ? figure.imageUrl : '/img/profile-placeholder.svg'}"
+              th:src="${@layoutHelper.getProfileImageByString(figure.image)}"
               th:alt="${figure.name}" class="figure-image" data-handle-error="true"
               data-placeholder="/img/profile-placeholder.svg">
 
@@ -166,7 +166,7 @@
           </div>
 
           <!-- 카테고리 배지 -->
-          <span th:if="${figure.category != null}" th:text="${figure.category.displayName}"
+          <span th:text="${figure.categoryName}"
                 class="absolute top-4 right-4 bg-indigo-600 text-white text-sm px-3 py-1 rounded-full shadow-md">
           카테고리
         </span>
@@ -175,7 +175,7 @@
         <div class="p-5 flex flex-col flex-grow">
           <!-- 인물 소개 (일부만 표시) -->
           <p class="text-gray-600 mb-4 flex-grow"
-             th:text="${figure.bio != null ? #strings.abbreviate(figure.bio, 100) : '소개가 등록되지 않았습니다.'}">
+             th:text="${#strings.abbreviate(figure.bio, 100)}">
             인물 소개 텍스트...
           </p>
 
@@ -185,20 +185,20 @@
             <div class="flex items-center">
               <div class="flex items-center mr-3 tooltip" data-tooltip="숭배">
                 <i class="fas fa-crown text-green-500 mr-1"></i>
-                <span th:text="${figure.reputation.likeCount}">0</span>
+                <span th:text="${figure.positives}">0</span>
               </div>
               <div class="flex items-center mr-3 tooltip" data-tooltip="중립">
                 <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
-                <span th:text="${figure.reputation.neutralCount}">0</span>
+                <span th:text="${figure.neutrals}">0</span>
               </div>
               <div class="flex items-center tooltip" data-tooltip="사형">
                 <i class="fas fa-skull text-red-500 mr-1"></i>
-                <span th:text="${figure.reputation.dislikeCount}">0</span>
+                <span th:text="${figure.negatives}">0</span>
               </div>
             </div>
 
             <!-- 상세 페이지 링크 -->
-            <a th:href="@{'/' + ${figure.category.id} + '/@' + ${figure.name}}"
+            <a th:href="${@layoutHelper.toDetail(figure.categoryId, figure.name)}"
                class="inline-block bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 transition text-sm">
               자세히 보기
             </a>
