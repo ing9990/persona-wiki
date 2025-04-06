@@ -1,7 +1,7 @@
 package io.ing9990.admin.service
 
 import io.ing9990.admin.repository.AdminCategoryRepository
-import io.ing9990.domain.figure.Category
+import io.ing9990.domain.category.Category
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -14,30 +14,22 @@ class AdminCategoryService(
     /**
      * 모든 카테고리를 조회한다.
      */
-    fun getAllCategories(): List<Category> {
-        return categoryRepository.findAll()
-    }
+    fun getAllCategories(): List<Category> = categoryRepository.findAll()
 
     /**
      * 카테고리를 페이징하여 조회한다.
      */
-    fun getCategoriesPaged(pageable: Pageable): Page<Category> {
-        return categoryRepository.findAll(pageable)
-    }
+    fun getCategoriesPaged(pageable: Pageable): Page<Category> = categoryRepository.findAll(pageable)
 
     /**
      * 카테고리 ID로 카테고리를 조회한다.
      */
-    fun getCategoryById(id: String): Category? {
-        return categoryRepository.findById(id).orElse(null)
-    }
+    fun getCategoryById(id: String): Category? = categoryRepository.findById(id).orElse(null)
 
     /**
      * 카테고리 개수를 조회한다.
      */
-    fun getCategoryCount(): Long {
-        return categoryRepository.count()
-    }
+    fun getCategoryCount(): Long = categoryRepository.count()
 
     /**
      * 새 카테고리를 생성한다.
@@ -81,7 +73,8 @@ class AdminCategoryService(
         imageUrl: String?,
     ): Category {
         val category =
-            categoryRepository.findById(id)
+            categoryRepository
+                .findById(id)
                 .orElseThrow { IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: $id") }
 
         // 다른 카테고리와 표시 이름 중복 체크
@@ -113,7 +106,8 @@ class AdminCategoryService(
     @Transactional
     fun deleteCategory(id: String) {
         val category =
-            categoryRepository.findById(id)
+            categoryRepository
+                .findById(id)
                 .orElseThrow { IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: $id") }
 
         if (category.figures.isNotEmpty()) {

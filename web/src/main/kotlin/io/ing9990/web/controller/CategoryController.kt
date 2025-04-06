@@ -1,6 +1,6 @@
 package io.ing9990.web.controller
 
-import io.ing9990.domain.figure.service.CategoryService
+import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -60,22 +60,19 @@ class CategoryController(
 
         return "category/category-list"
     }
-// web/src/main/kotlin/io/ing9990/web/controller/CategoryController.kt
 
-    @GetMapping("/{id}")
+    @GetMapping("/{categoryId}")
     fun getCategoryDetails(
-        @PathVariable id: String,
+        @PathVariable categoryId: String,
         model: Model,
     ): String {
-        // 카테고리 정보 조회 (이제 서비스에서 예외를 발생시키므로 null 체크 불필요)
-        val category = categoryService.getCategoryById(id)
+        val category = categoryService.getCategoryById(categoryId)
 
-        // 카테고리에 속한 인물 목록 조회 (카테고리가 함께 로딩됨)
-        val figures = figureService.findByCategoryId(id)
+        val figures = figureService.findByCategoryId(categoryId)
 
         // 관련 카테고리 목록 조회 (현재 카테고리를 제외한 다른 카테고리들)
         val allCategories = categoryService.getAllCategories()
-        val relatedCategories = allCategories.filter { it.id != id }.take(2)
+        val relatedCategories = allCategories.filter { it.id != categoryId }.take(2)
 
         model.addAttribute("category", category)
         model.addAttribute("figures", figures)
@@ -86,7 +83,5 @@ class CategoryController(
 
     // 카테고리 추가 페이지를 렌더링하는 메서드 추가
     @GetMapping("/add")
-    fun addCategoryForm(): String {
-        return "category/add-category"
-    }
+    fun addCategoryForm(): String = "category/add-category"
 }

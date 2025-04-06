@@ -1,6 +1,6 @@
 package io.ing9990.admin.repository
 
-import io.ing9990.domain.figure.Comment
+import io.ing9990.domain.comment.Comment
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository

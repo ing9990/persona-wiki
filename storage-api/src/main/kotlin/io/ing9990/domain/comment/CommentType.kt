@@ -1,4 +1,4 @@
-package io.ing9990.domain.figure
+package io.ing9990.domain.comment
 
 /**
  * 댓글 유형을 나타내는 Enum 클래스

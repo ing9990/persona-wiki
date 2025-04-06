@@ -1,6 +1,6 @@
 package io.ing9990.web.controller
 
-import io.ing9990.domain.figure.service.CategoryService
+import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model

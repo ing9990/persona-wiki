@@ -1,6 +1,9 @@
 package io.ing9990.domain.figure
 
+import io.ing9990.domain.category.Category
+import io.ing9990.domain.comment.Comment
 import io.ing9990.domain.user.User
+import io.ing9990.domain.vote.Vote
 import io.ing9990.model.BaseEntity
 import jakarta.persistence.CascadeType.ALL
 import jakarta.persistence.Column
@@ -73,7 +76,6 @@ class Figure(
                 Sentiment.NEUTRAL -> reputation.neutralCount++
                 Sentiment.NEGATIVE -> reputation.dislikeCount++
             }
-
             vote
         }
     }

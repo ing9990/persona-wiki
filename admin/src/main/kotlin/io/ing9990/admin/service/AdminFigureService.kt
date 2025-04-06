@@ -1,8 +1,8 @@
 package io.ing9990.admin.service
 
 import io.ing9990.admin.dto.FigureListDto
+import io.ing9990.domain.category.repository.CategoryRepository
 import io.ing9990.domain.figure.Figure
-import io.ing9990.domain.figure.repository.CategoryRepository
 import io.ing9990.domain.figure.repository.FigureRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
@@ -18,46 +18,36 @@ class AdminFigureService(
     /**
      * 인물 개수를 조회한다.
      */
-    fun getFigureCount(): Long {
-        return figureRepository.count()
-    }
+    fun getFigureCount(): Long = figureRepository.count()
 
     /**
      * 최근 추가된 인물을 조회한다.
      */
-    fun getRecentFigures(limit: Int): List<Figure> {
-        return figureRepository.findAllWithCategory()
+    fun getRecentFigures(limit: Int): List<Figure> =
+        figureRepository
+            .findAllWithCategory()
             .sortedByDescending { it.createdAt }
             .take(limit)
-    }
 
     /**
      * 모든 인물을 카테고리와 함께 조회한다.
      */
-    fun getAllFigures(): List<Figure> {
-        return figureRepository.findAllWithCategory()
-    }
+    fun getAllFigures(): List<Figure> = figureRepository.findAllWithCategory()
 
     /**
      * 인물을 페이징하여 조회한다.
      */
-    fun getFiguresPaged(pageable: Pageable): Page<Figure> {
-        return figureRepository.findAll(pageable)
-    }
+    fun getFiguresPaged(pageable: Pageable): Page<Figure> = figureRepository.findAll(pageable)
 
     /**
      * ID로 인물을 조회한다.
      */
-    fun getFigureById(id: Long): Figure? {
-        return figureRepository.findByIdWithDetails(id)
-    }
+    fun getFigureById(id: Long): Figure? = figureRepository.findByIdWithDetails(id)
 
     /**
      * 카테고리 ID로 인물 목록을 조회한다.
      */
-    fun getFiguresByCategoryId(categoryId: String): List<Figure> {
-        return figureRepository.findByCategoryId(categoryId)
-    }
+    fun getFiguresByCategoryId(categoryId: String): List<Figure> = figureRepository.findByCategoryId(categoryId)
 
     /**
      * 인물 목록을 DTO로 변환하여 페이징 조회한다.
@@ -80,7 +70,8 @@ class AdminFigureService(
         bio: String?,
     ): Figure {
         val category =
-            categoryRepository.findById(categoryId)
+            categoryRepository
+                .findById(categoryId)
                 .orElseThrow { IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: $categoryId") }
 
         // 중복 체크
@@ -115,7 +106,8 @@ class AdminFigureService(
                 ?: throw IllegalArgumentException("해당 ID의 인물이 존재하지 않습니다: $id")
 
         val category =
-            categoryRepository.findById(categoryId)
+            categoryRepository
+                .findById(categoryId)
                 .orElseThrow { IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: $categoryId") }
 
         // 동일 카테고리 내 다른 인물과 이름 중복 체크 (자신은 제외)
@@ -152,7 +144,5 @@ class AdminFigureService(
     /**
      * 인물을 검색한다.
      */
-    fun searchFigures(keyword: String): List<Figure> {
-        return figureRepository.findByNameContaining(keyword)
-    }
+    fun searchFigures(keyword: String): List<Figure> = figureRepository.findByNameContaining(keyword)
 }

@@ -1,6 +1,6 @@
 package io.ing9990.api.categories.dto.response
 
-import io.ing9990.domain.figure.Category
+import io.ing9990.domain.category.Category
 
 data class CategoryResponse(
     val id: String,
@@ -9,13 +9,12 @@ data class CategoryResponse(
     val imageUrl: String?,
 ) {
     companion object {
-        fun from(category: Category): CategoryResponse {
-            return CategoryResponse(
+        fun from(category: Category): CategoryResponse =
+            CategoryResponse(
                 id = category.id,
                 displayName = category.displayName,
                 description = category.description,
                 imageUrl = category.imageUrl,
             )
-        }
     }
 }

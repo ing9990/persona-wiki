@@ -1,7 +1,8 @@
 // storage-api/src/main/kotlin/io/ing9990/domain/figure/Comment.kt
-package io.ing9990.domain.figure
+package io.ing9990.domain.comment
 
-import io.ing9990.domain.figure.CommentType.ROOT
+import io.ing9990.domain.comment.CommentType.ROOT
+import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.user.User
 import io.ing9990.model.BaseEntity
 import jakarta.persistence.CascadeType.ALL

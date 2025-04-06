@@ -1,6 +1,6 @@
 package io.ing9990.api.comments.dto.response
 
-import io.ing9990.domain.figure.InteractionType
+import io.ing9990.domain.comment.InteractionType
 
 data class CommentInteractionResponse(
     val commentId: Long,

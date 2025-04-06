@@ -6,6 +6,7 @@ import io.ing9990.api.comments.dto.request.CommentRequest
 import io.ing9990.api.comments.dto.response.CommentInteractionResponse
 import io.ing9990.api.comments.dto.response.CommentPageResponse
 import io.ing9990.api.comments.dto.response.CommentResponse
+import io.ing9990.domain.comment.service.CommentService
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.user.User
 import org.springframework.http.ResponseEntity
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api")
 class CommentApi(
     private val figureService: FigureService,
+    private val commentService: CommentService,
 ) {
     /**
      * 새 댓글을 추가합니다.
@@ -35,7 +37,7 @@ class CommentApi(
         @AuthorizedUser user: User,
     ): ResponseEntity<CommentResponse> {
         val comment =
-            figureService.addComment(
+            commentService.addComment(
                 figureId = figureId,
                 content = request.content,
                 user = user,
@@ -72,7 +74,7 @@ class CommentApi(
         @PathVariable commentId: Long,
         @AuthorizedUser user: User,
     ): ResponseEntity<CommentInteractionResponse> {
-        val comment = figureService.likeOrDislikeComment(commentId, true, user)
+        val comment = commentService.likeOrDislikeComment(commentId, true, user)
         val interaction = comment.getUserInteraction(user.id!!)
 
         return ResponseEntity.ok(
@@ -88,7 +90,7 @@ class CommentApi(
         @PathVariable commentId: Long,
         @AuthorizedUser user: User,
     ): ResponseEntity<CommentInteractionResponse> {
-        val comment = figureService.likeOrDislikeComment(commentId, false, user)
+        val comment = commentService.likeOrDislikeComment(commentId, false, user)
         val interaction = comment.getUserInteraction(user.id!!)
 
         return ResponseEntity.ok(
@@ -131,29 +133,5 @@ class CommentApi(
         val repliesResponse = replies.map { CommentResponse.from(it, user?.id) }
 
         return ResponseEntity.ok(repliesResponse)
-    }
-
-    /**
-     * 인물에 대한 댓글과 답글을 계층 구조로 조회합니다.
-     */
-    @GetMapping("/figure/{figureId}/comment-trees")
-    fun getCommentTrees(
-        @PathVariable figureId: Long,
-        @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
-    ): ResponseEntity<CommentPageResponse> {
-        val commentPage = figureService.getCommentTreesByFigureId(figureId, page, size)
-
-        return ResponseEntity.ok(
-            CommentPageResponse(
-                content = commentPage.content.map { CommentResponse.from(it) },
-                totalPages = commentPage.totalPages,
-                totalElements = commentPage.totalElements,
-                currentPage = commentPage.number,
-                size = commentPage.size,
-                isFirst = commentPage.isFirst,
-                isLast = commentPage.isLast,
-            ),
-        )
     }
 }

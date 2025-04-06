@@ -1,5 +1,6 @@
-package io.ing9990.domain.figure
+package io.ing9990.domain.category
 
+import io.ing9990.domain.figure.Figure
 import io.ing9990.model.BaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

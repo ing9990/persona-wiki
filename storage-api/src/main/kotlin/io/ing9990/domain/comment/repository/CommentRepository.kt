@@ -1,8 +1,8 @@
-package io.ing9990.domain.figure.repository
+package io.ing9990.domain.comment.repository
 
-import io.ing9990.domain.figure.Comment
-import io.ing9990.domain.figure.CommentType
-import io.ing9990.domain.figure.repository.querydsl.comment.CommentCustomRepository
+import io.ing9990.domain.comment.Comment
+import io.ing9990.domain.comment.CommentType
+import io.ing9990.domain.comment.repository.querydsl.CommentCustomRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository

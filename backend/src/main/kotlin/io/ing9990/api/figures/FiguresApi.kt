@@ -10,6 +10,7 @@ import io.ing9990.api.figures.dto.response.VoteResponse
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.user.User
+import io.ing9990.domain.vote.service.VoteService
 import io.ing9990.exceptions.UnauthorizedException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -27,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/figures")
 class FiguresApi(
     private val figureService: FigureService,
+    private val voteService: VoteService,
 ) {
     @PostMapping("/{figureId}/vote")
     fun voteFigure(
@@ -36,7 +38,7 @@ class FiguresApi(
     ): ResponseEntity<VoteResponse> {
         try {
             // 사용자 정보를 포함하여 voteFigure 호출
-            val updated = figureService.voteFigure(figureId, request.sentiment, user)
+            val updated = voteService.voteFigure(figureId, request.sentiment, user)
 
             return ResponseEntity.ok(
                 VoteResponse(

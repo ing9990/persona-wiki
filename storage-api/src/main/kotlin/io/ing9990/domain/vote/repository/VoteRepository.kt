@@ -1,6 +1,6 @@
-package io.ing9990.domain.figure.repository
+package io.ing9990.domain.vote.repository
 
-import io.ing9990.domain.figure.Vote
+import io.ing9990.domain.vote.Vote
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 

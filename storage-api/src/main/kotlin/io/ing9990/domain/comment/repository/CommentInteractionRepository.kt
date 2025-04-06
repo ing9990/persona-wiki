@@ -1,6 +1,6 @@
-package io.ing9990.domain.figure.repository
+package io.ing9990.domain.comment.repository
 
-import io.ing9990.domain.figure.CommentInteraction
+import io.ing9990.domain.comment.CommentInteraction
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 

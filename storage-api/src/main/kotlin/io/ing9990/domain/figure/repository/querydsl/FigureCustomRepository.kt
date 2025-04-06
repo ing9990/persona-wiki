@@ -1,4 +1,4 @@
-package io.ing9990.domain.figure.repository.querydsl.figure
+package io.ing9990.domain.figure.repository.querydsl
 
 import io.ing9990.domain.figure.Figure
 

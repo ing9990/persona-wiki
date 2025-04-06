@@ -1,9 +1,9 @@
-package io.ing9990.domain.figure.repository.querydsl.figure
+package io.ing9990.domain.figure.repository.querydsl
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.querydsl.QFigure
-import io.ing9990.domain.figure.querydsl.QVote
+import io.ing9990.domain.vote.querydsl.QVote
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
 

@@ -1,6 +1,6 @@
 package io.ing9990.admin.repository
 
-import io.ing9990.domain.figure.Category
+import io.ing9990.domain.category.Category
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param

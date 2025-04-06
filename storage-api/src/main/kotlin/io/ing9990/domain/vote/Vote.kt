@@ -1,5 +1,7 @@
-package io.ing9990.domain.figure
+package io.ing9990.domain.vote
 
+import io.ing9990.domain.figure.Figure
+import io.ing9990.domain.figure.Sentiment
 import io.ing9990.domain.user.User
 import io.ing9990.model.BaseEntity
 import jakarta.persistence.Column

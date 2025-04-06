@@ -1,7 +1,7 @@
 package io.ing9990.domain.figure.repository
 
 import io.ing9990.domain.figure.Figure
-import io.ing9990.domain.figure.repository.querydsl.figure.FigureCustomRepository
+import io.ing9990.domain.figure.repository.querydsl.FigureCustomRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.EntityGraph

@@ -1,6 +1,6 @@
 package io.ing9990.admin.dto
 
-import io.ing9990.domain.figure.Comment
+import io.ing9990.domain.comment.Comment
 import java.time.LocalDateTime
 
 /**
@@ -16,8 +16,8 @@ data class CommentDto(
     val figureName: String,
 ) {
     companion object {
-        fun from(comment: Comment): CommentDto {
-            return CommentDto(
+        fun from(comment: Comment): CommentDto =
+            CommentDto(
                 id = comment.id,
                 content = comment.content,
                 likes = comment.likes,
@@ -26,6 +26,5 @@ data class CommentDto(
                 figureId = comment.figure.id ?: 0,
                 figureName = comment.figure.name,
             )
-        }
     }
 }

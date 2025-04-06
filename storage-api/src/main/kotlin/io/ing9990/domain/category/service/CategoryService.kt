@@ -1,8 +1,8 @@
-package io.ing9990.domain.figure.service
+package io.ing9990.domain.category.service
 
 import io.ing9990.domain.EntityNotFoundException
-import io.ing9990.domain.figure.Category
-import io.ing9990.domain.figure.repository.CategoryRepository
+import io.ing9990.domain.category.Category
+import io.ing9990.domain.category.repository.CategoryRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -16,18 +16,15 @@ class CategoryService(
     /**
      * 전체 카테고리 조회
      */
-    fun getAllCategories(): List<Category> {
-        return categoryRepository.findAll()
-    }
+    fun getAllCategories(): List<Category> = categoryRepository.findAll()
 
     /**
      * ID로 카테고리 조회
      */
-    fun getCategoryById(id: String): Category {
-        return categoryRepository.findById(id).orElseThrow {
+    fun getCategoryById(id: String): Category =
+        categoryRepository.findById(id).orElseThrow {
             EntityNotFoundException("Category", id, "해당 ID의 카테고리가 존재하지 않습니다: $id")
         }
-    }
 
     /**
      * 새 카테고리 생성
@@ -51,6 +48,14 @@ class CategoryService(
 
         return categoryRepository.save(category)
     }
+
+    /**
+     * 카테고리 ID로 카테고리 정보를 조회합니다.
+     * @param categoryId, 카테고리 ID
+     */
+    fun findCategoryById(categoryId: String): Category =
+        categoryRepository.findById(categoryId).orElse(null)
+            ?: throw IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: $categoryId")
 
     private fun validateCreateCategory(
         id: String,

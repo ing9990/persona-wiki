@@ -1,7 +1,7 @@
 // web/src/main/kotlin/io/ing9990/web/controller/SitemapController.kt
 package io.ing9990.web.controller
 
-import io.ing9990.domain.figure.service.CategoryService
+import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.MediaType

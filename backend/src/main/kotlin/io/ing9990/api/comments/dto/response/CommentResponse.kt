@@ -1,9 +1,9 @@
 // backend/src/main/kotlin/io/ing9990/api/comments/dto/response/CommentResponse.kt
 package io.ing9990.api.comments.dto.response
 
-import io.ing9990.domain.figure.Comment
-import io.ing9990.domain.figure.CommentType
-import io.ing9990.domain.figure.InteractionType
+import io.ing9990.domain.comment.Comment
+import io.ing9990.domain.comment.CommentType
+import io.ing9990.domain.comment.InteractionType
 
 /**
  * 댓글 응답을 위한 DTO

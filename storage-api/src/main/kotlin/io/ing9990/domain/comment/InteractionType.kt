@@ -1,5 +1,5 @@
 // storage-api/src/main/kotlin/io/ing9990/domain/figure/InteractionType.kt
-package io.ing9990.domain.figure
+package io.ing9990.domain.comment
 
 /**
  * 댓글에 대한 상호작용 유형을 나타내는 Enum 클래스

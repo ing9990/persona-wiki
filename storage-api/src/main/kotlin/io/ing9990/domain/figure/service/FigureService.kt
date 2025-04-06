@@ -3,19 +3,17 @@ package io.ing9990.domain.figure.service
 import io.ing9990.common.HangeulUtil
 import io.ing9990.common.HangeulUtil.Companion.CHOSUNG_MAP
 import io.ing9990.domain.EntityNotFoundException
-import io.ing9990.domain.figure.Category
-import io.ing9990.domain.figure.Comment
-import io.ing9990.domain.figure.CommentInteraction
-import io.ing9990.domain.figure.CommentType
+import io.ing9990.domain.category.Category
+import io.ing9990.domain.category.repository.CategoryRepository
+import io.ing9990.domain.category.service.CategoryService
+import io.ing9990.domain.comment.Comment
+import io.ing9990.domain.comment.CommentType
+import io.ing9990.domain.comment.repository.CommentInteractionRepository
+import io.ing9990.domain.comment.repository.CommentRepository
 import io.ing9990.domain.figure.Figure
-import io.ing9990.domain.figure.InteractionType
-import io.ing9990.domain.figure.Sentiment
-import io.ing9990.domain.figure.Vote
-import io.ing9990.domain.figure.repository.CategoryRepository
-import io.ing9990.domain.figure.repository.CommentInteractionRepository
-import io.ing9990.domain.figure.repository.CommentRepository
 import io.ing9990.domain.figure.repository.FigureRepository
 import io.ing9990.domain.user.User
+import io.ing9990.domain.vote.Vote
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
@@ -32,9 +30,10 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class FigureService(
     private val figureRepository: FigureRepository,
-    private val categoryRepository: CategoryRepository,
     private val commentRepository: CommentRepository,
     private val commentInteractionRepository: CommentInteractionRepository,
+    private val categoryService: CategoryService,
+    private val categoryRepository: CategoryRepository,
 ) {
     private val log: Logger = LoggerFactory.getLogger(FigureService::class.java)
 
@@ -46,6 +45,9 @@ class FigureService(
         figureRepository.findByIdWithVotes(id)
             ?: throw IllegalArgumentException("해당 ID의 인물이 존재하지 않습니다: $id")
 
+    /**
+     * 인물의 상세 정보들을 페치 조인합니다.
+     */
     fun findByCategoryIdAndNameWithDetails(
         categoryId: String,
         figureName: String,
@@ -57,18 +59,39 @@ class FigureService(
                 "해당 인물을 찾을 수 없습니다.",
             )
 
-    // 투표 관련 메서드 - 트랜잭션 내에서 관계 엔티티에 안전하게 접근
-    @Transactional
-    fun voteFigure(
-        figureId: Long,
-        sentiment: Sentiment,
-        user: User,
-    ): Figure {
-        val figure = findById(figureId)
+    /**
+     * 카테고리 ID로, 해당 카테고리에 속한 인물 목록을 조회합니다.
+     * 이제 카테고리가 함께 로딩되므로 LazyInitializationException이 발생하지 않습니다.
+     * @param categoryId 카테고리 ID
+     */
+    fun findByCategoryId(categoryId: String): List<Figure> = figureRepository.findByCategoryId(categoryId)
 
-        figure.addOrUpdateVote(user, sentiment)
+    /**
+     * 카테고리별 인기 인물을 가져옵니다.
+     * @param limit 각 카테고리별로 가져올 인물 수
+     * @return 카테고리 ID를 키로, 인물 목록을 값으로 하는 맵
+     */
+    @Transactional(readOnly = true)
+    fun getPopularFiguresByCategory(limit: Int = 3): Map<Category, List<Figure>> {
+        // 인물이 많은 상위 카테고리 10개 조회
+        val topCategories =
+            categoryRepository
+                .findAll()
+                .map { category ->
+                    val figureCount = figureRepository.findByCategoryId(category.id).size
+                    Pair(category, figureCount)
+                }.sortedByDescending { it.second }
+                .take(10)
+                .map { it.first }
 
-        return figureRepository.save(figure)
+        // 각 카테고리별 인기 인물 조회
+        return topCategories.associateWith { category ->
+            // 해당 카테고리의 모든 인물
+            val figures = figureRepository.findByCategoryId(category.id)
+
+            // 평판 점수 기준으로 정렬 후 limit 개수만큼 추출
+            figures.sortedByDescending { it.reputation.total() }.take(limit)
+        }
     }
 
     /**
@@ -109,49 +132,8 @@ class FigureService(
     }
 
     /**
-     * 카테고리별 인기 인물을 가져옵니다.
-     * @param limit 각 카테고리별로 가져올 인물 수
-     * @return 카테고리 ID를 키로, 인물 목록을 값으로 하는 맵
+     * 이름으로 검색합니다.
      */
-    @Transactional(readOnly = true)
-    fun getPopularFiguresByCategory(limit: Int = 3): Map<Category, List<Figure>> {
-        // 인물이 많은 상위 카테고리 10개 조회
-        val topCategories =
-            categoryRepository
-                .findAll()
-                .map { category ->
-                    val figureCount = figureRepository.findByCategoryId(category.id).size
-                    Pair(category, figureCount)
-                }.sortedByDescending { it.second }
-                .take(10)
-                .map { it.first }
-
-        // 각 카테고리별 인기 인물 조회
-        return topCategories.associateWith { category ->
-            // 해당 카테고리의 모든 인물
-            val figures = findByCategoryId(category.id)
-
-            // 평판 점수 기준으로 정렬 후 limit 개수만큼 추출
-            figures.sortedByDescending { it.reputation.total() }.take(limit)
-        }
-    }
-
-    /**
-     * 카테고리 ID로, 해당 카테고리에 속한 인물 목록을 조회합니다.
-     * 이제 카테고리가 함께 로딩되므로 LazyInitializationException이 발생하지 않습니다.
-     * @param categoryId 카테고리 ID
-     */
-    fun findByCategoryId(categoryId: String): List<Figure> = figureRepository.findByCategoryId(categoryId)
-
-    /**
-     * 카테고리 ID로 카테고리 정보를 조회합니다.
-     * @param categoryId, 카테고리 ID
-     */
-    fun findCategoryById(categoryId: String): Category =
-        categoryRepository.findById(categoryId).orElse(null)
-            ?: throw IllegalArgumentException("해당 ID의 카테고리가 존재하지 않습니다: $categoryId")
-
-    // 검색 메서드를 수정합니다
     fun searchByName(name: String): List<Figure> {
         try {
             return figureRepository.findByNameContaining(name)
@@ -161,6 +143,9 @@ class FigureService(
         }
     }
 
+    /**
+     * 이니셜로 검색합니다.
+     */
     fun searchByNameWithInitials(query: String): List<Figure> {
         if (query.isBlank()) {
             throw IllegalArgumentException("검색어를 입력해주세요")
@@ -198,7 +183,7 @@ class FigureService(
         imageUrl: String?,
         bio: String?,
     ): Figure {
-        val category = findCategoryById(categoryId)
+        val category = categoryService.findCategoryById(categoryId)
 
         // 중복 체크
         if (figureRepository.existsByCategoryIdAndName(categoryId, name)) {
@@ -214,72 +199,6 @@ class FigureService(
             )
 
         return figureRepository.save(figure)
-    }
-
-    /**
-     * 새로운 댓글을 추가합니다.
-     * @param figureId 인물 ID
-     * @param content 댓글 내용
-     * @param user 댓글 작성자
-     */
-    @Transactional
-    fun addComment(
-        figureId: Long,
-        content: String,
-        user: User,
-    ): Comment {
-        val figure = findById(figureId)
-
-        val comment =
-            Comment(
-                figure = figure,
-                content = content,
-                user = user,
-            )
-
-        return commentRepository.save(comment)
-    }
-
-    /**
-     * 댓글에 좋아요/싫어요를 추가합니다.
-     * @param commentId 댓글 ID
-     * @param isLike true면 좋아요, false면 싫어요
-     */
-    @Transactional
-    fun likeOrDislikeComment(
-        commentId: Long,
-        isLike: Boolean,
-        user: User,
-    ): Comment {
-        val comment =
-            commentRepository.findByIdOrNull(commentId)
-                ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $commentId")
-
-        val interactionType = if (isLike) InteractionType.LIKE else InteractionType.DISLIKE
-
-        // 기존 상호작용 검색
-        val existingInteraction = commentInteractionRepository.findByUserIdAndCommentId(user.id!!, commentId)
-
-        if (existingInteraction != null) {
-            // 이미 같은 타입이면 아무것도 하지 않음
-            if (existingInteraction.interactionType == interactionType) {
-                return comment
-            }
-
-            // 다른 타입이면 업데이트
-            comment.updateInteraction(user.id!!, interactionType)
-        } else {
-            // 새 상호작용 추가
-            val interaction =
-                CommentInteraction(
-                    user = user,
-                    comment = comment,
-                    interactionType = interactionType,
-                )
-            comment.addInteraction(interaction)
-        }
-
-        return comment
     }
 
     // 새 메서드 추가
@@ -309,17 +228,6 @@ class FigureService(
     ): Vote? {
         val figure = findById(figureId)
         return userId?.let { id -> figure.getUserVote(id) }
-    }
-
-    /**
-     * 사용자가 특정 인물에 대해 이미 투표했는지 확인합니다.
-     */
-    fun hasUserVoted(
-        figureId: Long,
-        userId: Long?,
-    ): Boolean {
-        val figure = findById(figureId)
-        return userId?.let { id -> figure.hasVoted(id) } ?: false
     }
 
     /**
@@ -388,41 +296,6 @@ class FigureService(
         parentComment.addReply(reply)
 
         return commentRepository.save(reply)
-    }
-
-    /**
-     * 원 댓글과 그에 속한 모든 답글을 조회합니다.
-     * QueryDSL을 사용하여 한 번의 쿼리로 원 댓글과 답글들을 함께 가져옵니다.
-     *
-     * @param rootCommentId 원 댓글 ID
-     * @return 원 댓글과 모든 답글이 포함된 Comment 객체
-     */
-    fun getCommentWithReplies(rootCommentId: Long): List<Comment> {
-        val comment = commentRepository.findWithRepliesById(rootCommentId)
-        return comment?.replies ?: emptyList()
-    }
-
-    /**
-     * 특정 인물에 대한 댓글 트리(원 댓글과 답글)를 페이지 단위로 조회합니다.
-     * @param figureId 인물 ID
-     * @param page 페이지 번호
-     * @param size 페이지 크기
-     * @return 댓글 트리 목록
-     */
-    @Transactional(readOnly = true)
-    fun getCommentTreesByFigureId(
-        figureId: Long,
-        page: Int,
-        size: Int,
-    ): Page<Comment> {
-        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
-
-        // 원 댓글만 페이징하여 조회
-        return commentRepository.findCommentsByFigureIdAndType(
-            figureId = figureId,
-            commentType = CommentType.ROOT,
-            pageable = pageable,
-        )
     }
 
     /**

@@ -1,6 +1,6 @@
-package io.ing9990.domain.figure.repository
+package io.ing9990.domain.category.repository
 
-import io.ing9990.domain.figure.Category
+import io.ing9990.domain.category.Category
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 

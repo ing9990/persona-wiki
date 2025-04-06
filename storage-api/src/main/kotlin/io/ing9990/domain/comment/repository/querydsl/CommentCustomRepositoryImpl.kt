@@ -1,10 +1,10 @@
-package io.ing9990.domain.figure.repository.querydsl.comment
+package io.ing9990.domain.comment.repository.querydsl
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import io.ing9990.domain.figure.Comment
-import io.ing9990.domain.figure.CommentType
-import io.ing9990.domain.figure.querydsl.QComment
-import io.ing9990.domain.figure.querydsl.QCommentInteraction
+import io.ing9990.domain.comment.Comment
+import io.ing9990.domain.comment.CommentType
+import io.ing9990.domain.comment.querydsl.QComment
+import io.ing9990.domain.comment.querydsl.QCommentInteraction
 import io.ing9990.domain.user.querydsl.QUser
 import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page

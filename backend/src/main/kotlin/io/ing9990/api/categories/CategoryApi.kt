@@ -2,7 +2,7 @@ package io.ing9990.api.categories
 
 import io.ing9990.api.categories.dto.request.CategoryRequest
 import io.ing9990.api.categories.dto.response.CategoryResponse
-import io.ing9990.domain.figure.service.CategoryService
+import io.ing9990.domain.category.service.CategoryService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
