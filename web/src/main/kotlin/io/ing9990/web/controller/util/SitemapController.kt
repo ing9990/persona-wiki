@@ -1,5 +1,5 @@
 // web/src/main/kotlin/io/ing9990/web/controller/SitemapController.kt
-package io.ing9990.web.controller
+package io.ing9990.web.controller.util
 
 import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService

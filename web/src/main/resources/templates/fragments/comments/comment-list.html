@@ -1,0 +1,56 @@
+<!-- fragments/comments/comment-list.html -->
+<div th:fragment="commentList" th:attr="data-last=${comments.last}">
+  <div th:each="comment : ${comments.content}" class="comment mb-6">
+    <div class="comment-header flex items-center gap-3">
+      <img
+          th:src="${@layoutHelper.getProfileImageByString(comment.userProfileImage)}"
+          class="comment-profile w-8 h-8 rounded-full object-cover"
+          alt="프로필 이미지"/>
+      <div class="comment-meta">
+        <span class="comment-nickname font-semibold"
+              th:text="${comment.userNickname != null} ? ${comment.userNickname} : '익명'"></span>
+        <span class="comment-date ml-2 text-sm text-gray-400"
+              th:text="${comment.createdAt}"></span>
+      </div>
+    </div>
+    <div class="comment-body mt-2 text-gray-800 text-[15px] leading-relaxed"
+         th:text="${comment.content}"></div>
+    <div class="comment-footer flex flex-wrap gap-4 text-sm text-gray-500 mt-2 items-center">
+      <span class="like-btn cursor-pointer"
+            th:classappend="${comment.isLikedByUser} ? 'clicked text-blue-600'"
+            th:attr="data-id=${comment.id}, data-figure-id=${figureId}">
+        <i class="fa-regular fa-thumbs-up"></i>
+        <span class="count" th:text="${comment.likes}">0</span>
+      </span>
+      <span class="dislike-btn cursor-pointer"
+            th:classappend="${comment.isDislikedByUser} ? 'clicked text-red-500'"
+            th:attr="data-id=${comment.id}, data-figure-id=${figureId}">
+        <i class="fa-regular fa-thumbs-down"></i>
+        <span class="count" th:text="${comment.dislikes}">0</span>
+      </span>
+
+      <span th:if="${#authentication.name != 'anonymousUser'}"
+            class="reply-write-btn cursor-pointer text-gray-600 hover:text-blue-600 flex items-center gap-1"
+            th:attr="data-id=${comment.id}">
+        <i class="fa-regular fa-pen-to-square"></i> 답글 쓰기
+      </span>
+      <span th:if="${#authentication.name == 'anonymousUser'}"
+            class="reply-write-disabled text-gray-400 flex items-center gap-1"
+            title="로그인 후 이용 가능합니다">
+        <i class="fa-regular fa-pen-to-square"></i> 답글 쓰기
+      </span>
+
+      <span th:if="${comment.replyCount > 0}"
+            class="reply-toggle cursor-pointer font-medium text-blue-600 hover:underline"
+            th:attr="data-comment-id=${comment.id}, data-figure-id=${figureId}">
+        <i class="fa-regular fa-comment-dots"></i>
+        답글 <span th:text="${comment.replyCount}">0</span>개
+      </span>
+    </div>
+
+    <!-- 답글 컨테이너 -->
+    <div class="reply-container mt-3 pl-6 ml-2 border-l-2 border-blue-100 hidden">
+      <div class="replies-list"></div>
+    </div>
+  </div>
+</div>

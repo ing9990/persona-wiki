@@ -1,0 +1,33 @@
+<!-- fragments/comments/comment-replies.html -->
+<div th:fragment="replies">
+  <div th:each="reply : ${replies}" class="reply mb-4">
+    <div class="reply-header flex items-center gap-3">
+      <img
+          th:src="${@layoutHelper.getProfileImageByString(reply.userProfileImage)}"
+          class="reply-profile w-7 h-7 rounded-full object-cover"
+          alt="프로필 이미지"/>
+      <div class="reply-meta">
+        <span class="reply-nickname font-semibold text-sm"
+              th:text="${reply.userNickname != null} ? ${reply.userNickname} : '익명'"></span>
+        <span class="reply-date ml-2 text-xs text-gray-400"
+              th:text="${reply.createdAt}"></span>
+      </div>
+    </div>
+    <div class="reply-body mt-1 text-gray-800 text-[14px] leading-relaxed"
+         th:text="${reply.content}"></div>
+    <div class="reply-footer flex flex-wrap gap-4 text-xs text-gray-500 mt-1 items-center">
+      <span class="like-btn cursor-pointer"
+            th:classappend="${reply.isLikedByUser} ? 'clicked text-blue-600'"
+            th:attr="data-id=${reply.id}, data-figure-id=${figureId}">
+        <i class="fa-regular fa-thumbs-up"></i>
+        <span class="count" th:text="${reply.likes}">0</span>
+      </span>
+      <span class="dislike-btn cursor-pointer"
+            th:classappend="${reply.isDislikedByUser} ? 'clicked text-red-500'"
+            th:attr="data-id=${reply.id}, data-figure-id=${figureId}">
+        <i class="fa-regular fa-thumbs-down"></i>
+        <span class="count" th:text="${reply.dislikes}">0</span>
+      </span>
+    </div>
+  </div>
+</div>

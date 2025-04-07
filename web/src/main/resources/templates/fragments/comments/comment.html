@@ -1,0 +1,31 @@
+<!-- fragments/comment.html -->
+<div class="comment mb-6" th:fragment="commentFragment">
+  <div class="comment-header flex items-center gap-3">
+    <img
+        th:src="${comment.userProfileImage != null ? comment.userProfileImage : '/img/placeholder.svg'}"
+        class="comment-profile w-8 h-8 rounded-full object-cover"
+        alt="프로필 이미지"/>
+    <div class="comment-meta">
+      <span class="comment-nickname font-semibold"
+            th:text="${comment.userNickname != null} ? ${comment.userNickname} : '익명'"></span>
+      <span class="comment-date ml-2 text-sm text-gray-400"
+            th:text="${comment.createdAt}"></span>
+    </div>
+  </div>
+  <div class="comment-body mt-2 text-gray-800 text-[15px] leading-relaxed"
+       th:text="${comment.content}"></div>
+  <div class="comment-footer flex flex-wrap gap-4 text-sm text-gray-500 mt-2 items-center">
+    <span class="like-btn cursor-pointer"
+          th:classappend="${comment.isLikedByUser} ? 'clicked text-blue-600'"
+          th:attr="data-id=${comment.id}, data-figure-id=${figureId}">
+      <i class="fa-regular fa-thumbs-up"></i>
+      <span class="count" th:text="${comment.likes}">0</span>
+    </span>
+    <span class="dislike-btn cursor-pointer"
+          th:classappend="${comment.isDislikedByUser} ? 'clicked text-red-500'"
+          th:attr="data-id=${comment.id}, data-figure-id=${figureId}">
+      <i class="fa-regular fa-thumbs-down"></i>
+      <span class="count" th:text="${comment.dislikes}">0</span>
+    </span>
+  </div>
+</div>

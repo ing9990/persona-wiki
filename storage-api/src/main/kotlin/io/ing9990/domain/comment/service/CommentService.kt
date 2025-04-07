@@ -60,7 +60,6 @@ class CommentService(
                 userId = userId,
                 pageable = pageable,
             )
-
         return commentPage
     }
 

@@ -43,27 +43,38 @@
 
   <!-- 댓글 목록 -->
   <div class="comments-container">
-    <div id="comment-list" th:attr="data-figure-id=${detailsResult.getId()}"></div>
-    <p class="empty-comment-message text-sm text-gray-400 py-4 text-center hidden">아직 댓글이 없습니다.</p>
+    <div id="comment-list" class="flex flex-col gap-4"
+         th:attr="data-figure-id=${detailsResult.getId()}"></div>
 
-    <div class="loading-indicator text-center py-4 hidden">
-      <div
-          class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
-      <p class="text-gray-500 mt-2">댓글을 불러오는 중...</p>
-    </div>
 
-    <div class="no-more-comments text-center py-4 text-gray-500 hidden">더 이상 불러올 댓글이 없습니다.</div>
-    <div class="no-comments text-center py-8 hidden">
-      <div class="text-gray-400 mb-2">
-        <i class="far fa-comment-dots text-4xl"></i>
-      </div>
-      <p class="text-gray-500">아직 댓글이 없습니다. 첫 번째 의견을 남겨보세요!</p>
-    </div>
-
-    <div class="error-message text-center py-4 text-red-500 hidden">
-      댓글을 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.
-    </div>
+    <!-- 여기로 comment fragment가 append됨 -->
   </div>
+
+  <p class="js-empty-comment-message text-sm text-gray-400 py-4 text-center hidden">
+    아직 댓글이 없습니다.
+  </p>
+
+  <div class="js-loading-indicator text-center py-4 hidden">
+    <div
+        class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+    <p class="text-gray-500 mt-2">댓글을 불러오는 중...</p>
+  </div>
+
+  <div class="js-no-more-comments text-center py-4 text-gray-500 hidden">
+    더 이상 불러올 댓글이 없습니다.
+  </div>
+
+  <div class="js-no-comments text-center py-8 hidden">
+    <div class="text-gray-400 mb-2">
+      <i class="far fa-comment-dots text-4xl"></i>
+    </div>
+    <p class="text-gray-500">아직 댓글이 없습니다. 첫 번째 의견을 남겨보세요!</p>
+  </div>
+
+  <div class="js-error-message text-center py-4 text-red-500 hidden">
+    댓글을 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.
+  </div>
+
 
   <!-- 댓글 템플릿 -->
   <template id="comment-template">

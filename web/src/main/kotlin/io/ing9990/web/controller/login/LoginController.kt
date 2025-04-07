@@ -1,4 +1,4 @@
-package io.ing9990.web.controller
+package io.ing9990.web.controller.login
 
 import io.ing9990.authentication.providers.google.dto.GoogleAuthProperties
 import io.ing9990.authentication.providers.kakao.dto.KakaoAuthProperties

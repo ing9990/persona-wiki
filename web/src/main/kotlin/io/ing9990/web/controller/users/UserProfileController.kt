@@ -1,4 +1,4 @@
-package io.ing9990.web.controller
+package io.ing9990.web.controller.users
 
 import io.ing9990.service.UserService
 import org.springframework.stereotype.Controller

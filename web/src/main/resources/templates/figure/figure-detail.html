@@ -13,6 +13,8 @@
 
 <body>
 <div layout:fragment="content">
+  <div id="comment-section" th:attr="data-figure-id=${detailsResult.id}"></div>
+
   <!-- 인물 프로필 헤더 -->
   <section class="profile-header mb-8 shadow-lg" th:attr="data-figure-id=${detailsResult.getId()}">
     <img th:src="${detailsResult.getCategoryImage()}" th:alt="${detailsResult.getName()}"
@@ -45,25 +47,26 @@
     <!-- 왼쪽: 인물 정보 -->
     <div class="lg:col-span-2">
       <!-- 인물 평가 투표 섹션 -->
-      <div th:replace="fragments/vote-section :: voteSection(${detailsResult}, ${current})"></div>
+      <div
+          th:replace="~{fragments/vote-section :: voteSection(${detailsResult}, ${current})}"></div>
       <!-- 인물 평가 투표 섹션 종료 -->
 
       <!-- 댓글 섹션 부분 -->
       <div
-          th:replace="fragments/comment-section :: commentSection(${detailsResult}, ${current})"></div>
+          th:replace="~{fragments/comment-section :: commentSection(${detailsResult}, ${current})}"></div>
       <!-- 댓글 섹션 부분 종료-->
     </div>
 
-    <!--    페이지 우측 평판 통계 부분 -->
-    <div th:replace="fragments/reputation-sidebar :: reputationSidebar(${detailsResult})"></div>
-    <!--    페이지 우측 평판 통계 부분 종료 -->
+    <!-- 페이지 우측 평판 통계 부분 -->
+    <div th:replace="~{fragments/reputation-sidebar :: reputationSidebar(${detailsResult})}"></div>
+    <!-- 페이지 우측 평판 통계 부분 종료 -->
 
-    <!--    페이지 우측 카테고리 섹션-->
-    <div th:replace="fragments/category-section :: categorySection(${detailsResult})"></div>
-    <!--    페이지 우측 카테고리 섹션 종료-->
+    <!-- 페이지 우측 카테고리 섹션 -->
+    <div th:replace="~{fragments/category-section :: categorySection(${detailsResult})}"></div>
+    <!-- 페이지 우측 카테고리 섹션 종료-->
 
     <!-- 공유하기 -->
-    <div th:replace="fragments/share-section :: shareSection"></div>
+    <div th:replace="~{fragments/share-section :: shareSection}"></div>
     <!-- 공유하기 종료-->
   </div>
 </div>
@@ -79,7 +82,7 @@
 
   <!-- 먼저 comment-api.js를 로드 -->
   <script src="/js/comment-api.js"></script>
-  <script src="/js/figure/comment-infinite-scroll.js"></script>
+  <script src="/js/comment-fragments-handler.js"></script>
 
   <!-- 추가 페이지별 스크립트 -->
   <script>
