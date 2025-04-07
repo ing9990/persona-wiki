@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/{categoryId}/@{figureName}/vote")
+@RequestMapping("api/v1/categories/{categoryId}/@{figureName}/vote")
 class VoteApi(
     private val voteService: VoteService,
 ) {

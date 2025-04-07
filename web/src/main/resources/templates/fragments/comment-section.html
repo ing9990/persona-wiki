@@ -1,0 +1,107 @@
+<!-- fragments/comment-section.html -->
+<section th:fragment="commentSection(detailsResult, current)"
+         class="bg-white rounded-lg shadow-md p-6 fade-in">
+  <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+    <i class="fas fa-comments text-indigo-500 mr-2"></i>
+    <span>의견</span>
+    <span class="ml-2 text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full"
+          th:text="${detailsResult.totalCommentCount}">0</span>
+  </h2>
+
+  <!-- 로그인 사용자 댓글 작성 폼 -->
+  <div th:if="${current.loggedIn()}">
+    <form th:action="@{'/api/v1/figures/' + ${detailsResult.getId()} + '/comments'}"
+          method="post" class="mb-8">
+      <div class="mb-3">
+        <textarea name="content" rows="3"
+                  class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 comment-box"
+                  placeholder="이 인물에 대한 의견을 남겨주세요..."></textarea>
+      </div>
+      <div class="text-right">
+        <button type="submit"
+                class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition">
+          <i class="fas fa-paper-plane mr-1"></i> 게시하기
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- 비로그인 사용자 안내 -->
+  <div th:if="${current.notLoggedIn()}" class="mb-8">
+    <div
+        class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col sm:flex-row items-center sm:justify-between">
+      <div class="flex items-center mb-2 sm:mb-0">
+        <i class="fas fa-info-circle text-blue-500 text-xl mr-2"></i>
+        <p class="text-gray-700">의견을 남기려면 로그인이 필요합니다.</p>
+      </div>
+      <a href="/login"
+         class="mt-2 sm:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition-colors duration-200 flex items-center">
+        <i class="fas fa-sign-in-alt mr-2"></i> 로그인하기
+      </a>
+    </div>
+  </div>
+
+  <!-- 댓글 목록 -->
+  <div class="comments-container">
+    <div id="comment-list" th:attr="data-figure-id=${detailsResult.getId()}"></div>
+    <p class="empty-comment-message text-sm text-gray-400 py-4 text-center hidden">아직 댓글이 없습니다.</p>
+
+    <div class="loading-indicator text-center py-4 hidden">
+      <div
+          class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+      <p class="text-gray-500 mt-2">댓글을 불러오는 중...</p>
+    </div>
+
+    <div class="no-more-comments text-center py-4 text-gray-500 hidden">더 이상 불러올 댓글이 없습니다.</div>
+    <div class="no-comments text-center py-8 hidden">
+      <div class="text-gray-400 mb-2">
+        <i class="far fa-comment-dots text-4xl"></i>
+      </div>
+      <p class="text-gray-500">아직 댓글이 없습니다. 첫 번째 의견을 남겨보세요!</p>
+    </div>
+
+    <div class="error-message text-center py-4 text-red-500 hidden">
+      댓글을 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.
+    </div>
+  </div>
+
+  <!-- 댓글 템플릿 -->
+  <template id="comment-template">
+    <div class="comment-item border-b border-gray-200 py-4">
+      <div class="flex">
+        <div class="flex-shrink-0 mr-3">
+          <img class="user-profile h-10 w-10 rounded-full object-cover"
+               src="" alt="프로필 이미지"
+               data-handle-error="true"
+               data-placeholder="/img/profile-placeholder.svg">
+        </div>
+
+        <div class="flex-grow">
+          <div class="flex items-center mb-1">
+            <span class="user-nickname font-medium text-gray-900 mr-2"></span>
+            <span class="comment-date text-sm text-gray-500"></span>
+          </div>
+          <div class="comment-content text-gray-700 mb-2"></div>
+
+          <div class="flex items-center text-sm text-gray-500">
+            <button class="like-button flex items-center mr-4 hover:text-indigo-600">
+              <i class="far fa-thumbs-up mr-1"></i><span class="like-count">0</span>
+            </button>
+            <button class="dislike-button flex items-center mr-4 hover:text-red-600">
+              <i class="far fa-thumbs-down mr-1"></i><span class="dislike-count">0</span>
+            </button>
+            <button class="reply-button flex items-center hover:text-indigo-600">
+              <i class="far fa-comment mr-1"></i><span>답글</span><span
+                class="reply-count ml-1"></span>
+            </button>
+          </div>
+
+          <div class="reply-container mt-3 pl-3 border-l-2 border-gray-200 hidden">
+            <div class="replies-list"></div>
+            <div class="reply-form mt-2 hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+</section>

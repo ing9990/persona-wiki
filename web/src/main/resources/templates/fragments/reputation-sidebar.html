@@ -1,0 +1,62 @@
+<!-- fragments/reputation-sidebar.html -->
+<div th:fragment="reputationSidebar(detailsResult)" class="space-y-6">
+  <!-- 평판 카드 -->
+  <div class="bg-white rounded-lg shadow-md p-6 stat-card fade-in">
+    <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+      <i class="fas fa-chart-pie text-indigo-500 mr-2"></i>
+      <span>평판 통계</span>
+    </h3>
+
+    <!-- 평판 그래프 -->
+    <div class="space-y-4 mb-4">
+      <!-- 숭배 -->
+      <div>
+        <div class="flex justify-between text-sm mb-1">
+          <span class="font-medium text-green-600 flex items-center">
+            <i class="fas fa-crown mr-1 text-xs"></i>숭배
+          </span>
+          <span class="text-gray-600" th:text="${detailsResult.positivePercentage()}">0 (0%)</span>
+        </div>
+        <div class="reputation-meter bg-gray-200">
+          <div class="h-full bg-green-500"
+               th:style="${detailsResult.totalVotes() == 0} ? 'width: 0%' : 'width: ' + (${detailsResult.positiveCount()} / ${detailsResult.totalVotes()} * 100) + '%'">
+          </div>
+        </div>
+      </div>
+
+      <!-- 중립 -->
+      <div>
+        <div class="flex justify-between text-sm mb-1">
+          <span class="font-medium text-blue-600 flex items-center">
+            <i class="fas fa-balance-scale mr-1 text-xs"></i>중립
+          </span>
+          <span class="text-gray-600" th:text="${detailsResult.neutralPercentage()}">0 (0%)</span>
+        </div>
+        <div class="reputation-meter bg-gray-200">
+          <div class="h-full bg-blue-500"
+               th:style="${detailsResult.totalVotes() == 0} ? 'width: 0%' : 'width: ' + (${detailsResult.neutralCount()} / ${detailsResult.totalVotes()} * 100) + '%'">
+          </div>
+        </div>
+      </div>
+
+      <!-- 사형 -->
+      <div>
+        <div class="flex justify-between text-sm mb-1">
+          <span class="font-medium text-red-600 flex items-center">
+            <i class="fas fa-skull mr-1 text-xs"></i>사형
+          </span>
+          <span class="text-gray-600" th:text="${detailsResult.negativePercentage()}">0 (0%)</span>
+        </div>
+        <div class="reputation-meter bg-gray-200">
+          <div class="h-full bg-red-500"
+               th:style="${detailsResult.totalVotes() == 0} ? 'width: 0%' : 'width: ' + (${detailsResult.negativeCount()} / ${detailsResult.totalVotes()} * 100) + '%'">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center text-sm text-gray-500 mt-3">
+      총 <span th:text="${detailsResult.totalVotes()}" class="font-bold">0</span>개의 평가 기록
+    </div>
+  </div>
+</div>

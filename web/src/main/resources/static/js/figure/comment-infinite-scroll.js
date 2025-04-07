@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
   if (typeof CommentAPI === 'undefined') {
     console.warn('CommentAPI 모듈이 로드되지 않았습니다.');
   }
-
   // Toast 관리자 초기화
   initializeToastManager();
 

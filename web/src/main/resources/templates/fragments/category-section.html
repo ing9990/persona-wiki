@@ -1,0 +1,28 @@
+<!-- fragments/category-section.html -->
+<div th:fragment="categorySection(detailsResult)"
+     class="bg-white rounded-lg shadow-md overflow-hidden stat-card fade-in mt-5">
+
+  <div class="category-card">
+    <img th:src="${@layoutHelper.getCategoryImageByString(detailsResult.getCategoryImage())}"
+         th:alt="${detailsResult.getName()}"
+         class="category-image">
+    <div class="category-content">
+      <h3 class="text-xl font-bold mb-1"
+          th:text="${detailsResult.getCategoryDisplayName()}">
+        카테고리명</h3>
+    </div>
+  </div>
+
+  <div class="p-4">
+    <p class="text-gray-600 text-sm mb-4"
+       th:text="${detailsResult.getCategoryDescription()}">
+      카테고리 설명</p>
+    <div class="mt-2">
+      <a th:href="@{'/categories/' + ${detailsResult.getCategoryId()}}"
+         class="text-indigo-600 hover:text-indigo-800 text-sm flex items-center">
+        <span>이 카테고리의 다른 인물 보기</span>
+        <i class="fas fa-chevron-right ml-1 text-xs"></i>
+      </a>
+    </div>
+  </div>
+</div>

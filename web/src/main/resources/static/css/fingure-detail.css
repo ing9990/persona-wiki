@@ -1,0 +1,174 @@
+/* 프로필 헤더 스타일 */
+.profile-header {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+
+.profile-header-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(70%);
+}
+
+.profile-header-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 2rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  color: white;
+}
+
+.profile-image {
+  border: 4px solid white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 카드 및 UI 요소 스타일 */
+.badge-category {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+}
+
+.comment-box {
+  transition: all 0.3s ease;
+}
+
+.comment-box:hover {
+  border-color: #6366F1;
+}
+
+.stat-card {
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+/* 평판 측정기 */
+.reputation-meter {
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* 카테고리 카드 */
+.category-card {
+  position: relative;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: brightness(70%);
+}
+
+.category-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 1.5rem;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  color: white;
+  z-index: 10;
+}
+
+/* 애니메이션 효과 */
+.fade-in {
+  animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 투표 버튼 스타일 */
+.vote-button {
+  transition: all 0.3s ease;
+}
+
+.vote-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.vote-button-disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.vote-button-disabled:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+/* 로그인 프롬프트 */
+.login-prompt {
+  background-color: #EFF6FF;
+  border: 1px solid #DBEAFE;
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.login-button {
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  transition: all 0.3s ease;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
+}
+
+/* 투표 결과 표시 */
+.vote-result {
+  background-color: #F9FAFB;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  margin-top: 1rem;
+  border: 1px solid #E5E7EB;
+}
+
+.vote-sentiment-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-weight: 600;
+}
+
+.sentiment-positive {
+  background-color: #D1FAE5;
+  color: #047857;
+}
+
+.sentiment-neutral {
+  background-color: #DBEAFE;
+  color: #1D4ED8;
+}
+
+.sentiment-negative {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
