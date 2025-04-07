@@ -100,6 +100,22 @@ class Comment(
         }
     }
 
+    fun deleteInteraction(
+        userId: Long,
+        type: InteractionType,
+    ) {
+        val interaction = getUserInteraction(userId) ?: return
+
+        // 상호작용 유형에 따라 카운트 감소
+        when (interaction.interactionType) {
+            InteractionType.LIKE -> likes--
+            InteractionType.DISLIKE -> dislikes--
+        }
+
+        // 상호작용 삭제
+        interactions.removeIf { it.user.id == userId }
+    }
+
     fun updateInteraction(
         userId: Long,
         newType: InteractionType,

@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController
  * 댓글 및 평가 관련 REST API를 제공하는 컨트롤러
  */
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/figures/{figureId}/comments")
 class CommentApi(
     private val commentService: CommentService,
 ) {
@@ -34,7 +34,7 @@ class CommentApi(
      * @param pageable 페이지 정보 (page, size)
      * @return 페이징된 댓글 목록
      */
-    @GetMapping("/{figureId}/comments")
+    @GetMapping
     fun getComments(
         @CurrentUser currentUser: CurrentUserDto,
         @PathVariable figureId: Long,
@@ -78,7 +78,7 @@ class CommentApi(
     /**
      * 새 댓글을 추가합니다.
      */
-    @PostMapping("/figure/{figureId}/comments")
+    @PostMapping
     fun addComment(
         @PathVariable figureId: Long,
         @RequestBody request: CommentRequest,
@@ -89,41 +89,42 @@ class CommentApi(
             content = request.content,
             user = user,
         )
-
         return ResponseEntity.noContent().build()
     }
 
     /**
      * 댓글에 좋아요 혹은 싫어요를 누릅니다.
      */
-    @PostMapping("/comments/{commentId}/toggle")
+    @PostMapping("/{commentId}/toggle")
     fun likeComment(
-        @PathVariable commentId: Long,
         @AuthorizedUser user: User,
+        @PathVariable commentId: Long,
+        @PathVariable figureId: Long,
     ): ResponseEntity<Unit> {
-        val comment = commentService.likeOrDislikeComment(commentId, true, user)
+        commentService.likeOrDislikeComment(commentId, true, user)
 
         return ResponseEntity.noContent().build()
     }
 
     /**
      * 댓글에 답글을 추가합니다.
+     * @RequestMapping 주소로 인해 이 API의 주소는
+     * /api/v1/figures/{figureId}/comments/{commentId}/replies 입니다.
      */
-    @PostMapping("/comments/{commentId}/replies")
+    @PostMapping("/{commentId}/replies")
     fun addReply(
         @AuthorizedUser user: User,
         @PathVariable commentId: Long,
         @RequestBody request: CommentRequest,
-    ): ResponseEntity<CommentResponse> {
-        val reply: CommentResult =
-            commentService.addReply(
-                user = user,
-                parentCommentId = commentId,
-                content = request.content,
-            )
-
-        return ResponseEntity.ok(
-            CommentResponse.from(reply),
+        // 쓰지 않아도 무관함. 리소스 구조상 받는 거임.
+        @PathVariable figureId: Long,
+    ): ResponseEntity<Unit> {
+        commentService.addReply(
+            user = user,
+            parentCommentId = commentId,
+            content = request.content,
         )
+
+        return ResponseEntity.noContent().build()
     }
 }

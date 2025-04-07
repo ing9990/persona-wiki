@@ -359,7 +359,7 @@
         <!-- 댓글 작성 폼 -->
         <div th:if="${current.loggedIn()}">
           <form
-              th:action="@{'/api/v1/figure/' + ${detailsResult.getId()} + '/comments'}"
+              th:action="@{'/api/v1/figures/' + ${detailsResult.getId()} + '/comments'}"
               method="post" class="mb-8">
             <div class="mb-3">
   <textarea name="content" rows="3"
@@ -377,13 +377,28 @@
 
         <!-- 비로그인 사용자를 위한 안내 -->
         <div th:if="${current.notLoggedIn()}" class="mb-8">
-          <!-- 로그인 안내 메시지 -->
+          <div
+              class="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col sm:flex-row items-center sm:justify-between">
+            <div class="flex items-center mb-2 sm:mb-0">
+              <i class="fas fa-info-circle text-blue-500 text-xl mr-2"></i>
+              <p class="text-gray-700">
+                의견을 남기려면 로그인이 필요합니다.
+              </p>
+            </div>
+            <a href="/login"
+               class="mt-2 sm:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition-colors duration-200 flex items-center">
+              <i class="fas fa-sign-in-alt mr-2"></i>
+              로그인하기
+            </a>
+          </div>
         </div>
 
         <!-- 댓글 목록 -->
         <div class="comments-container">
           <!-- 댓글 목록이 여기에 로드됩니다 -->
           <div id="comment-list" th:attr="data-figure-id=${detailsResult.getId()}"></div>
+          <p class="empty-comment-message text-sm text-gray-400 py-4 text-center hidden">아직 댓글이
+            없습니다.</p>
 
 
           <!-- 로딩 표시기 -->
@@ -606,9 +621,11 @@
 
   <!-- InfiniteScroll 라이브러리 -->
   <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
+  <!-- figure-detail.html의 <th:block layout:fragment="script"> 안에 추가 -->
 
+  <!-- 먼저 comment-api.js를 로드 -->
+  <script src="/js/comment-api.js"></script>
   <script src="/js/figure/comment-infinite-scroll.js"></script>
-
 
   <!-- 추가 페이지별 스크립트 -->
   <script>

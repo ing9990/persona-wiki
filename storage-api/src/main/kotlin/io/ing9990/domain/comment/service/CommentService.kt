@@ -83,25 +83,29 @@ class CommentService(
 
         // 기존 상호작용 검색
         val existingInteraction =
-            commentInteractionRepository.findByUserIdAndCommentId(user.id!!, commentId)
+            commentInteractionRepository
+                .findByUserIdAndCommentId(user.id!!, commentId)
 
-        if (existingInteraction != null) {
-            // 이미 같은 타입이면 아무것도 하지 않음
-            if (existingInteraction.interactionType == interactionType) {
-                return comment
+        when {
+            // 동일한 타입의 상호작용이 이미 존재하면 삭제 (좋아요 취소 또는 싫어요 취소)
+            existingInteraction?.interactionType == interactionType -> {
+                comment.deleteInteraction(user.id!!, interactionType)
+                commentInteractionRepository.delete(existingInteraction)
             }
-
-            // 다른 타입이면 업데이트
-            comment.updateInteraction(user.id!!, interactionType)
-        } else {
-            // 새 상호작용 추가
-            val interaction =
-                CommentInteraction(
-                    user = user,
-                    comment = comment,
-                    interactionType = interactionType,
-                )
-            comment.addInteraction(interaction)
+            // 다른 타입의 상호작용이 존재하면 업데이트 (좋아요→싫어요 또는 싫어요→좋아요)
+            existingInteraction != null -> {
+                comment.updateInteraction(user.id!!, interactionType)
+            }
+            // 상호작용이 없으면 새로 생성
+            else -> {
+                val interaction =
+                    CommentInteraction(
+                        user = user,
+                        comment = comment,
+                        interactionType = interactionType,
+                    )
+                comment.addInteraction(interaction)
+            }
         }
 
         return comment
@@ -141,7 +145,7 @@ class CommentService(
         }
 
         // 새 답글 생성
-        val reply =
+        val reply: Comment =
             Comment(
                 figure = parentComment.figure,
                 content = content,

@@ -2,7 +2,6 @@ package io.ing9990.domain.comment.repository.querydsl.dto
 
 import io.ing9990.domain.comment.Comment
 import io.ing9990.domain.comment.InteractionType
-import io.ing9990.domain.comment.InteractionType.*
 import java.time.LocalDateTime
 
 data class CommentResults(
@@ -42,7 +41,7 @@ data class CommentResult(
                 userName = it.user?.nickname ?: "",
                 replyCount = if (replyCount > 0) replyCount else it.repliesCount,
                 interactionType = userInteractionType,
-                isLikedByUser = isLikedByUser || userInteractionType == LIKE,
+                isLikedByUser = isLikedByUser || userInteractionType == InteractionType.LIKE,
             )
     }
 }

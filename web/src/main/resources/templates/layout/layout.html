@@ -47,7 +47,8 @@
   <!-- 아이콘 및 매니페스트 -->
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <!-- Head에 추가 -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
   <!-- CSS 최적화 로드 -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
@@ -167,6 +168,7 @@
 
 <header class="gradient-bg text-white shadow-md">
   <div class="container mx-auto px-4 py-4">
+    <input type="hidden" id="userLoginStatus" th:value="${current.loggedIn()}">
     <nav class="flex flex-col md:flex-row md:justify-between md:items-center" aria-label="메인 네비게이션">
 
       <!-- (1) 로고 + 모바일 영역 -->
@@ -179,7 +181,6 @@
 
         <!-- (A) 모바일용 우측 영역 -->
         <div class="flex items-center">
-
           <!-- 비로그인: 모바일에서만 (md:hidden) 햄버거 + 로그인 아이콘 표시 -->
           <th:block th:if="${current.notLoggedIn()}">
             <div class="md:hidden flex items-center">

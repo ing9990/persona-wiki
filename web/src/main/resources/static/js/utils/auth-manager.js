@@ -1,6 +1,6 @@
 /**
  * 토스트 알림 관리자
- * 각종 알림을 화면 우하단에 표시하는 기능 제공
+ * 각종 알림을 화면 상단에 표시하는 기능 제공
  */
 class ToastManager {
   constructor() {
@@ -9,15 +9,7 @@ class ToastManager {
     this.queue = [];
     this.maxToasts = 3;
     this.defaultDuration = 3000;
-    this._initialized = false;
-
-    // DOMContentLoaded 이벤트에서 초기화
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.init());
-    } else {
-      // 이미 DOM이 로드된 경우 즉시 초기화
-      this.init();
-    }
+    this.init();
   }
 
   /**
@@ -25,9 +17,6 @@ class ToastManager {
    * @private
    */
   init() {
-    // 이미 초기화되었다면 중복 실행 방지
-    if (this._initialized) return;
-
     // 기존 컨테이너가 있는지 확인
     let container = document.getElementById('toast-container');
 
@@ -42,10 +31,6 @@ class ToastManager {
 
     // 스타일 추가
     this.addStyles();
-
-    // 초기화 완료 표시
-    this._initialized = true;
-    console.info('[ToastManager] 초기화 완료');
   }
 
   /**
@@ -56,7 +41,9 @@ class ToastManager {
     const styleId = 'toast-manager-styles';
 
     // 이미 스타일이 추가되어 있는지 확인
-    if (document.getElementById(styleId)) return;
+    if (document.getElementById(styleId)) {
+      return;
+    }
 
     const style = document.createElement('style');
     style.id = styleId;
@@ -110,11 +97,6 @@ class ToastManager {
    * @private
    */
   createToast(message, type, duration = this.defaultDuration) {
-    // 초기화 확인
-    if (!this._initialized) {
-      this.init();
-    }
-
     const toast = document.createElement('div');
     toast.className = `toast toast-${type} px-4 py-2 rounded-md toast-enter flex items-center justify-between`;
 
@@ -148,7 +130,7 @@ class ToastManager {
       this.removeToast(toast);
     });
 
-    return { toast, duration };
+    return {toast, duration};
   }
 
   /**
@@ -158,11 +140,6 @@ class ToastManager {
    * @private
    */
   showToast(toast, duration) {
-    // 초기화 확인
-    if (!this._initialized) {
-      this.init();
-    }
-
     // 현재 표시 중인 토스트가 최대 개수보다 적으면 바로 표시
     if (this.toasts.length < this.maxToasts) {
       this.container.appendChild(toast);
@@ -179,7 +156,7 @@ class ToastManager {
       }, duration);
     } else {
       // 대기열에 추가
-      this.queue.push({ toast, duration });
+      this.queue.push({toast, duration});
     }
   }
 
@@ -190,7 +167,9 @@ class ToastManager {
    */
   removeToast(toast) {
     // 이미 제거 중인지 확인
-    if (toast.classList.contains('toast-exit')) return;
+    if (toast.classList.contains('toast-exit')) {
+      return;
+    }
 
     // 제거 애니메이션
     toast.classList.replace('toast-visible', 'toast-exit');
@@ -221,7 +200,7 @@ class ToastManager {
    * @param {number} [duration] - 표시 시간 (ms)
    */
   success(message, duration) {
-    const { toast, duration: d } = this.createToast(message, 'success', duration);
+    const {toast, duration: d} = this.createToast(message, 'success', duration);
     this.showToast(toast, d);
   }
 
@@ -231,7 +210,7 @@ class ToastManager {
    * @param {number} [duration] - 표시 시간 (ms)
    */
   error(message, duration) {
-    const { toast, duration: d } = this.createToast(message, 'error', duration);
+    const {toast, duration: d} = this.createToast(message, 'error', duration);
     this.showToast(toast, d);
   }
 
@@ -241,7 +220,7 @@ class ToastManager {
    * @param {number} [duration] - 표시 시간 (ms)
    */
   warning(message, duration) {
-    const { toast, duration: d } = this.createToast(message, 'warning', duration);
+    const {toast, duration: d} = this.createToast(message, 'warning', duration);
     this.showToast(toast, d);
   }
 
@@ -251,7 +230,7 @@ class ToastManager {
    * @param {number} [duration] - 표시 시간 (ms)
    */
   info(message, duration) {
-    const { toast, duration: d } = this.createToast(message, 'info', duration);
+    const {toast, duration: d} = this.createToast(message, 'info', duration);
     this.showToast(toast, d);
   }
 }
