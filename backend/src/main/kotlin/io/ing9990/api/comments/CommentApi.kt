@@ -4,11 +4,14 @@ import io.ing9990.aop.AuthorizedUser
 import io.ing9990.aop.CurrentUser
 import io.ing9990.aop.resolver.CurrentUserDto
 import io.ing9990.api.comments.dto.request.CommentRequest
-import io.ing9990.api.comments.dto.response.CommentInteractionResponse
+import io.ing9990.api.comments.dto.response.CommentPageResponse
 import io.ing9990.api.comments.dto.response.CommentResponse
+import io.ing9990.domain.comment.repository.querydsl.dto.CommentResult
 import io.ing9990.domain.comment.service.CommentService
-import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.user.User
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -23,9 +26,55 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1")
 class CommentApi(
-    private val figureService: FigureService,
     private val commentService: CommentService,
 ) {
+    /**
+     * 특정 인물의 댓글 목록을 페이징하여 조회
+     * @param figureId 인물 ID
+     * @param pageable 페이지 정보 (page, size)
+     * @return 페이징된 댓글 목록
+     */
+    @GetMapping("/{figureId}/comments")
+    fun getComments(
+        @CurrentUser currentUser: CurrentUserDto,
+        @PathVariable figureId: Long,
+        @PageableDefault(page = 0, size = 10) pageable: Pageable,
+    ): ResponseEntity<CommentPageResponse> {
+        val userId = currentUser.getUserIdOrDefault()
+
+        val result: Page<CommentResult> =
+            commentService.getCommentByPagination(
+                figureId = figureId,
+                userId = userId,
+                pageable = pageable,
+            )
+
+        val response: CommentPageResponse =
+            CommentPageResponse.from(result)
+
+        return ResponseEntity.ok(response)
+    }
+
+    /**
+     * 특정 댓글에 대한 답글 목록 조회
+     * @param commentId 댓글 ID
+     * @return 답글 목록
+     */
+    @GetMapping("/{commentId}/replies")
+    fun getReplies(
+        @CurrentUser currentUser: CurrentUserDto,
+        @PathVariable commentId: Long,
+    ): ResponseEntity<List<CommentResponse>> {
+        val userId = currentUser.getUserIdOrDefault()
+
+        val response: List<CommentResponse> =
+            commentService
+                .getReplies(commentId, userId)
+                .map { CommentResponse.from(it) }
+
+        return ResponseEntity.ok(response)
+    }
+
     /**
      * 새 댓글을 추가합니다.
      */
@@ -34,47 +83,27 @@ class CommentApi(
         @PathVariable figureId: Long,
         @RequestBody request: CommentRequest,
         @AuthorizedUser user: User,
-    ): ResponseEntity<CommentResponse> {
-        val comment =
-            commentService.addComment(
-                figureId = figureId,
-                content = request.content,
-                user = user,
-            )
+    ): ResponseEntity<Unit> {
+        commentService.addComment(
+            figureId = figureId,
+            content = request.content,
+            user = user,
+        )
 
-        return ResponseEntity.ok(CommentResponse.from(comment))
+        return ResponseEntity.noContent().build()
     }
 
-    @PostMapping("/comments/{commentId}/like")
+    /**
+     * 댓글에 좋아요 혹은 싫어요를 누릅니다.
+     */
+    @PostMapping("/comments/{commentId}/toggle")
     fun likeComment(
         @PathVariable commentId: Long,
         @AuthorizedUser user: User,
-    ): ResponseEntity<CommentInteractionResponse> {
+    ): ResponseEntity<Unit> {
         val comment = commentService.likeOrDislikeComment(commentId, true, user)
-        val interaction = comment.getUserInteraction(user.id!!)
 
-        return ResponseEntity.ok(
-            CommentInteractionResponse.from(
-                commentId = commentId,
-                interactionType = interaction?.interactionType,
-            ),
-        )
-    }
-
-    @PostMapping("/comments/{commentId}/dislike")
-    fun dislikeComment(
-        @PathVariable commentId: Long,
-        @AuthorizedUser user: User,
-    ): ResponseEntity<CommentInteractionResponse> {
-        val comment = commentService.likeOrDislikeComment(commentId, false, user)
-        val interaction = comment.getUserInteraction(user.id!!)
-
-        return ResponseEntity.ok(
-            CommentInteractionResponse.from(
-                commentId = commentId,
-                interactionType = interaction?.interactionType,
-            ),
-        )
+        return ResponseEntity.noContent().build()
     }
 
     /**
@@ -86,32 +115,15 @@ class CommentApi(
         @PathVariable commentId: Long,
         @RequestBody request: CommentRequest,
     ): ResponseEntity<CommentResponse> {
-        val reply =
+        val reply: CommentResult =
             commentService.addReply(
                 user = user,
                 parentCommentId = commentId,
                 content = request.content,
             )
 
-        return ResponseEntity.ok(CommentResponse.from(reply))
-    }
-
-    /**
-     * 댓글과 그에 달린 답글 목록을 조회합니다.
-     */
-    @GetMapping("/comments/{rootCommentId}/replies")
-    fun getReplies(
-        @PathVariable rootCommentId: Long,
-        @CurrentUser currentUser: CurrentUserDto,
-    ): ResponseEntity<List<CommentResponse>> {
-        val replies =
-            figureService.getRepliesWithUserInteractions(
-                rootCommentId,
-                currentUser.currentUser?.id ?: -1,
-            )
-
-        val repliesResponse = replies.map { CommentResponse.from(it, currentUser.getUserIdOrDefault()) }
-
-        return ResponseEntity.ok(repliesResponse)
+        return ResponseEntity.ok(
+            CommentResponse.from(reply),
+        )
     }
 }

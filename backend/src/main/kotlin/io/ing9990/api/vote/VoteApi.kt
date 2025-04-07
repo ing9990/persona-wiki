@@ -2,7 +2,6 @@ package io.ing9990.api.vote
 
 import io.ing9990.aop.AuthorizedUser
 import io.ing9990.api.vote.dto.request.VoteRequest
-import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.user.User
 import io.ing9990.domain.vote.service.VoteService
 import io.ing9990.domain.vote.service.dto.VoteData
@@ -29,17 +28,16 @@ class VoteApi(
         @PathVariable figureName: String,
         @Valid @RequestBody request: VoteRequest,
     ): ResponseEntity<Unit> {
-        val updatedFigure: Figure =
-            voteService.voteFigure(
-                VoteData(
-                    user = user,
-                    categoryId = categoryId,
-                    figureName = figureName,
-                    sentiment = request.sentiment,
-                ),
-            )
+        voteService.voteFigure(
+            VoteData(
+                user = user,
+                categoryId = categoryId,
+                figureName = figureName,
+                sentiment = request.sentiment,
+            ),
+        )
 
-        log.info("Votes saved: $updatedFigure")
+        log.info("Votes saved: $request")
 
         return ResponseEntity.noContent().build()
     }

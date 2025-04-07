@@ -8,6 +8,7 @@ import java.time.temporal.ChronoUnit
 @Service
 class LayoutHelper {
     val placeHolderAddress: String = "/img/profile-placeholder.svg"
+    val categoryPlaceHolderAddress: String = "/img/category-placeholder.jpg"
 
     /**
      * 프로필 이미지를 가져옵니다.
@@ -24,6 +25,11 @@ class LayoutHelper {
      * 이미지 주소가 NULL 이라면 기본 이미지를 반환합니다.
      */
     fun getProfileImageByString(imageUrl: String?): String = imageUrl ?: placeHolderAddress
+
+    /**
+     * 카테고리 주소가 NULL 이라면 기본 이미지를 반환합니다.
+     */
+    fun getCategoryImageByString(imageUrl: String?): String = imageUrl ?: placeHolderAddress
 
     /**
      * 회원 상태: True

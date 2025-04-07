@@ -21,11 +21,11 @@ class VoteService(
      * 투표
      */
     @Transactional
-    fun voteFigure(voteData: VoteData): Figure {
+    fun voteFigure(voteData: VoteData) {
         validateVotable(voteData)
 
         val figure: Figure =
-            figureService.findByCategoryIdAndNameWithDetails(
+            figureService.findFigureByCategoryIdAndName(
                 voteData.categoryId,
                 voteData.figureName,
             )
@@ -39,7 +39,7 @@ class VoteService(
 
         val voteSaved = voteRepository.save(voteCreated)
         figure.addVote(voteSaved)
-        return figureRepository.save(figure)
+        figureRepository.save(figure)
     }
 
     /**

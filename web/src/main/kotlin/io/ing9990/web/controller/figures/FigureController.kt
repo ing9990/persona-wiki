@@ -5,15 +5,15 @@ import io.ing9990.aop.CurrentUser
 import io.ing9990.aop.resolver.CurrentUserDto
 import io.ing9990.common.Redirect
 import io.ing9990.domain.category.service.CategoryService
-import io.ing9990.domain.comment.Comment
 import io.ing9990.domain.comment.service.CommentService
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.service.FigureService
+import io.ing9990.domain.figure.service.dto.FigureDetailsResult
 import io.ing9990.domain.figure.service.dto.PopularFiguresByCategoriesResult
 import io.ing9990.domain.user.User
+import io.ing9990.domain.user.repositories.UserRepository
 import io.ing9990.domain.vote.service.VoteService
 import jakarta.validation.Valid
-import org.springframework.data.domain.Page
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -28,6 +28,7 @@ class FigureController(
     private val categoryService: CategoryService,
     private val voteService: VoteService,
     private val commentService: CommentService,
+    private val userRepository: UserRepository,
 ) {
     /**
      * 인물 목록 페이지 - 카테고리별 인기 인물 표시
@@ -90,23 +91,19 @@ class FigureController(
         @PathVariable categoryId: String,
         @PathVariable figureName: String,
         @RequestParam(defaultValue = "0") page: Int,
-        @RequestParam(defaultValue = "10") size: Int,
+        @RequestParam(defaultValue = "15") size: Int,
         model: Model,
     ): String {
-        val category = categoryService.findCategoryById(categoryId)
-        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+        val detailsResult: FigureDetailsResult =
+            figureService.findByCategoryIdAndNameWithDetails(
+                categoryId = categoryId,
+                figureName = figureName,
+                userId = user.getUserIdOrDefault(),
+                page = page,
+                size = size,
+            )
 
-        val hasVoted = voteService.hasUserVoted(figure.id!!, user.getUserIdOrDefault())
-        val userVote = voteService.getUserVote(figure.id!!, user.getUserIdOrDefault())
-
-        val commentPage: Page<Comment> =
-            commentService.getCommentTreesByFigureId(figure.id!!, page, size)
-
-        model.addAttribute("category", category)
-        model.addAttribute("figure", figure)
-        model.addAttribute("commentPage", commentPage)
-        model.addAttribute("hasVoted", hasVoted)
-        model.addAttribute("userVote", userVote)
+        model.addAttribute("detailsResult", detailsResult)
 
         return "figure/figure-detail"
     }

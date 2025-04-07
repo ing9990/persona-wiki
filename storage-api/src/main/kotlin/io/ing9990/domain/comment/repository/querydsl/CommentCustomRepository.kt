@@ -1,6 +1,6 @@
 package io.ing9990.domain.comment.repository.querydsl
 
-import io.ing9990.domain.comment.Comment
+import io.ing9990.domain.comment.repository.querydsl.dto.CommentResult
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
@@ -9,23 +9,24 @@ import org.springframework.data.domain.Pageable
  */
 interface CommentCustomRepository {
     /**
-     * 댓글 ID로 해당 댓글과 모든 답글을 함께 조회합니다.
+     * 댓글을 페이징하여 조회합니다.
      */
-    fun findWithRepliesById(commentId: Long): Comment?
-
-    /**
-     * 부모 댓글 ID로 모든 답글을 사용자 정보와 함께 조회합니다.
-     */
-    fun findRepliesWithUserByParentId(parentId: Long): List<Comment>
-
-    fun findCommentsWithUserInteractions(
+    fun findCommentsByFigureIdWithUserInteractions(
         figureId: Long,
         userId: Long?,
         pageable: Pageable,
-    ): Page<Comment>
+    ): Page<CommentResult>
+
+    fun countCommentsByFigureId(figureId: Long): Long
+
+    fun findCommentsWithUserInteractions(
+        figureId: Long,
+        userId: Long,
+        pageable: Pageable,
+    ): Page<CommentResult>
 
     fun findRepliesWithUserInteractions(
         parentId: Long,
         userId: Long?,
-    ): List<Comment>
+    ): List<CommentResult>
 }

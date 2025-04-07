@@ -2,7 +2,8 @@ package io.ing9990.domain.figure.repository.querydsl
 
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.service.dto.FigureCardResult
-import io.ing9990.domain.figure.service.dto.FigureMicroResult
+import io.ing9990.domain.figure.service.dto.FigureDetailsResult
+import io.ing9990.domain.figure.service.dto.FigureMicroResults
 
 /**
  * QueryDSL을 활용한 Figure 조회 커스텀 인터페이스
@@ -11,7 +12,7 @@ interface FigureCustomRepository {
     /**
      * 검색 창에서 인물 검색 시 응답임 LIKE 문으로 조회
      */
-    fun searchByName(name: String): List<FigureMicroResult>
+    fun searchByName(name: String): FigureMicroResults
 
     /**
      * 주목받는 인물들, 투표 수와 댓글 수가 가장 많은 사람부터 5개 가져옵니다.
@@ -38,6 +39,9 @@ interface FigureCustomRepository {
      */
     fun findByCategoryIdAndNameWithDetails(
         categoryId: String,
-        name: String,
-    ): Figure?
+        figureName: String,
+        userId: Long,
+        commentPage: Int,
+        commentSize: Int,
+    ): FigureDetailsResult
 }

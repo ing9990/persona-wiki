@@ -16,6 +16,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
+import org.hibernate.annotations.Check
 import java.util.Locale
 
 @Table(
@@ -27,13 +28,19 @@ import java.util.Locale
         ),
     ],
 )
+@Check(
+    // 이름 제약조건입니다.
+    constraints = "figure_name REGEXP '^[가-힣]{1,20}$' OR figure_name REGEXP '^[a-zA-Z]{1,20}$'",
+)
 @Entity(name = "figure")
 class Figure(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "figure_id") val id: Long? = null,
-    @Column(name = "name", nullable = false) var name: String,
+    @Column(name = "name", nullable = false, length = 20) var name: String,
     @Column(name = "image_url", nullable = false) var imageUrl: String,
     @Column(name = "biography") var bio: String? = null,
-    @ManyToOne(fetch = FetchType.LAZY) @JoinColumn(
+    @Column(name = "chosung") val chosung: String = "",
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
         name = "category_id",
         nullable = false,
     ) var category: Category,
@@ -48,6 +55,35 @@ class Figure(
         orphanRemoval = true,
     ) val comments: MutableList<Comment> = mutableListOf(),
 ) : BaseEntity() {
+    companion object {
+        fun create(
+            name: String,
+            imageUrl: String,
+            bio: String?,
+            category: Category,
+        ): Figure {
+            val chosung = getChosungFrom(name) // 함수 만들어서 초성 추출
+            return Figure(
+                name = name,
+                imageUrl = imageUrl,
+                bio = bio,
+                category = category,
+                chosung = chosung,
+            )
+        }
+
+        private fun getChosungFrom(name: String): String =
+            name
+                .filter { it.isLetter() }
+                .map {
+                    when (it) {
+                        in '가'..'힣' -> ((it.code - 0xAC00) / 28 / 21 + 0x1100).toChar() // 초성 추출
+                        in 'A'..'Z', in 'a'..'z' -> it.uppercaseChar()
+                        else -> null
+                    }
+                }.joinToString("")
+    }
+
     /**
      * Vote를 추가합니다.
      */

@@ -3,13 +3,15 @@ package io.ing9990.domain.figure.service
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.category.repository.CategoryRepository
 import io.ing9990.domain.category.service.CategoryService
-import io.ing9990.domain.comment.Comment
 import io.ing9990.domain.comment.repository.CommentRepository
+import io.ing9990.domain.comment.repository.querydsl.dto.CommentResult
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.repository.FigureRepository
 import io.ing9990.domain.figure.service.dto.CreateFiureData
 import io.ing9990.domain.figure.service.dto.FigureCardResult
-import io.ing9990.domain.figure.service.dto.FigureMicroResult
+import io.ing9990.domain.figure.service.dto.FigureDetailsResult
+import io.ing9990.domain.figure.service.dto.FigureMicroResults
+import io.ing9990.domain.user.repositories.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -25,6 +27,7 @@ class FigureService(
     private val commentRepository: CommentRepository,
     private val categoryService: CategoryService,
     private val categoryRepository: CategoryRepository,
+    private val userRepository: UserRepository,
 ) {
     private val log: Logger = LoggerFactory.getLogger(FigureService::class.java)
 
@@ -36,19 +39,36 @@ class FigureService(
         figureRepository.findByIdWithVotes(id)
             ?: throw IllegalArgumentException("해당 ID의 인물이 존재하지 않습니다: $id")
 
+    fun findFigureByCategoryIdAndName(
+        categoryId: String,
+        figureName: String,
+    ) = figureRepository.findFigureByCategoryIdAndName(categoryId, figureName)
+        ?: throw EntityNotFoundException(
+            "Figure",
+            "$categoryId/figureName",
+            "해당 인물을 찾을 수 없습니다.",
+        )
+
     /**
      * 인물의 상세 정보들을 페치 조인합니다.
      */
     fun findByCategoryIdAndNameWithDetails(
         categoryId: String,
         figureName: String,
-    ): Figure =
-        figureRepository.findByCategoryIdAndNameWithDetails(categoryId, figureName)
-            ?: throw EntityNotFoundException(
-                "Figure",
-                "$categoryId/$figureName",
-                "해당 인물을 찾을 수 없습니다.",
+        userId: Long,
+        page: Int,
+        size: Int,
+    ): FigureDetailsResult {
+        val result: FigureDetailsResult =
+            figureRepository.findByCategoryIdAndNameWithDetails(
+                categoryId = categoryId,
+                figureName = figureName,
+                userId = userId,
+                commentPage = page,
+                commentSize = size,
             )
+        return result
+    }
 
     /**
      * 카테고리 ID로, 해당 카테고리에 속한 인물 목록을 조회합니다.
@@ -72,7 +92,7 @@ class FigureService(
     /**
      * 이름으로 검색합니다.
      */
-    fun searchByName(name: String): List<FigureMicroResult> {
+    fun searchByName(name: String): FigureMicroResults {
         try {
             return figureRepository.searchByName(name)
         } catch (e: Exception) {
@@ -98,7 +118,7 @@ class FigureService(
         }
 
         val figure =
-            Figure(
+            Figure.create(
                 name = data.figureName,
                 imageUrl = data.imageUrl,
                 bio = data.bio,
@@ -112,7 +132,7 @@ class FigureService(
     fun getRepliesWithUserInteractions(
         parentId: Long,
         userId: Long?,
-    ): List<Comment> = commentRepository.findRepliesWithUserInteractions(parentId, userId)
+    ): List<CommentResult> = commentRepository.findRepliesWithUserInteractions(parentId, userId)
 
     /**
      * 모든 인물 목록을 카테고리와 함께 조회합니다.

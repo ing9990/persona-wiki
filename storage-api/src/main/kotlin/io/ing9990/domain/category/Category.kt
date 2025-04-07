@@ -14,8 +14,8 @@ class Category(
     @Id @Column(name = "category_id") val id: String,
     @Column(name = "display_name", nullable = false) val displayName: String,
     // 표시 이름 (예: 대통령, 유튜버)
-    @Column(name = "description") var description: String? = null,
-    @Column(name = "image_url") var imageUrl: String? = null,
+    @Column(name = "description") var description: String? = "",
+    @Column(name = "image_url") var imageUrl: String? = "",
     @OneToMany(mappedBy = "category") val figures: MutableList<Figure> = mutableListOf(),
 ) : BaseEntity() {
     /**

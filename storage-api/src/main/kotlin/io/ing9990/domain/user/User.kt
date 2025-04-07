@@ -32,7 +32,7 @@ class User(
     @Column(name = "nickname", nullable = false, unique = true, length = 40)
     var nickname: String,
     @Column(name = "profile_image", nullable = true)
-    var image: String? = null,
+    var image: String = "",
     @Column(name = "last_login_at", nullable = false)
     var lastLoginAt: LocalDateTime = LocalDateTime.now(),
 ) : BaseEntity() {
@@ -41,6 +41,6 @@ class User(
     }
 
     fun removeProfileImage() {
-        this.image = null
+        this.image = ""
     }
 }

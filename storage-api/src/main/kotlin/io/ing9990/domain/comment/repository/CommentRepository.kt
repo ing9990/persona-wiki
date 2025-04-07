@@ -48,9 +48,6 @@ interface CommentRepository :
         pageable: Pageable,
     ): Page<Comment>
 
-    @Query("SELECT COUNT(c) FROM comment c WHERE c.figure.id = ?1")
-    fun countCommentsByFigureId(figureId: Long): Int
-
     /**
      * 인물 ID로 모든 댓글을 페이징하여 조회합니다.
      */

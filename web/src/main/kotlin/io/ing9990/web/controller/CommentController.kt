@@ -33,7 +33,7 @@ class CommentController(
         }
 
         // 인물 찾기
-        val figure = figureService.findByCategoryIdAndNameWithDetails(categoryId, figureName)
+        val figure = figureService.findFigureByCategoryIdAndName(categoryId, figureName)
 
         // 댓글 추가 (사용자 정보 전달)
         commentService.addComment(figure.id!!, content, user)

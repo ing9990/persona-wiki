@@ -6,11 +6,11 @@ import io.ing9990.domain.comment.CommentType
 import io.ing9990.domain.comment.InteractionType
 import io.ing9990.domain.comment.repository.CommentInteractionRepository
 import io.ing9990.domain.comment.repository.CommentRepository
+import io.ing9990.domain.comment.repository.querydsl.dto.CommentResult
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.user.User
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
+import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -46,38 +46,22 @@ class CommentService(
     }
 
     /**
-     * 원 댓글과 그에 속한 모든 답글을 조회합니다.
-     * QueryDSL을 사용하여 한 번의 쿼리로 원 댓글과 답글들을 함께 가져옵니다.
-     *
-     * @param rootCommentId 원 댓글 ID
-     * @return 원 댓글과 모든 답글이 포함된 Comment 객체
-     */
-    fun getCommentWithReplies(rootCommentId: Long): List<Comment> {
-        val comment = commentRepository.findWithRepliesById(rootCommentId)
-        return comment?.replies ?: emptyList()
-    }
-
-    /**
-     * 특정 인물에 대한 댓글 트리(원 댓글과 답글)를 페이지 단위로 조회합니다.
-     * @param figureId 인물 ID
-     * @param page 페이지 번호
-     * @param size 페이지 크기
-     * @return 댓글 트리 목록
+     * Root 댓글을 페이지네이션 하여 조회합니다.
      */
     @Transactional(readOnly = true)
-    fun getCommentTreesByFigureId(
+    fun getCommentByPagination(
+        userId: Long,
         figureId: Long,
-        page: Int,
-        size: Int,
-    ): Page<Comment> {
-        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
+        pageable: Pageable,
+    ): Page<CommentResult> {
+        val commentPage =
+            commentRepository.findCommentsByFigureIdWithUserInteractions(
+                figureId = figureId,
+                userId = userId,
+                pageable = pageable,
+            )
 
-        // 원 댓글만 페이징하여 조회
-        return commentRepository.findCommentsByFigureIdAndType(
-            figureId = figureId,
-            commentType = CommentType.ROOT,
-            pageable = pageable,
-        )
+        return commentPage
     }
 
     /**
@@ -135,7 +119,7 @@ class CommentService(
         parentCommentId: Long,
         content: String,
         user: User,
-    ): Comment {
+    ): CommentResult {
         val parentComment =
             commentRepository.findByIdOrNull(parentCommentId)
                 ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $parentCommentId")
@@ -171,18 +155,19 @@ class CommentService(
         // 부모 댓글에 답글 추가
         parentComment.addReply(reply)
 
-        return commentRepository.save(reply)
+        return CommentResult.from(commentRepository.save(reply))
     }
 
-    // 새 메서드 추가
-    @Transactional(readOnly = true)
-    fun getCommentsByFigureIdWithUserInteractions(
-        figureId: Long,
-        userId: Long?,
-        page: Int,
-        size: Int,
-    ): Page<Comment> {
-        val pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"))
-        return commentRepository.findCommentsWithUserInteractions(figureId, userId, pageable)
+    fun getReplies(
+        commentId: Long,
+        userId: Long,
+    ): List<CommentResult> {
+        val replies =
+            commentRepository.findRepliesWithUserInteractions(
+                parentId = commentId,
+                userId = userId,
+            )
+
+        return replies
     }
 }

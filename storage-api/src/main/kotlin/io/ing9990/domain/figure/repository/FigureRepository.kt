@@ -20,6 +20,12 @@ interface FigureRepository :
     @Query("SELECT f FROM figure f JOIN FETCH f.category WHERE f.category.id = :categoryId")
     fun findByCategoryId(categoryId: String): List<Figure>
 
+    @Query("select f from figure f where f.category.id = ?1 and f.name = ?2")
+    fun findFigureByCategoryIdAndName(
+        categoryId: String,
+        f: String,
+    ): Figure?
+
     /**
      * 카테고리 ID와 인물 이름으로 인물이 존재하는지 확인합니다.
      */

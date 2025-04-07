@@ -1,7 +1,7 @@
 package io.ing9990.api.search
 
 import io.ing9990.domain.figure.service.FigureService
-import io.ing9990.domain.figure.service.dto.FigureMicroResult
+import io.ing9990.domain.figure.service.dto.FigureMicroResults
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -19,13 +19,13 @@ class SearchApi(
     @GetMapping("/search/suggestions")
     fun getSearchSuggestions(
         @RequestParam query: String,
-    ): ResponseEntity<List<SearchSuggestion>> {
-        val searchResults: List<FigureMicroResult> =
+    ): ResponseEntity<List<SearchSuggestionResponse>> {
+        val searchResults: FigureMicroResults =
             figureService.searchByName(query)
 
         val suggestions =
-            searchResults.take(5).map { figure ->
-                SearchSuggestion(
+            searchResults.data.take(5).map { figure ->
+                SearchSuggestionResponse(
                     name = figure.figureName,
                     categoryId = figure.categoryId,
                     categoryName = figure.categoryName,
