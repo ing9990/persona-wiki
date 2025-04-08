@@ -26,7 +26,9 @@ class ToastManager {
    */
   init() {
     // 이미 초기화되었다면 중복 실행 방지
-    if (this._initialized) return;
+    if (this._initialized) {
+      return;
+    }
 
     // 기존 컨테이너가 있는지 확인
     let container = document.getElementById('toast-container');
@@ -56,7 +58,9 @@ class ToastManager {
     const styleId = 'toast-manager-styles';
 
     // 이미 스타일이 추가되어 있는지 확인
-    if (document.getElementById(styleId)) return;
+    if (document.getElementById(styleId)) {
+      return;
+    }
 
     const style = document.createElement('style');
     style.id = styleId;
@@ -94,7 +98,7 @@ class ToastManager {
         color: white;
       }
       .toast-info {
-        background-color: #EF4444;
+        background-color: #3B82F6;
         color: white;
       }
     `;
@@ -115,8 +119,8 @@ class ToastManager {
       this.init();
     }
 
-    const toast = document.createElement('div');
-    toast.className = `toast toast-${type} px-4 py-2 rounded-md toast-enter flex items-center justify-between`;
+    const toastElement = document.createElement('div');
+    toastElement.className = `toast toast-${type} px-4 py-2 rounded-md toast-enter flex items-center justify-between`;
 
     // 아이콘 선택
     let icon = '';
@@ -138,17 +142,17 @@ class ToastManager {
     // 닫기 버튼
     const closeButton = '<button class="ml-3 text-white focus:outline-none"><i class="fas fa-times"></i></button>';
 
-    toast.innerHTML = `
+    toastElement.innerHTML = `
       <div class="flex items-center">${icon}<span>${message}</span></div>
       ${closeButton}
     `;
 
     // 닫기 버튼 이벤트
-    toast.querySelector('button').addEventListener('click', () => {
-      this.removeToast(toast);
+    toastElement.querySelector('button').addEventListener('click', () => {
+      this.removeToast(toastElement);
     });
 
-    return { toast, duration };
+    return {toast: toastElement, duration};
   }
 
   /**
@@ -179,7 +183,7 @@ class ToastManager {
       }, duration);
     } else {
       // 대기열에 추가
-      this.queue.push({ toast, duration });
+      this.queue.push({toast, duration});
     }
   }
 
@@ -190,7 +194,9 @@ class ToastManager {
    */
   removeToast(toast) {
     // 이미 제거 중인지 확인
-    if (toast.classList.contains('toast-exit')) return;
+    if (toast.classList.contains('toast-exit')) {
+      return;
+    }
 
     // 제거 애니메이션
     toast.classList.replace('toast-visible', 'toast-exit');
@@ -221,7 +227,7 @@ class ToastManager {
    * @param {number} [duration] - 표시 시간 (ms)
    */
   success(message, duration) {
-    const { toast, duration: d } = this.createToast(message, 'success', duration);
+    const {toast, duration: d} = this.createToast(message, 'success', duration);
     this.showToast(toast, d);
   }
 
@@ -231,7 +237,7 @@ class ToastManager {
    * @param {number} [duration] - 표시 시간 (ms)
    */
   error(message, duration) {
-    const { toast, duration: d } = this.createToast(message, 'error', duration);
+    const {toast, duration: d} = this.createToast(message, 'error', duration);
     this.showToast(toast, d);
   }
 
@@ -241,7 +247,7 @@ class ToastManager {
    * @param {number} [duration] - 표시 시간 (ms)
    */
   warning(message, duration) {
-    const { toast, duration: d } = this.createToast(message, 'warning', duration);
+    const {toast, duration: d} = this.createToast(message, 'warning', duration);
     this.showToast(toast, d);
   }
 
@@ -251,13 +257,13 @@ class ToastManager {
    * @param {number} [duration] - 표시 시간 (ms)
    */
   info(message, duration) {
-    const { toast, duration: d } = this.createToast(message, 'info', duration);
+    const {toast, duration: d} = this.createToast(message, 'info', duration);
     this.showToast(toast, d);
   }
 }
 
-// 싱글톤 인스턴스 생성
-const toast = new ToastManager();
+// 싱글톤 인스턴스 생성 - 변수명 변경
+const toastManager = new ToastManager();
 
-// 전역으로 노출
-window.toast = toast;
+// 전역으로 노출 - 변수명 변경
+window.toastManager = toastManager;

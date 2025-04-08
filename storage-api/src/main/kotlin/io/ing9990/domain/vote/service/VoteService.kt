@@ -1,9 +1,9 @@
 package io.ing9990.domain.vote.service
 
-import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.repository.FigureRepository
 import io.ing9990.domain.figure.service.FigureService
+import io.ing9990.domain.user.User
 import io.ing9990.domain.vote.Vote
 import io.ing9990.domain.vote.repository.VoteRepository
 import io.ing9990.domain.vote.service.dto.VoteData
@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional
 class VoteService(
     private val figureService: FigureService,
     private val figureRepository: FigureRepository,
-    private val categoryService: CategoryService,
     private val voteRepository: VoteRepository,
 ) {
     /**
@@ -22,13 +21,13 @@ class VoteService(
      */
     @Transactional
     fun voteFigure(voteData: VoteData) {
-        validateVotable(voteData)
-
         val figure: Figure =
             figureService.findFigureByCategoryIdAndName(
                 voteData.categoryId,
                 voteData.figureName,
             )
+
+        validateVotable(figure, voteData.user)
 
         val voteCreated =
             Vote(
@@ -36,17 +35,18 @@ class VoteService(
                 figure = figure,
                 sentiment = voteData.sentiment,
             )
-
         val voteSaved = voteRepository.save(voteCreated)
         figure.addVote(voteSaved)
         figureRepository.save(figure)
     }
 
-    /**
-     * 투표한 적이 있는지 검증하면 된다.
-     */
-    private fun validateVotable(voteData: VoteData) {
-        TODO("Not yet implemented")
+    private fun validateVotable(
+        figure: Figure,
+        user: User,
+    ) {
+        require(!hasUserVoted(figure.id!!, user.id)) {
+            "이미 베팅한 인물입니다. figure=$figure, user=$user"
+        }
     }
 
     /**

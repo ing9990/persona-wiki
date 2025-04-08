@@ -1,14 +1,13 @@
-// web/src/main/kotlin/io/ing9990/web/exceptions/GlobalExceptionHandler.kt
-package io.ing9990.web.exception
+package io.ing9990.exceptions // web/src/main/kotlin/io/ing9990/web/exceptions/io.ing9990.exceptions.GlobalExceptionHandler.kt
 
+import io.ing9990.aop.CurrentUser
+import io.ing9990.aop.resolver.CurrentUserDto
 import io.ing9990.api.ApiException
 import io.ing9990.domain.EntityNotFoundException
-import io.ing9990.exceptions.FigureOperationException
-import io.ing9990.exceptions.UnauthorizedException
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpStatus.UNAUTHORIZED
 import org.springframework.http.ResponseEntity
 import org.springframework.ui.Model
-import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ResponseBody
@@ -36,29 +35,6 @@ class GlobalExceptionHandler {
         model.addAttribute("status", HttpStatus.NOT_FOUND.value())
 
         return "error/404"
-    }
-
-    /**
-     * 검색 관련 예외 처리
-     * 검색 중 발생하는 예외를 처리하여 사용자에게 적절한 메시지를 보여줍니다.
-     */
-    @ExceptionHandler(value = [NoSuchElementException::class, IllegalArgumentException::class])
-    fun handleSearchException(
-        e: Exception,
-        model: Model,
-        redirectAttributes: RedirectAttributes,
-    ): String {
-        // 메시지에 따라 토스트 표시 또는 페이지 리다이렉트 결정
-        if (e.message?.contains("검색") == true) {
-            model.addAttribute("error", "검색 중 오류가 발생했습니다: ${e.message}")
-            model.addAttribute("query", "")
-            model.addAttribute("searchResults", emptyList<Any>())
-            return "search/search-results"
-        } else {
-            // 리다이렉트가 필요한 경우
-            redirectAttributes.addFlashAttribute("error", e.message)
-            return "redirect:/"
-        }
     }
 
     /**
@@ -91,13 +67,7 @@ class GlobalExceptionHandler {
     fun handleUnauthorizedException(
         e: UnauthorizedException,
         model: Model,
-    ): String = "redirect:/login"
-
-    @ExceptionHandler(MethodArgumentNotValidException::class)
-    fun handleMethodArgumentNotValidException(e: MethodArgumentNotValidException): String {
-        e.printStackTrace()
-        return "error/500"
-    }
+    ): ApiException = ApiException("인증이 필요한 작업입니다.", UNAUTHORIZED)
 
     /**
      * 일반적인 RuntimeException 처리
@@ -106,11 +76,13 @@ class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException::class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     fun handleRuntimeException(
+        @CurrentUser currentUser: CurrentUserDto,
         e: RuntimeException,
         model: Model,
     ): String {
         e.printStackTrace()
 
+        model.addAttribute("current", currentUser)
         model.addAttribute("error", e.message)
         model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value())
 
@@ -119,12 +91,14 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception::class)
     fun handleAllExceptions(
+        @CurrentUser currentUser: CurrentUserDto,
         e: Exception,
         model: Model,
     ): String {
         e.printStackTrace()
 
         model.addAttribute("error", e.message)
+        model.addAttribute("current", currentUser)
         model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value())
         return "error/500"
     }

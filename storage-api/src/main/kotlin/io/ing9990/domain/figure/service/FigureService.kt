@@ -1,7 +1,6 @@
 package io.ing9990.domain.figure.service
 
 import io.ing9990.domain.EntityNotFoundException
-import io.ing9990.domain.category.repository.CategoryRepository
 import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.comment.repository.CommentRepository
 import io.ing9990.domain.comment.repository.querydsl.dto.CommentResult
@@ -11,7 +10,6 @@ import io.ing9990.domain.figure.service.dto.CreateFiureData
 import io.ing9990.domain.figure.service.dto.FigureCardResult
 import io.ing9990.domain.figure.service.dto.FigureDetailsResult
 import io.ing9990.domain.figure.service.dto.FigureMicroResults
-import io.ing9990.domain.user.repositories.UserRepository
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -26,8 +24,6 @@ class FigureService(
     private val figureRepository: FigureRepository,
     private val commentRepository: CommentRepository,
     private val categoryService: CategoryService,
-    private val categoryRepository: CategoryRepository,
-    private val userRepository: UserRepository,
 ) {
     private val log: Logger = LoggerFactory.getLogger(FigureService::class.java)
 
