@@ -39,7 +39,7 @@ class WebSecurityConfig {
                     .permitAll()
             }.logout { logout ->
                 logout
-                    .logoutUrl("/auth/logout")
+                    .logoutUrl("/logout")
                     .logoutSuccessUrl("/?logout=true")
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID")

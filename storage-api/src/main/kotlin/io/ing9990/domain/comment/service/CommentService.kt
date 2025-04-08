@@ -73,14 +73,12 @@ class CommentService(
     @Transactional
     fun likeOrDislikeComment(
         commentId: Long,
-        isLike: Boolean,
+        interactionType: InteractionType,
         user: User,
-    ): Comment {
+    ): CommentResult {
         val comment =
             commentRepository.findByIdOrNull(commentId)
                 ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $commentId")
-
-        val interactionType = if (isLike) InteractionType.LIKE else InteractionType.DISLIKE
 
         // 기존 상호작용 검색
         val existingInteraction =
@@ -109,7 +107,7 @@ class CommentService(
             }
         }
 
-        return comment
+        return CommentResult.from(comment)
     }
 
     /**

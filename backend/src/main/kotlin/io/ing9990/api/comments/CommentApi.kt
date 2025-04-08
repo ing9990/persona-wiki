@@ -6,6 +6,7 @@ import io.ing9990.aop.resolver.CurrentUserDto
 import io.ing9990.api.comments.dto.request.CommentRequest
 import io.ing9990.api.comments.dto.response.CommentPageResponse
 import io.ing9990.api.comments.dto.response.CommentResponse
+import io.ing9990.domain.comment.InteractionType
 import io.ing9990.domain.comment.repository.querydsl.dto.CommentResult
 import io.ing9990.domain.comment.service.CommentService
 import io.ing9990.domain.user.User
@@ -102,15 +103,18 @@ class CommentApi(
     /**
      * 댓글에 좋아요 혹은 싫어요를 누릅니다.
      */
-    @PostMapping("/{commentId}/toggle")
+    @PostMapping("/{commentId}/toggle/{type}")
     fun likeComment(
         @AuthorizedUser user: User,
         @PathVariable commentId: Long,
         @PathVariable figureId: Long,
-    ): ResponseEntity<Unit> {
-        commentService.likeOrDislikeComment(commentId, true, user)
+        @PathVariable type: InteractionType,
+    ): ResponseEntity<CommentResult> {
+        val result = commentService.likeOrDislikeComment(commentId, type, user)
 
-        return ResponseEntity.noContent().build()
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(result)
     }
 
     /**
@@ -123,7 +127,6 @@ class CommentApi(
         @AuthorizedUser user: User,
         @PathVariable commentId: Long,
         @RequestBody request: CommentRequest,
-        // 쓰지 않아도 무관함. 리소스 구조상 받는 거임.
         @PathVariable figureId: Long,
     ): ResponseEntity<Unit> {
         commentService.addReply(

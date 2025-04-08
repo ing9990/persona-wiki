@@ -8,7 +8,6 @@ import io.ing9990.api.comments.dto.response.CommentResponse
 import io.ing9990.domain.comment.service.CommentService
 import io.ing9990.domain.user.User
 import org.springframework.data.domain.PageRequest
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
 @RequestMapping("/figures/{figureId}/comments/fragment")
@@ -52,26 +50,6 @@ class CommentFragmentController(
         model.addAttribute("replies", replies)
         model.addAttribute("commentId", commentId)
         return "fragments/comments/reply-list :: replyList"
-    }
-
-    /**
-     * 댓글 좋아요/싫어요 토글함
-     */
-    @ResponseBody
-    @PostMapping("/{commentId}/toggle")
-    fun toggleCommentFragment(
-        @AuthorizedUser user: User,
-        @PathVariable commentId: Long,
-        @PathVariable figureId: Long,
-        model: Model,
-    ): ResponseEntity<Unit> {
-        commentService.likeOrDislikeComment(
-            commentId = commentId,
-            isLike = true,
-            user = user,
-        )
-
-        return ResponseEntity.noContent().build()
     }
 
     /**

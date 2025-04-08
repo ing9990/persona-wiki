@@ -26,11 +26,6 @@ class AuthorizedUserArgumentResolver(
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?,
     ): User {
-        webRequest
-            .getNativeRequest(HttpServletRequest::class.java)
-            ?.session
-            ?.setAttribute("userId", 10L)
-
         val userId: Long =
             webRequest
                 .getNativeRequest(HttpServletRequest::class.java)

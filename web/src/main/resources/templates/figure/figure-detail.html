@@ -4,7 +4,7 @@
 
 <head>
   <title th:text="${detailsResult.getName()} + ' - 국민사형투표'">인물 상세</title>
-  <meta name="description" th:content="${#strings.substring(detailsResult.bio, 0, 15)}">
+  <meta name="description" th:content="${#strings.abbreviate(detailsResult.bio,15)}">
 
   <link rel="stylesheet" href="/css/comment-reply.css">
   <link rel="stylesheet" href="/css/comment-style.css">
