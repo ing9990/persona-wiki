@@ -69,6 +69,9 @@
   <!-- 핵심 이미지 프리로딩 -->
   <link rel="preload" th:href="${@layoutHelper.placeHolderAddress}" as="image" type="image/png">
 
+  <!-- 로그인 모달 스타일 -->
+  <link rel="stylesheet" href="/css/login-modal.css">
+
   <!-- Alpine.js 지연 로드 -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.3/dist/cdn.min.js"></script>
   <script async
@@ -194,12 +197,12 @@
                 <i class="fas fa-bars text-xl" aria-hidden="true"></i>
               </button>
 
-              <!-- 로그인 아이콘 (/login 이동) -->
-              <a href="/login"
-                 class="text-white focus:outline-none"
-                 aria-label="로그인">
+              <!-- 로그인 아이콘 -->
+              <button
+                  class="login-button text-white focus:outline-none"
+                  aria-label="로그인">
                 <i class="fas fa-sign-in-alt text-xl" aria-hidden="true"></i>
-              </a>
+              </button>
             </div>
           </th:block>
 
@@ -370,10 +373,12 @@
             <i class="fas fa-plus-circle mr-1" aria-hidden="true"></i>
             <span>추가</span>
           </a>
-          <a href="/login" class="text-white hover:text-indigo-100 transition" aria-label="로그인">
+          <button
+              class="login-button text-white hover:text-indigo-100 transition bg-transparent border-0 cursor-pointer flex items-center"
+              aria-label="로그인">
             <i class="fas fa-sign-in-alt mr-1" aria-hidden="true"></i>
             <span>로그인</span>
-          </a>
+          </button>
         </th:block>
       </div>
     </nav>
@@ -439,11 +444,11 @@
           <!-- 비로그인 상태 -->
           <th:block th:if="${current.notLoggedIn()}">
             <div class="mt-6 pt-6 border-t border-gray-200">
-              <a href="/login"
-                 class="flex items-center justify-center py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+              <button
+                  class="login-button flex items-center justify-center py-3 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition w-full border-0 cursor-pointer">
                 <i class="fas fa-sign-in-alt mr-2"></i>
                 로그인
-              </a>
+              </button>
             </div>
           </th:block>
         </div>
@@ -778,5 +783,9 @@
     }
   });
 </script>
+<!-- 로그인 모달 -->
+<div th:replace="~{fragments/login/login-fragment :: loginModal}"></div>
+<!-- 로그인 모달 스크립트 -->
+<script src="/js/login/login-modal.js"></script>
 </body>
 </html>

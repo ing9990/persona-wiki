@@ -34,11 +34,6 @@
             th:attr="data-id=${comment.id}">
         <i class="fa-regular fa-pen-to-square"></i> 답글 쓰기
       </span>
-      <span th:if="${#authentication.name == 'anonymousUser'}"
-            class="reply-write-disabled text-gray-400 flex items-center gap-1"
-            title="로그인 후 이용 가능합니다">
-        <i class="fa-regular fa-pen-to-square"></i> 답글 쓰기
-      </span>
 
       <span th:if="${comment.replyCount > 0}"
             class="reply-toggle cursor-pointer font-medium text-blue-600 hover:underline"

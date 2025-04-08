@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="/css/comment-reply.css">
   <link rel="stylesheet" href="/css/comment-style.css">
   <link rel="stylesheet" href="/css/fingure-detail.css">
+  <link rel="stylesheet" href="/css/scroll-to-top.css">
 </head>
 
 <body>
@@ -44,7 +45,7 @@
   </section>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- 왼쪽: 인물 정보 -->
+    <!-- 왼쪽: 인물 정보 및 댓글 (2칸 차지) -->
     <div class="lg:col-span-2">
       <!-- 인물 평가 투표 섹션 -->
       <div
@@ -57,17 +58,21 @@
       <!-- 댓글 섹션 부분 종료-->
     </div>
 
-    <!-- 페이지 우측 평판 통계 부분 -->
-    <div th:replace="~{fragments/reputation-sidebar :: reputationSidebar(${detailsResult})}"></div>
-    <!-- 페이지 우측 평판 통계 부분 종료 -->
+    <!-- 오른쪽: 평판, 카테고리, 공유하기 (1칸 차지) -->
+    <div class="lg:col-span-1">
+      <!-- 페이지 우측 평판 통계 부분 -->
+      <div
+          th:replace="~{fragments/reputation-sidebar :: reputationSidebar(${detailsResult})}"></div>
+      <!-- 페이지 우측 평판 통계 부분 종료 -->
 
-    <!-- 페이지 우측 카테고리 섹션 -->
-    <div th:replace="~{fragments/category-section :: categorySection(${detailsResult})}"></div>
-    <!-- 페이지 우측 카테고리 섹션 종료-->
+      <!-- 페이지 우측 카테고리 섹션 -->
+      <div th:replace="~{fragments/category-section :: categorySection(${detailsResult})}"></div>
+      <!-- 페이지 우측 카테고리 섹션 종료-->
 
-    <!-- 공유하기 -->
-    <div th:replace="~{fragments/share-section :: shareSection}"></div>
-    <!-- 공유하기 종료-->
+      <!-- 공유하기 -->
+      <div th:replace="~{fragments/share-section :: shareSection}"></div>
+      <!-- 공유하기 종료-->
+    </div>
   </div>
 </div>
 
@@ -78,11 +83,15 @@
 
   <!-- InfiniteScroll 라이브러리 -->
   <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
-  <!-- figure-detail.html의 <th:block layout:fragment="script"> 안에 추가 -->
 
   <!-- 먼저 comment-api.js를 로드 -->
   <script src="/js/comment-api.js"></script>
+  <!--  댓글 Fragment 로드-->
   <script src="/js/comment-fragments-handler.js"></script>
+  <!-- 먼저 답글 Fragment 로드 -->
+  <script src="/js/comment-replies-handler.js"></script>
+  <!-- 스크롤 상단 이동 버튼 -->
+  <script src="/js/utils/scroll-to-top.js"></script>
 
   <!-- 추가 페이지별 스크립트 -->
   <script>

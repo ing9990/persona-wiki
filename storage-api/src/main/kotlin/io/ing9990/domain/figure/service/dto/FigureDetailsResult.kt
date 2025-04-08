@@ -43,12 +43,12 @@ data class FigureDetailsResult(
 
     fun isCommentEmpty(): Boolean = totalCommentCount == 0L
 
-    fun percentageString(count: Int): String =
+    private fun percentageString(count: Int): String =
         if (totalVotes() == 0L) {
             "0 (0%)"
         } else {
             val percent = (count.toDouble() / totalVotes()) * 100.0
-            "$count (${String.format("%.1f", percent)}%)"
+            "$count (${String.format("%.0f", percent)}%)"
         }
 
     fun positivePercentage(): String = percentageString(positiveCount())
@@ -62,4 +62,19 @@ data class FigureDetailsResult(
     fun isNegative(): Boolean = userVote?.sentiment == NEGATIVE
 
     fun isNeutral(): Boolean = userVote?.sentiment == NEUTRAL
+
+    fun getPositivePercentValue(): Double {
+        if (totalVotes() == 0L) return 0.0
+        return (positiveCount().toDouble() / totalVotes().toDouble()) * 100
+    }
+
+    fun getNeutralPercentValue(): Double {
+        if (totalVotes() == 0L) return 0.0
+        return (neutralCount().toDouble() / totalVotes().toDouble()) * 100
+    }
+
+    fun getNegativePercentValue(): Double {
+        if (totalVotes() == 0L) return 0.0
+        return (negativeCount().toDouble() / totalVotes().toDouble()) * 100
+    }
 }

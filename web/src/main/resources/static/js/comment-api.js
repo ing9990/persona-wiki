@@ -52,6 +52,30 @@ class CommentAPI {
   }
 
   /**
+   * 댓글에 대한 답글 목록을 Fragment로 가져오기
+   * @param {string} figureId - 피규어 ID
+   * @param {string} commentId - 댓글 ID
+   * @returns {Promise<string>} - HTML Fragment 문자열
+   */
+  static async fetchRepliesFragment(figureId, commentId) {
+    try {
+      const response = await fetch(
+          `/figures/${figureId}/comments/fragment/${commentId}/replies`,
+          {method: "GET"}
+      );
+
+      if (!response.ok) {
+        throw new Error("답글 요청 실패");
+      }
+
+      return await response.text(); // HTML Fragment를 텍스트로 받음
+    } catch (error) {
+      console.error("답글 로딩 실패:", error);
+      throw error;
+    }
+  }
+
+  /**
    * 답글 작성하기
    * @param {string} figureId - 피규어 ID
    * @param {string} commentId - 댓글 ID
@@ -74,6 +98,37 @@ class CommentAPI {
       }
 
       return await response.json();
+    } catch (error) {
+      console.error("답글 작성 실패:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * 답글 작성하기 (Fragment 반환)
+   * @param {string} figureId - 피규어 ID
+   * @param {string} commentId - 댓글 ID
+   * @param {string} content - 답글 내용
+   * @returns {Promise<string>} - HTML Fragment 문자열
+   */
+  static async createReplyFragment(figureId, commentId, content) {
+    try {
+      const formData = new FormData();
+      formData.append('content', content);
+
+      const response = await fetch(
+          `/figures/${figureId}/comments/fragment/${commentId}/replies`,
+          {
+            method: "POST",
+            body: formData
+          }
+      );
+
+      if (!response.ok) {
+        throw new Error("답글 작성 실패");
+      }
+
+      return await response.text(); // HTML Fragment를 텍스트로 받음
     } catch (error) {
       console.error("답글 작성 실패:", error);
       throw error;

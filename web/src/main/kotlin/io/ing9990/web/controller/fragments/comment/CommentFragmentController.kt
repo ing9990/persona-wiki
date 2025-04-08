@@ -8,8 +8,6 @@ import io.ing9990.api.comments.dto.response.CommentResponse
 import io.ing9990.domain.comment.service.CommentService
 import io.ing9990.domain.user.User
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
-import org.springframework.data.web.PageableDefault
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -21,38 +19,14 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 
 @Controller
-@RequestMapping("/figures/{figureId}/comments")
+@RequestMapping("/figures/{figureId}/comments/fragment")
 class CommentFragmentController(
     private val commentService: CommentService,
 ) {
     /**
-     * 댓글 목록 Fragment 반환
-     */
-    @GetMapping("/fragment")
-    fun getCommentsFragment(
-        @CurrentUser currentUser: CurrentUserDto,
-        @PathVariable figureId: Long,
-        @PageableDefault(size = 10) pageable: Pageable,
-        model: Model,
-    ): String {
-        val result =
-            commentService.getCommentByPagination(
-                figureId = figureId,
-                userId = currentUser.getUserIdOrDefault(),
-                pageable = pageable,
-            )
-        model.addAttribute(
-            "comments",
-            io.ing9990.api.comments.dto.response.CommentPageResponse
-                .from(result),
-        )
-        return "fragments/comments/comment-list :: commentList"
-    }
-
-    /**
      * 답글 추가 후 해당 댓글의 답글 목록 다시 렌더링
      */
-    @PostMapping("/{commentId}/replies/fragment")
+    @PostMapping("/{commentId}/replies")
     fun addReplyFragment(
         @AuthorizedUser user: User,
         @PathVariable commentId: Long,
@@ -84,7 +58,7 @@ class CommentFragmentController(
      * 댓글 좋아요/싫어요 토글함
      */
     @ResponseBody
-    @PostMapping("/{commentId}/toggle/fragment")
+    @PostMapping("/{commentId}/toggle")
     fun toggleCommentFragment(
         @AuthorizedUser user: User,
         @PathVariable commentId: Long,
@@ -103,7 +77,7 @@ class CommentFragmentController(
     /**
      * 인물 디테일 페이지 - 댓글 무한스크롤 구현
      */
-    @GetMapping("/fragment")
+    @GetMapping
     fun getCommentFragment(
         @PathVariable figureId: Long,
         @RequestParam page: Int,
@@ -130,7 +104,7 @@ class CommentFragmentController(
     /**
      * 답글 목록 Fragment 반환
      */
-    @GetMapping("/{commentId}/replies/fragment")
+    @GetMapping("/{commentId}/replies")
     fun getRepliesFragment(
         @CurrentUser currentUser: CurrentUserDto,
         @PathVariable figureId: Long,
@@ -145,6 +119,7 @@ class CommentFragmentController(
 
         model.addAttribute("replies", replies)
         model.addAttribute("figureId", figureId)
+
         return "fragments/comments/comment-replies :: replies"
     }
 }
