@@ -29,9 +29,9 @@
         <span class="count" th:text="${comment.dislikes}">0</span>
       </span>
 
-      <span th:if="${#authentication.name != 'anonymousUser'}"
-            class="reply-write-btn cursor-pointer text-gray-600 hover:text-blue-600 flex items-center gap-1"
-            th:attr="data-id=${comment.id}">
+      <span
+          class="reply-write-btn cursor-pointer text-gray-600 hover:text-blue-600 flex items-center gap-1"
+          th:attr="data-id=${comment.id}">
         <i class="fa-regular fa-pen-to-square"></i> 답글 쓰기
       </span>
 

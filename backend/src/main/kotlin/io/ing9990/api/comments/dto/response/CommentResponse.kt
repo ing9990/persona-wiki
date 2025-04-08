@@ -39,6 +39,7 @@ data class CommentResponse(
                 replyCount = result.replyCount,
                 userNickname = result.userName,
                 userProfileImage = result.image,
+                userId = result.userId,
                 userInteraction = userInteraction,
                 isLikedByUser = isLikedByUser,
                 isDislikedByUser = isDislikedByUser,

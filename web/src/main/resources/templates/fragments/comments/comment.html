@@ -7,7 +7,7 @@
         alt="프로필 이미지"/>
     <div class="comment-meta">
       <span class="comment-nickname font-semibold"
-            th:text="${comment.userNickname != null} ? ${comment.userNickname} : '익명'"></span>
+            th:text="${comment.userNickname}"></span>
       <span class="comment-date ml-2 text-sm text-gray-400"
             th:text="${comment.createdAt}"></span>
     </div>

@@ -80,6 +80,7 @@ class CommentCustomRepositoryImpl(
                     image = comment.user?.image ?: "",
                     createdAt = comment.createdAt,
                     userName = comment.user?.nickname ?: "알 수 없음",
+                    userId = comment.user?.id ?: -1,
                     replyCount = comment.repliesCount,
                     interactionType = userInteractionType,
                 )
@@ -119,7 +120,6 @@ class CommentCustomRepositoryImpl(
                 .fetch()
 
         if (replies.isEmpty() || userId == null) {
-            // 답글이 없거나 사용자 ID가 null이면 기본 CommentResult 반환
             return replies.map { reply ->
                 CommentResult(
                     id = reply.id!!,
@@ -130,6 +130,7 @@ class CommentCustomRepositoryImpl(
                     image = reply.user?.image ?: "",
                     createdAt = reply.createdAt,
                     userName = reply.user?.nickname ?: "알 수 없음",
+                    userId = reply.user?.id ?: -1,
                     replyCount = 0, // 답글에는 답글이 없음
                     interactionType = null,
                     isLikedByUser = false,
@@ -169,6 +170,7 @@ class CommentCustomRepositoryImpl(
                 image = reply.user?.image ?: "",
                 createdAt = reply.createdAt,
                 userName = reply.user?.nickname ?: "알 수 없음",
+                userId = reply.user?.id ?: -1,
                 replyCount = 0, // 답글에는 답글이 없음
                 interactionType = userInteractionType,
                 isLikedByUser = isLikedByUser,
@@ -236,7 +238,7 @@ class CommentCustomRepositoryImpl(
                 val isLikedByUser = userInteractionType == InteractionType.LIKE
 
                 CommentResult.from(
-                    it = comment,
+                    comment = comment,
                     replyCount = comment.repliesCount,
                     userInteractionType = userInteractionType,
                     isLikedByUser = isLikedByUser,

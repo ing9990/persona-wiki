@@ -82,24 +82,22 @@ class CommentAPI {
    * @param {string} content - 답글 내용
    * @returns {Promise<Object>} - 새로 생성된 답글 데이터
    */
-  static async createReply(figureId, commentId, content) {
+  static async createComment(url, content) {
     try {
-      const response = await fetch(
-          `/api/v1/figures/${figureId}/comments/${commentId}/replies`,
-          {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({content})
-          }
-      );
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({content})
+      });
 
       if (!response.ok) {
-        throw new Error("답글 작성 실패");
+        throw new Error("댓글 등록 실패");
       }
 
+      // 201 Created와 함께 본문이 반환됨
       return await response.json();
     } catch (error) {
-      console.error("답글 작성 실패:", error);
+      console.error("댓글 등록 중 오류:", error);
       throw error;
     }
   }

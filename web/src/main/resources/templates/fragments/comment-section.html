@@ -10,16 +10,16 @@
 
   <!-- 댓글 작성 폼 - 모든 사용자에게 표시되지만 requires-login 클래스 추가 -->
   <div>
-    <form th:action="@{'/api/v1/figures/' + ${detailsResult.getId()} + '/comments'}"
-          method="post" class="mb-8">
+    <form id="comment-form" class="mb-8" onsubmit="return false;">
       <div class="mb-3">
-        <textarea name="content" rows="3" id="comment-textarea"
-                  class="comment-login-trigger w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 comment-box"
-                  placeholder="이 인물에 대한 의견을 남겨주세요..."
-                  th:readonly="${current.notLoggedIn()}"></textarea>
+    <textarea name="content" rows="3" id="comment-textarea"
+              class="comment-login-trigger w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 comment-box"
+              placeholder="이 인물에 대한 의견을 남겨주세요..."
+              th:readonly="${current.notLoggedIn()}">
+    </textarea>
       </div>
       <div class="text-right">
-        <button type="submit"
+        <button type="button" id="comment-submit-button"
                 class="requires-login bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition">
           <i class="fas fa-paper-plane mr-1"></i> 게시하기
         </button>

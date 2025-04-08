@@ -42,7 +42,9 @@ class CommentService(
                 user = user,
             )
 
-        return commentRepository.save(comment)
+        val savedComment: Comment = commentRepository.save(comment)
+
+        return savedComment
     }
 
     /**

@@ -247,7 +247,7 @@ class FigureRepositoryImpl(
                 val isLikedByUser = userInteractionType == InteractionType.LIKE
 
                 CommentResult.from(
-                    it = comment,
+                    comment = comment,
                     userInteractionType = userInteractionType,
                     isLikedByUser = isLikedByUser,
                 )

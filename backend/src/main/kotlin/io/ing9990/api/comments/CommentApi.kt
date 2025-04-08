@@ -12,6 +12,7 @@ import io.ing9990.domain.user.User
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -56,6 +57,29 @@ class CommentApi(
     }
 
     /**
+     * 새 댓글을 추가합니다.
+     */
+    @PostMapping
+    fun addComment(
+        @PathVariable figureId: Long,
+        @RequestBody request: CommentRequest,
+        @AuthorizedUser user: User,
+    ): ResponseEntity<CommentResponse> {
+        val addComment =
+            commentService.addComment(
+                figureId = figureId,
+                content = request.content,
+                user = user,
+            )
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+            CommentResponse.from(
+                CommentResult.from(addComment),
+            ),
+        )
+    }
+
+    /**
      * 특정 댓글에 대한 답글 목록 조회
      * @param commentId 댓글 ID
      * @return 답글 목록
@@ -73,23 +97,6 @@ class CommentApi(
                 .map { CommentResponse.from(it) }
 
         return ResponseEntity.ok(response)
-    }
-
-    /**
-     * 새 댓글을 추가합니다.
-     */
-    @PostMapping
-    fun addComment(
-        @PathVariable figureId: Long,
-        @RequestBody request: CommentRequest,
-        @AuthorizedUser user: User,
-    ): ResponseEntity<Unit> {
-        commentService.addComment(
-            figureId = figureId,
-            content = request.content,
-            user = user,
-        )
-        return ResponseEntity.noContent().build()
     }
 
     /**
