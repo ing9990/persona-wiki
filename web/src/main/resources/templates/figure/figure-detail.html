@@ -4,7 +4,7 @@
 
 <head>
   <title th:text="${detailsResult.getName()} + ' - 국민사형투표'">인물 상세</title>
-  <meta name="description" th:content="${detailsResult.getBio()}">
+  <meta name="description" th:content="${#strings.substring(detailsResult.bio, 0, 15)}">
 
   <link rel="stylesheet" href="/css/comment-reply.css">
   <link rel="stylesheet" href="/css/comment-style.css">
@@ -36,7 +36,7 @@
             </div>
             <p class="text-gray-200 text-lg">
               <i class="fas fa-quote-left text-sm opacity-50 mr-1"></i>
-              <span th:text="${#strings.abbreviate(detailsResult.getBio(), 100)}">인물 소개 요약</span>
+              <span th:text="${#strings.abbreviate(detailsResult.getBio(), 50)}">인물 소개 요약</span>
               <i class="fas fa-quote-right text-sm opacity-50 ml-1"></i>
             </p>
           </div>

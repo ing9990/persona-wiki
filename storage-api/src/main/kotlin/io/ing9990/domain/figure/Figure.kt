@@ -34,10 +34,12 @@ import java.util.Locale
 )
 @Entity(name = "figure")
 class Figure(
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) @Column(name = "figure_id") val id: Long? = null,
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "figure_id") val id: Long? = null,
     @Column(name = "name", nullable = false, length = 20) var name: String,
     @Column(name = "image_url", nullable = false) var imageUrl: String,
-    @Column(name = "biography") var bio: String? = null,
+    @Column(name = "biography", nullable = true, length = 50) var bio: String? = null,
     @Column(name = "chosung") val chosung: String = "",
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

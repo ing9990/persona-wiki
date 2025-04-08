@@ -69,13 +69,13 @@
   </section>
 
   <!-- 카테고리별 인물 목록 -->
-  <div th:each="entry : ${categoriesWithFigures}" class="category-section">
+  <div th:each="categoryResult : ${categories.figures}" class="category-section">
     <div class="category-header flex justify-between items-center">
       <h2 class="text-2xl font-bold text-gray-800">
         <i class="fas fa-folder text-indigo-500 mr-2"></i>
-        <span th:text="${entry.key.displayName}">카테고리명</span>
+        <span th:text="${categoryResult.categoryName()}">카테고리명</span>
       </h2>
-      <a th:href="@{'/categories/' + ${entry.key.id}}"
+      <a th:href="@{'/categories/' + ${categoryResult.category.id}}"
          class="text-indigo-600 hover:text-indigo-800 transition">
         더 보기 <i class="fas fa-arrow-right ml-1"></i>
       </a>
@@ -84,12 +84,12 @@
     <!-- 인물 카드 그리드 -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- 인물 카드 (반복) -->
-      <div th:each="figure : ${entry.value}"
+      <div th:each="figure : ${categoryResult.figures}"
            class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 figure-card">
         <div class="figure-image-container">
           <!-- 인물 이미지 -->
           <img
-              th:src="${@layoutHelper.getProfileImageByString(figure.imageUrl)}"
+              th:src="${@layoutHelper.getProfileImageByString(figure.image)}"
               th:alt="${figure.name}" class="figure-image"
               data-handle-error="true"
               data-placeholder="/img/profile-placeholder.svg">
@@ -105,7 +105,7 @@
         <div class="p-5">
           <!-- 인물 소개 (일부만 표시) -->
           <p class="text-gray-600 mb-4"
-             th:text="${figure.bio != null ? #strings.abbreviate(figure.bio, 100) : '소개가 등록되지 않았습니다.'}">
+             th:text="${#strings.abbreviate(figure.bio, 50)}">
             인물 소개 텍스트...
           </p>
 
@@ -115,20 +115,20 @@
             <div class="flex items-center">
               <div class="flex items-center mr-3 tooltip" data-tooltip="숭배">
                 <i class="fas fa-crown text-green-500 mr-1"></i>
-                <span th:text="${figure.reputation.likeCount}">0</span>
+                <span th:text="${figure.positives}">0</span>
               </div>
               <div class="flex items-center mr-3 tooltip" data-tooltip="중립">
                 <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
-                <span th:text="${figure.reputation.neutralCount}">0</span>
+                <span th:text="${figure.neutrals}">0</span>
               </div>
               <div class="flex items-center tooltip" data-tooltip="사형">
                 <i class="fas fa-skull text-red-500 mr-1"></i>
-                <span th:text="${figure.reputation.dislikeCount}">0</span>
+                <span th:text="${figure.negatives}">0</span>
               </div>
             </div>
 
             <!-- 상세 페이지 링크 -->
-            <a th:href="@{'/' + ${figure.category.id} + '/@' + ${figure.name}}"
+            <a th:href="@{'/' + ${figure.categoryId} + '/@' + ${figure.name}}"
                class="inline-block bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 transition text-sm">
               자세히 보기
             </a>

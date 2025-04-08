@@ -71,7 +71,10 @@ class FigureService(
      * 이제 카테고리가 함께 로딩되므로 LazyInitializationException이 발생하지 않습니다.
      * @param categoryId 카테고리 ID
      */
-    fun findByCategoryId(categoryId: String): List<Figure> = figureRepository.findByCategoryId(categoryId)
+    fun findByCategoryId(categoryId: String): List<FigureCardResult> =
+        figureRepository
+            .findByCategoryId(categoryId)
+            .map { FigureCardResult.from(it) }
 
     /**
      * 인기 있는 인물 목록을 가져옵니다. (평판 투표 + 댓글 수 기준)

@@ -71,7 +71,7 @@ class CategoryController(
 
         // 관련 카테고리 목록 조회 (현재 카테고리를 제외한 다른 카테고리들)
         val allCategories = categoryService.getAllCategories()
-        val relatedCategories = allCategories.filter { it.id != categoryId }.take(2)
+        val relatedCategories = allCategories.filter { it.id != categoryId }.take(4)
 
         model.addAttribute("category", category)
         model.addAttribute("figures", figures)

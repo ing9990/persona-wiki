@@ -4,6 +4,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory
 import io.ing9990.domain.category.Category
 import io.ing9990.domain.category.querydsl.QCategory
 import io.ing9990.domain.figure.querydsl.QFigure
+import io.ing9990.domain.figure.service.dto.FigureCardResult
 import io.ing9990.domain.figure.service.dto.FiguresByCategoryResult
 import io.ing9990.domain.figure.service.dto.PopularFiguresByCategoriesResult
 
@@ -36,7 +37,10 @@ class CategoryCustomRepositoryImpl(
                         .where(figure.category.eq(category))
                         .orderBy(figure.votes.size().desc())
                         .limit(figuresCount)
-                        .fetch(),
+                        .fetch()
+                        .map {
+                            FigureCardResult.from(it)
+                        },
                 )
             }
 

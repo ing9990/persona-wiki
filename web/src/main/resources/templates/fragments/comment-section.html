@@ -1,6 +1,7 @@
 <!-- fragments/comment-section.html -->
 <section th:fragment="commentSection(detailsResult, current)"
          class="bg-white rounded-lg shadow-md p-6 fade-in">
+
   <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
     <i class="fas fa-comments text-indigo-500 mr-2"></i>
     <span>의견</span>
@@ -8,32 +9,104 @@
           th:text="${detailsResult.totalCommentCount}">0</span>
   </h2>
 
-  <!-- 댓글 작성 폼 - 모든 사용자에게 표시되지만 requires-login 클래스 추가 -->
-  <div>
-    <form id="comment-form" class="mb-8" onsubmit="return false;">
-      <div class="mb-3">
-    <textarea name="content" rows="3" id="comment-textarea"
-              class="comment-login-trigger w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 comment-box"
-              placeholder="이 인물에 대한 의견을 남겨주세요..."
-              th:readonly="${current.notLoggedIn()}">
-    </textarea>
+  <style>
+    .comment-input-wrapper {
+      position: relative;
+      border-bottom: 1px solid #ccc;
+      transition: border-color 0.2s ease;
+    }
+
+    .comment-input-wrapper:focus-within {
+      border-bottom-color: #000;
+    }
+
+    #comment-textarea {
+      width: 100%;
+      font-size: 14px;
+      padding: 6px 0;
+      border: none;
+      background: transparent;
+      color: #000;
+      line-height: 1.5;
+    }
+
+    #comment-textarea:focus {
+      outline: none;
+    }
+
+    /* 버튼 스타일 */
+    .comment-button-custom {
+      border: 1px solid transparent;
+      font-size: 13px;
+      padding: 5px 12px;
+      border-radius: 16px;
+      transition: all 0.2s ease;
+      background-color: transparent;
+    }
+
+    .comment-cancel-custom {
+      color: #666;
+    }
+
+    .comment-cancel-custom:hover {
+      background-color: #f3f4f6;
+      color: #4b5563;
+    }
+
+    .comment-submit-custom {
+      color: black;
+      border: 1px solid #4f46e5;
+      background-color: #fff;
+    }
+
+    .comment-submit-custom:hover {
+      background-color: lightblue;
+      border-color: #4338ca;
+    }
+
+    .comment-submit-custom:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+
+  <!-- 댓글 작성 영역 -->
+  <div class="mb-8">
+    <div class="flex items-start">
+      <div class="flex-shrink-0 mr-3">
+        <img class="h-10 w-10 rounded-full object-cover"
+             th:src="${current.image()}"
+             alt="프로필 이미지">
       </div>
-      <div class="text-right">
-        <button type="button" id="comment-submit-button"
-                class="requires-login bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition">
-          <i class="fas fa-paper-plane mr-1"></i> 게시하기
-        </button>
+      <div class="flex-grow">
+        <form id="comment-form" class="w-full">
+          <div class="comment-input-group">
+            <div class="relative comment-input-wrapper">
+              <input name="content" id="comment-textarea"
+                     class="comment-login-trigger requires-login w-full py-1 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:border-black comment-box placeholder-gray-500"
+                     placeholder="댓글 추가..."
+                     th:readonly="${current.notLoggedIn()}">
+            </div>
+            <div class="comment-button-group flex justify-end mt-2 gap-2">
+              <button type="button" id="comment-cancel-button"
+                      class="comment-button-custom comment-cancel-custom">
+                취소
+              </button>
+              <button type="submit" id="comment-submit-button"
+                      class="requires-login comment-button-custom comment-submit-custom">
+                <i class="fas fa-paper-plane mr-1"></i> 댓글
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   </div>
 
   <!-- 댓글 목록 -->
   <div class="comments-container">
     <div id="comment-list" class="flex flex-col gap-4"
          th:attr="data-figure-id=${detailsResult.getId()}"></div>
-
-
-    <!-- 여기로 comment fragment가 append됨 -->
   </div>
 
   <p class="js-empty-comment-message text-sm text-gray-400 py-4 text-center hidden">
@@ -56,7 +129,6 @@
   <div class="js-error-message text-center py-4 text-red-500 hidden">
     댓글을 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.
   </div>
-
 
   <!-- 댓글 템플릿 -->
   <template id="comment-template">

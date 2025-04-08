@@ -39,7 +39,7 @@ class FigureController(
         val result: PopularFiguresByCategoriesResult =
             categoryService.getPopularFiguresByCategory(3)
 
-        model.addAttribute("categoriesWithFigures", result)
+        model.addAttribute("categories", result)
 
         return "figure/figure-list-by-category"
     }

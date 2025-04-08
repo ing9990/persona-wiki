@@ -10,8 +10,9 @@ var commentHandler = (function () {
   // DOM 요소 참조
   var elements = {
     form: null,
-    textarea: null,
+    textarea: null, // 실제로는 input 요소지만 호환성을 위해 이름 유지
     submitButton: null,
+    cancelButton: null,
     commentList: null,
     template: null,
     noCommentsMessage: null,
@@ -24,6 +25,7 @@ var commentHandler = (function () {
   function init() {
     // 중복 초기화 방지
     if (isInitialized) {
+      console.log('댓글 핸들러가 이미 초기화되었습니다.');
       return;
     }
 
@@ -33,6 +35,7 @@ var commentHandler = (function () {
     elements.form = document.getElementById('comment-form');
     elements.textarea = document.getElementById('comment-textarea');
     elements.submitButton = document.getElementById('comment-submit-button');
+    elements.cancelButton = document.getElementById('comment-cancel-button');
     elements.commentList = document.getElementById('comment-list');
     elements.template = document.getElementById('comment-template');
     elements.noCommentsMessage = document.querySelector('.js-no-comments');
@@ -46,32 +49,90 @@ var commentHandler = (function () {
       return;
     }
 
-    // 모든 기존 이벤트 리스너 제거를 위한 복제 요소로 교체
-    var oldButton = elements.submitButton;
-    var newButton = oldButton.cloneNode(true);
-    oldButton.parentNode.replaceChild(newButton, oldButton);
-    elements.submitButton = newButton;
-
-    // 새 이벤트 리스너 등록
-    elements.submitButton.addEventListener('click', submitComment);
+    // 이벤트 리스너 제거 및 등록
+    removeAllEventListeners();
+    attachEventListeners();
 
     // 이미지 에러 처리
     document.addEventListener('error', handleImageError, true);
 
     isInitialized = true;
     console.log('댓글 핸들러 초기화 완료');
+
+    // 기존 댓글 날짜를 상대적 시간으로 변환
+    if (typeof RelativeTimeUtils !== 'undefined') {
+      RelativeTimeUtils.updateAllRelativeTimes('.comment-date');
+    }
+  }
+
+  /**
+   * 모든 이벤트 리스너 제거
+   */
+  function removeAllEventListeners() {
+    if (elements.submitButton) {
+      const newSubmitButton = elements.submitButton.cloneNode(true);
+      elements.submitButton.parentNode.replaceChild(newSubmitButton,
+          elements.submitButton);
+      elements.submitButton = newSubmitButton;
+    }
+
+    if (elements.cancelButton) {
+      const newCancelButton = elements.cancelButton.cloneNode(true);
+      elements.cancelButton.parentNode.replaceChild(newCancelButton,
+          elements.cancelButton);
+      elements.cancelButton = newCancelButton;
+    }
+
+    if (elements.form) {
+      // form의 submit 이벤트 복제는 필요 없음 (이벤트 핸들러만 제거)
+      elements.form.onsubmit = null;
+    }
+  }
+
+  /**
+   * 이벤트 리스너 등록
+   */
+  function attachEventListeners() {
+    // 댓글 제출 버튼 클릭 이벤트
+    if (elements.submitButton) {
+      elements.submitButton.addEventListener('click', function (event) {
+        event.preventDefault();
+        submitComment();
+      });
+    }
+
+    // 폼 제출 이벤트 (엔터키 처리)
+    if (elements.form) {
+      elements.form.addEventListener('submit', function (event) {
+        event.preventDefault();
+        submitComment();
+      });
+    }
+
+    // 텍스트 영역 엔터키 처리 (input 태그용)
+    if (elements.textarea) {
+      elements.textarea.addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          submitComment();
+        }
+      });
+    }
+
+    // 취소 버튼 클릭 이벤트
+    if (elements.cancelButton) {
+      elements.cancelButton.addEventListener('click', function () {
+        if (elements.textarea) {
+          elements.textarea.value = '';
+        }
+      });
+    }
   }
 
   /**
    * 댓글 제출 처리 함수
    */
-  function submitComment(event) {
-    // 이벤트 기본 동작 방지
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
+  function submitComment() {
     // 중복 제출 방지
     if (isSubmitting) {
       console.log('이미 제출 중입니다.');
@@ -139,13 +200,12 @@ var commentHandler = (function () {
     if (loading) {
       elements.submitButton.disabled = true;
       elements.submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> 등록 중...';
-      elements.submitButton.classList.add('opacity-75', 'cursor-not-allowed');
+      elements.submitButton.classList.add('opacity-75');
       elements.textarea.disabled = true;
     } else {
       elements.submitButton.disabled = false;
-      elements.submitButton.innerHTML = '<i class="fas fa-paper-plane mr-1"></i> 게시하기';
-      elements.submitButton.classList.remove('opacity-75',
-          'cursor-not-allowed');
+      elements.submitButton.innerHTML = '<i class="fas fa-paper-plane mr-1"></i> 댓글';
+      elements.submitButton.classList.remove('opacity-75');
       elements.textarea.disabled = false;
     }
   }
@@ -179,7 +239,14 @@ var commentHandler = (function () {
 
     const dateEl = commentNode.querySelector('.comment-date');
     if (dateEl) {
-      dateEl.textContent = commentData.createdAt;
+      // 상대적 시간 설정
+      if (typeof RelativeTimeUtils !== 'undefined') {
+        RelativeTimeUtils.setRelativeTime(dateEl, commentData.createdAt);
+      } else {
+        dateEl.textContent = '방금 전';
+        dateEl.setAttribute('data-original-date', commentData.createdAt);
+        dateEl.setAttribute('title', commentData.createdAt);
+      }
     }
 
     // 댓글 내용 설정
@@ -191,12 +258,12 @@ var commentHandler = (function () {
     // 좋아요/싫어요 카운트 설정
     const likeCountEl = commentNode.querySelector('.like-count');
     if (likeCountEl) {
-      likeCountEl.textContent = commentData.likes;
+      likeCountEl.textContent = commentData.likes || '0';
     }
 
     const dislikeCountEl = commentNode.querySelector('.dislike-count');
     if (dislikeCountEl) {
-      dislikeCountEl.textContent = commentData.dislikes;
+      dislikeCountEl.textContent = commentData.dislikes || '0';
     }
 
     // 댓글 ID 및 figure ID 설정
@@ -238,8 +305,17 @@ var commentHandler = (function () {
       }
     }
 
-    // 댓글 목록 맨 위에 추가
+    // 댓글 아이템 요소 가져오기
     const commentItem = commentNode.querySelector('.comment-item');
+
+    // '답글 쓰기' 버튼 스타일 조정
+    const commentBtnText = commentItem.querySelector(
+        '.reply-button span:first-child');
+    if (commentBtnText) {
+      commentBtnText.textContent = '답글';
+    }
+
+    // 댓글 목록 맨 위에 추가
     if (commentItem) {
       elements.commentList.insertBefore(commentItem,
           elements.commentList.firstChild);
