@@ -9,6 +9,7 @@ data class PopularFiguresByCategoriesResult(
 data class FiguresByCategoryResult(
     var category: CategoryResult,
     var figures: List<FigureCardResult>,
+    var totalFigures: Int = 0,
 ) {
     fun categoryId() = category.id
 

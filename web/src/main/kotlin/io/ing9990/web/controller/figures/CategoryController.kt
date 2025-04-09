@@ -2,6 +2,7 @@ package io.ing9990.web.controller.figures
 
 import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.category.service.dto.CategoryIds
+import io.ing9990.domain.category.service.dto.CategoryResult
 import io.ing9990.domain.figure.service.FigureService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -28,7 +29,8 @@ class CategoryController(
         @RequestParam(defaultValue = "9") size: Int,
     ): String {
         // 모든 카테고리 조회 (페이지네이션용)
-        val allCategories = categoryService.getAllCategories()
+        val allCategories: List<CategoryResult> =
+            categoryService.getAllCategories()
 
         // 페이지네이션 계산
         val totalCategories = allCategories.size

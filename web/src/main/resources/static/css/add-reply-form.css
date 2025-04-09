@@ -101,3 +101,30 @@
 .add-reply-button i {
   margin-right: 0.25rem;
 }
+
+
+/* 모바일 최적화용 텍스트 크기 */
+.text-2xs {
+  font-size: 0.65rem;
+}
+
+/* 모바일 최적화를 위한 미디어 쿼리 */
+@media (max-width: 640px) {
+  .add-reply-form {
+    margin-bottom: 0.75rem;
+  }
+
+  .add-reply-form .input-wrapper {
+    border-bottom-width: 1px;
+  }
+
+  .add-reply-form textarea {
+    font-size: 0.85rem;
+    padding: 4px 0;
+  }
+
+  .add-reply-form .button-custom {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+  }
+}

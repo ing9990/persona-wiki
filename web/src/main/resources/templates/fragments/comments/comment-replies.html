@@ -1,4 +1,3 @@
-<!-- fragments/comments/comment-replies.html -->
 <div th:fragment="replies">
   <div th:each="reply : ${replies}" class="reply mb-4">
     <div class="reply-header flex items-center gap-3">
@@ -16,17 +15,17 @@
     </div>
     <div class="reply-body mt-1 text-gray-800 text-[14px] leading-relaxed"
          th:text="${reply.content}"></div>
-    <div class="reply-footer flex flex-wrap gap-4 text-sm text-gray-500 mt-1 items-center">
+    <div class="reply-footer flex flex-wrap gap-x-4 gap-y-2 text-sm text-gray-500 mt-1 items-center">
       <span class="like-btn cursor-pointer flex items-center"
             th:classappend="${reply.isLikedByUser} ? 'clicked text-blue-600'"
             th:attr="data-id=${reply.id}, data-figure-id=${figureId}">
-        <i class="fa-regular fa-thumbs-up text-lg "></i>
+        <i class="fa-regular fa-thumbs-up text-lg mr-1"></i>
         <span class="count" th:text="${reply.likes}">0</span>
       </span>
       <span class="dislike-btn cursor-pointer flex items-center"
             th:classappend="${reply.isDislikedByUser} ? 'clicked text-red-500'"
             th:attr="data-id=${reply.id}, data-figure-id=${figureId}">
-        <i class="fa-regular fa-thumbs-down text-lg "></i>
+        <i class="fa-regular fa-thumbs-down text-lg mr-1"></i>
         <span class="count" th:text="${reply.dislikes}">0</span>
       </span>
     </div>

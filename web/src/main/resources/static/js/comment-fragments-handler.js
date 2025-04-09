@@ -106,3 +106,4 @@ document.addEventListener("DOMContentLoaded", function () {
     RelativeTimeUtils.updateAllRelativeTimes(".comment-date-relative")
   }
 });
+

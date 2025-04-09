@@ -31,8 +31,16 @@ class CategoryCustomRepositoryImpl(
 
         val result =
             topCategories.map { foundCategory ->
-                FiguresByCategoryResult(
-                    CategoryResult.from(foundCategory),
+                // 카테고리의 총 인물 개수 조회
+                val totalFiguresCount =
+                    query
+                        .select(figure.count())
+                        .from(figure)
+                        .where(figure.category.id.eq(foundCategory.id))
+                        .fetchOne() ?: 0L
+
+                // 해당 카테고리의 인기 인물(투표 수 기준) 조회
+                val popularFigures =
                     query
                         .selectFrom(figure)
                         .where(figure.category.id.eq(foundCategory.id))
@@ -41,7 +49,12 @@ class CategoryCustomRepositoryImpl(
                         .fetch()
                         .map {
                             FigureCardResult.from(it)
-                        },
+                        }
+
+                FiguresByCategoryResult(
+                    category = CategoryResult.from(foundCategory),
+                    figures = popularFigures,
+                    totalFigures = totalFiguresCount.toInt(),
                 )
             }
 
