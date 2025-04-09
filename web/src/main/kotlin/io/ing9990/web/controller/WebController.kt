@@ -41,7 +41,7 @@ class WebController(
         @RequestParam query: String,
         model: Model,
     ): String {
-        val searchResults =
+        val searchResults: List<FigureCardResult> =
             figureService.searchByName(query)
 
         model.addAttribute("searchResults", searchResults)

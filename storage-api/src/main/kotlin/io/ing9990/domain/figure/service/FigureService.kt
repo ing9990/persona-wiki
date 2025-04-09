@@ -9,7 +9,6 @@ import io.ing9990.domain.figure.repository.FigureRepository
 import io.ing9990.domain.figure.service.dto.CreateFiureData
 import io.ing9990.domain.figure.service.dto.FigureCardResult
 import io.ing9990.domain.figure.service.dto.FigureDetailsResult
-import io.ing9990.domain.figure.service.dto.FigureMicroResults
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
@@ -91,7 +90,7 @@ class FigureService(
     /**
      * 이름으로 검색합니다.
      */
-    fun searchByName(name: String): FigureMicroResults {
+    fun searchByName(name: String): List<FigureCardResult> {
         try {
             return figureRepository.searchByName(name)
         } catch (e: Exception) {
