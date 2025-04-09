@@ -3,6 +3,8 @@ package io.ing9990.domain.category.service
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.category.Category
 import io.ing9990.domain.category.repository.CategoryRepository
+import io.ing9990.domain.category.service.dto.CategoryIds
+import io.ing9990.domain.category.service.dto.CategoryResult
 import io.ing9990.domain.figure.service.dto.PopularFiguresByCategoriesResult
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -17,7 +19,23 @@ class CategoryService(
     /**
      * 전체 카테고리 조회
      */
-    fun getAllCategories(): List<Category> = categoryRepository.findAll()
+    fun getAllCategories(): List<CategoryResult> =
+        categoryRepository
+            .findAll()
+            .map {
+                CategoryResult.from(it)
+            }
+
+    /**
+     * 특정 카테고리를 제외하고 카테고리를 N개 만큼 조회
+     */
+    fun getAllCategoriesWithNotIn(
+        exception: CategoryIds,
+        limit: Int,
+    ): List<CategoryResult> =
+        getAllCategories()
+            .filter { category -> category.id !in exception.categories }
+            .take(limit)
 
     /**
      * ID로 카테고리 조회
@@ -50,8 +68,8 @@ class CategoryService(
     fun createCategory(
         id: String,
         displayName: String,
-        description: String?,
-        imageUrl: String?,
+        description: String,
+        imageUrl: String,
     ): Category {
         validateCreateCategory(id, displayName)
 

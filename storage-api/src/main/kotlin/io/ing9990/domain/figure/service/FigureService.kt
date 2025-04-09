@@ -113,7 +113,7 @@ class FigureService(
 
         // 중복 체크
         if (figureRepository.existsByCategoryIdAndName(data.categoryId, data.figureName)) {
-            throw IllegalArgumentException("이미 '${data.categoryId}' 카테고리에 '${data.figureName}' 인물이 존재합니다.")
+            throw CreateFigureException("이미 '${data.categoryId}' 카테고리에 '${data.figureName}' 인물이 존재합니다.", data)
         }
 
         val figure =

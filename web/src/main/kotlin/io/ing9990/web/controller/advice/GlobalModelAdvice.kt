@@ -5,20 +5,53 @@ import io.ing9990.aop.resolver.CurrentUserDto
 import io.ing9990.authentication.providers.google.dto.GoogleAuthProperties
 import io.ing9990.authentication.providers.kakao.dto.KakaoAuthProperties
 import io.ing9990.authentication.providers.naver.dto.NaverAuthProperties
+import io.ing9990.domain.category.service.CategoryService
+import io.ing9990.domain.category.service.dto.CategoryResult
+import io.ing9990.domain.figure.service.CreateFigureException
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.ControllerAdvice
+import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.ModelAttribute
+import org.springframework.web.servlet.ModelAndView
 
 @ControllerAdvice
 class GlobalModelAdvice(
     private val kakaoAuthProperties: KakaoAuthProperties,
     private val naverAuthProperties: NaverAuthProperties,
     private val googleAuthProperties: GoogleAuthProperties,
+    private val categoryService: CategoryService,
 ) {
+    @ExceptionHandler(CreateFigureException::class)
+    fun handleCreateFigureException(e: CreateFigureException): ModelAndView {
+        val modelAndView = ModelAndView("fragments/figure-add-modal :: figureAddModal")
+
+        // 예외 메시지와 함께 에러 정보 추가
+        modelAndView.addObject("errorMessage", e.message)
+        modelAndView.addObject("showError", true)
+
+        if (e.figureData != null) {
+            modelAndView.addObject("figureName", e.figureData!!?.figureName)
+            modelAndView.addObject("categoryId", e.figureData!!?.categoryId)
+            modelAndView.addObject("imageUrl", e.figureData!!?.imageUrl)
+            modelAndView.addObject("bio", e.figureData!!?.bio)
+        }
+
+        // 카테고리 목록 다시 불러오기
+        modelAndView.addObject("categories", categoryService.getAllCategories())
+
+        return modelAndView
+    }
+
     @ModelAttribute("current")
     fun addCurrentUser(
         @CurrentUser currentUserDto: CurrentUserDto,
     ): CurrentUserDto = currentUserDto
+
+    @ModelAttribute("addFigureCategories")
+    fun addCommonAttributes(model: Model) {
+        val result: List<CategoryResult> = categoryService.getAllCategories()
+        model.addAttribute("addFigureCategories", result)
+    }
 
     @ModelAttribute
     fun addLoginModalAttributes(model: Model) {

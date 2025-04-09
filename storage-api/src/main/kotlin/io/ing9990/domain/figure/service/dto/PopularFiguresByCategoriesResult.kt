@@ -1,14 +1,18 @@
 package io.ing9990.domain.figure.service.dto
 
-import io.ing9990.domain.category.Category
+import io.ing9990.domain.category.service.dto.CategoryResult
 
 data class PopularFiguresByCategoriesResult(
-    var figures: List<FiguresByCategoryResult>,
+    var datas: List<FiguresByCategoryResult>,
 )
 
 data class FiguresByCategoryResult(
-    var category: Category,
+    var category: CategoryResult,
     var figures: List<FigureCardResult>,
 ) {
-    fun categoryName() = category.displayName
+    fun categoryId() = category.id
+
+    fun categoryName() = category.name
+
+    fun getCards(): List<FigureCardResult> = figures
 }

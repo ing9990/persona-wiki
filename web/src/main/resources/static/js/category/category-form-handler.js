@@ -128,7 +128,7 @@ class CategoryFormHandler {
 
       // 3초 후 카테고리 목록 페이지로 이동
       setTimeout(() => {
-        window.location.href = '/categories';
+        window.location.href = '/categoryResult';
       }, 1500);
     })
     .catch(error => {

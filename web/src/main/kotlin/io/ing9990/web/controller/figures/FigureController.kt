@@ -5,15 +5,13 @@ import io.ing9990.aop.CurrentUser
 import io.ing9990.aop.resolver.CurrentUserDto
 import io.ing9990.common.Redirect
 import io.ing9990.domain.category.service.CategoryService
-import io.ing9990.domain.comment.service.CommentService
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.figure.service.dto.FigureDetailsResult
 import io.ing9990.domain.figure.service.dto.PopularFiguresByCategoriesResult
 import io.ing9990.domain.user.User
-import io.ing9990.domain.user.repositories.UserRepository
-import io.ing9990.domain.vote.service.VoteService
 import jakarta.validation.Valid
+import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -26,9 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam
 class FigureController(
     private val figureService: FigureService,
     private val categoryService: CategoryService,
-    private val voteService: VoteService,
-    private val commentService: CommentService,
-    private val userRepository: UserRepository,
 ) {
     /**
      * 인물 목록 페이지 - 카테고리별 인기 인물 표시
@@ -39,7 +34,7 @@ class FigureController(
         val result: PopularFiguresByCategoriesResult =
             categoryService.getPopularFiguresByCategory(3)
 
-        model.addAttribute("categories", result)
+        model.addAttribute("categoryResult", result)
 
         return "figure/figure-list-by-category"
     }
@@ -50,35 +45,16 @@ class FigureController(
         @PathVariable figureName: String,
     ): String = Redirect.to(categoryId, figureName)
 
-    @GetMapping("/add-figure")
-    fun addFigureForm(
-        @AuthorizedUser user: User,
-        @RequestParam(required = false) category: String?,
-        @RequestParam(required = false) name: String?,
-        model: Model,
-    ): String {
-        categoryService.getAllCategories().also {
-            model.addAttribute("categories", it)
-        }
-        category.let {
-            model.addAttribute("selectedCategoryId", it)
-        }
-        name.let {
-            model.addAttribute("selectedFigureName", it)
-        }
-        return "figure/add-figure"
-    }
-
     /**
-     * 인물을 등록합니다.
+     * 인물을 등록합니다 (폼 제출용)
      */
-    @PostMapping("/figures")
+    @PostMapping("/figures", consumes = [APPLICATION_FORM_URLENCODED_VALUE])
     fun addFigure(
         @AuthorizedUser user: User,
+        model: Model,
         @Valid @ModelAttribute request: CreateFigureRequest,
     ): String {
         val figure: Figure = figureService.createFigure(request.toData(user))
-
         return Redirect.to(figure.category.id, figure.name)
     }
 

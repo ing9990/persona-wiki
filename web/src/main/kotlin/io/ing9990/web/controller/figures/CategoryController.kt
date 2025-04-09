@@ -1,6 +1,7 @@
 package io.ing9990.web.controller.figures
 
 import io.ing9990.domain.category.service.CategoryService
+import io.ing9990.domain.category.service.dto.CategoryIds
 import io.ing9990.domain.figure.service.FigureService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -71,7 +72,13 @@ class CategoryController(
 
         // 관련 카테고리 목록 조회 (현재 카테고리를 제외한 다른 카테고리들)
         val allCategories = categoryService.getAllCategories()
-        val relatedCategories = allCategories.filter { it.id != categoryId }.take(4)
+        val relatedCategories =
+            categoryService.getAllCategoriesWithNotIn(
+                CategoryIds(mutableListOf(categoryId)),
+                4,
+            )
+
+        allCategories.filter { it.id != categoryId }.take(4)
 
         model.addAttribute("category", category)
         model.addAttribute("figures", figures)

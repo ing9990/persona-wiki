@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', function () {
         `;
 
     voteContainer.innerHTML = resultHTML;
-    voteContainer.classList.add('vote-result');
+    voteContainer.classList.add('vote-categoryResult');
 
     // 성공 메시지 표시
     showSuccess();

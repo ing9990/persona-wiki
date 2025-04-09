@@ -3,6 +3,7 @@ package io.ing9990.domain.category.repository
 import com.querydsl.jpa.impl.JPAQueryFactory
 import io.ing9990.domain.category.Category
 import io.ing9990.domain.category.querydsl.QCategory
+import io.ing9990.domain.category.service.dto.CategoryResult
 import io.ing9990.domain.figure.querydsl.QFigure
 import io.ing9990.domain.figure.service.dto.FigureCardResult
 import io.ing9990.domain.figure.service.dto.FiguresByCategoryResult
@@ -29,12 +30,12 @@ class CategoryCustomRepositoryImpl(
                 .fetch()
 
         val result =
-            topCategories.map { category ->
+            topCategories.map { foundCategory ->
                 FiguresByCategoryResult(
-                    category,
+                    CategoryResult.from(foundCategory),
                     query
                         .selectFrom(figure)
-                        .where(figure.category.eq(category))
+                        .where(figure.category.id.eq(foundCategory.id))
                         .orderBy(figure.votes.size().desc())
                         .limit(figuresCount)
                         .fetch()
@@ -44,6 +45,6 @@ class CategoryCustomRepositoryImpl(
                 )
             }
 
-        return PopularFiguresByCategoriesResult(figures = result)
+        return PopularFiguresByCategoriesResult(datas = result)
     }
 }

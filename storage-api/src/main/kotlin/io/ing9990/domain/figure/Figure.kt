@@ -33,12 +33,12 @@ import java.util.Locale
     constraints = "figure_name REGEXP '^[가-힣]{1,20}$' OR figure_name REGEXP '^[a-zA-Z]{1,20}$'",
 )
 @Entity(name = "figure")
-class Figure(
+class Figure protected constructor(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "figure_id") val id: Long? = null,
     @Column(name = "name", nullable = false, length = 20) var name: String,
-    @Column(name = "image_url", nullable = false) var imageUrl: String,
+    @Column(name = "image_url", nullable = false, length = 500) var imageUrl: String,
     @Column(name = "biography", nullable = true, length = 50) var bio: String? = null,
     @Column(name = "chosung") val chosung: String = "",
     @ManyToOne(fetch = FetchType.LAZY)
