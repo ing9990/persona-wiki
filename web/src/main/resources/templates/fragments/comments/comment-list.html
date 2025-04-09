@@ -13,7 +13,7 @@
         <div class="flex items-center mb-1">
           <span class="font-medium text-gray-900 mr-2"
                 th:text="${comment.userNickname != null} ? ${comment.userNickname} : '익명'"></span>
-          <span class="text-sm text-gray-500"
+          <span class="text-sm text-gray-500 comment-date-relative"
                 th:text="${comment.createdAt}"></span>
         </div>
 

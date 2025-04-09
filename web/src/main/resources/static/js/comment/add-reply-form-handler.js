@@ -71,7 +71,7 @@ const AddReplyFormHandler = (function () {
       }
     } else {
       // 폼이 이미 있다면 포커스
-      const textarea = replyForm.querySelector('textarea');
+      const textarea = replyForm.querySelector('input');
       if (textarea) {
         textarea.focus();
       }
@@ -79,7 +79,7 @@ const AddReplyFormHandler = (function () {
   }
 
   /**
-   * 답글 작성 폼 생성
+   * 답글 작성 폼 생성 - 댓글 작성 폼과 동일한 스타일로 변경
    * @param {string} figureId - 피규어 ID
    * @param {string} commentId - 댓글 ID
    * @returns {string} - 폼 HTML
@@ -88,18 +88,20 @@ const AddReplyFormHandler = (function () {
     return `
       <div class="add-reply-form mb-4">
         <form data-figure-id="${figureId}" data-comment-id="${commentId}">
-          <textarea
-            class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-            placeholder="답글을 입력하세요..."
-            rows="2"
-            required
-          ></textarea>
-          <div class="flex justify-end mt-2 gap-2">
-            <button type="button" class="cancel-btn px-3 py-1 text-sm text-gray-600 hover:text-gray-800">
+          <div class="input-wrapper">
+            <input
+              class="w-full py-1 bg-transparent border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
+              placeholder="답글을 입력하세요..."
+              rows="2"
+              required
+            ></input>
+          </div>
+          <div class="button-group flex justify-end mt-2 gap-2">
+            <button type="button" class="cancel-btn button-custom">
               취소
             </button>
-            <button type="submit" class="submit-btn px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600">
-              등록
+            <button type="submit" class="submit-btn button-custom">
+              <i class="fas fa-paper-plane mr-1"></i> 등록
             </button>
           </div>
         </form>
@@ -113,7 +115,7 @@ const AddReplyFormHandler = (function () {
    */
   function bindReplyFormEvents(formElement) {
     const form = formElement.querySelector('form');
-    const textarea = form.querySelector('textarea');
+    const textarea = form.querySelector('input');
     const cancelBtn = form.querySelector('.cancel-btn');
 
     // 취소 버튼 이벤트
@@ -139,9 +141,10 @@ const AddReplyFormHandler = (function () {
         try {
           // 로딩 상태 표시
           const submitBtn = form.querySelector('.submit-btn');
-          const originalText = submitBtn.textContent;
+          const originalText = submitBtn.innerHTML;
           submitBtn.disabled = true;
-          submitBtn.textContent = '등록 중...';
+          submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> 등록 중...';
+          submitBtn.classList.add('opacity-75');
 
           // 답글 등록 요청 (Fragment 방식)
           const repliesHtml = await CommentAPI.createReplyFragment(figureId,
@@ -184,7 +187,7 @@ const AddReplyFormHandler = (function () {
 
           // 버튼 상태 복구
           submitBtn.disabled = false;
-          submitBtn.textContent = originalText;
+          submitBtn.innerHTML = originalText;
         }
       });
     }

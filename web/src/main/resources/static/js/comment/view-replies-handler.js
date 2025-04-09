@@ -4,7 +4,7 @@
  */
 
 // 모듈 패턴으로 구현
-const ViewRepliesHandler = (function() {
+const ViewRepliesHandler = (function () {
   // 선택자 정의
   const SELECTORS = {
     COMMENT_ITEM: '.comment-item',
@@ -18,7 +18,7 @@ const ViewRepliesHandler = (function() {
    */
   function init() {
     // 이벤트 바인딩
-    document.addEventListener('click', function(e) {
+    document.addEventListener('click', function (e) {
       // 답글 보기 버튼 클릭 처리
       if (e.target.closest(SELECTORS.VIEW_REPLIES_BTN)) {
         handleViewRepliesButtonClick(e);
@@ -33,12 +33,12 @@ const ViewRepliesHandler = (function() {
    * @param {Event} e - 클릭 이벤트
    */
   async function handleViewRepliesButtonClick(e) {
-    console.log('답글 보기 버튼 클릭');
     const viewRepliesBtn = e.target.closest(SELECTORS.VIEW_REPLIES_BTN);
     const commentId = viewRepliesBtn.dataset.id;
     const figureId = document.querySelector('#comment-list').dataset.figureId;
     const commentElement = viewRepliesBtn.closest(SELECTORS.COMMENT_ITEM);
-    const replyContainer = commentElement.querySelector(SELECTORS.REPLY_CONTAINER);
+    const replyContainer = commentElement.querySelector(
+        SELECTORS.REPLY_CONTAINER);
     const repliesList = replyContainer.querySelector(SELECTORS.REPLIES_LIST);
 
     // 이미 로드된 경우 토글만 수행
@@ -55,7 +55,8 @@ const ViewRepliesHandler = (function() {
       replyContainer.classList.remove('hidden');
 
       // 답글 Fragment 로드
-      const repliesHtml = await CommentAPI.fetchRepliesFragment(figureId, commentId);
+      const repliesHtml = await CommentAPI.fetchRepliesFragment(figureId,
+          commentId);
 
       // 응답 HTML을 삽입
       repliesList.innerHTML = repliesHtml;
@@ -64,6 +65,8 @@ const ViewRepliesHandler = (function() {
       if (window.CommentInteractions) {
         window.CommentInteractions.initializeAllLikeDislikeButtons(repliesList);
       }
+
+      RelativeTimeUtils.updateAllRelativeTimes(".comment-date-relative")
     } catch (error) {
       console.error('답글 로딩 실패:', error);
       repliesList.innerHTML = '<div class="error-message text-center py-2 text-red-500">답글을 불러오지 못했습니다. 다시 시도해주세요.</div>';
@@ -85,6 +88,6 @@ const ViewRepliesHandler = (function() {
 })();
 
 // DOM 로드 완료 시 초기화
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
   ViewRepliesHandler.init();
 });

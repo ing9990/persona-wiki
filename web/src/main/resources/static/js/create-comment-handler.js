@@ -25,11 +25,9 @@ var commentHandler = (function () {
   function init() {
     // 중복 초기화 방지
     if (isInitialized) {
-      console.log('댓글 핸들러가 이미 초기화되었습니다.');
       return;
     }
 
-    console.log('댓글 핸들러 초기화 시작');
 
     // DOM 요소 캐시
     elements.form = document.getElementById('comment-form');
@@ -57,7 +55,6 @@ var commentHandler = (function () {
     document.addEventListener('error', handleImageError, true);
 
     isInitialized = true;
-    console.log('댓글 핸들러 초기화 완료');
 
     // 기존 댓글 날짜를 상대적 시간으로 변환
     if (typeof RelativeTimeUtils !== 'undefined') {
@@ -135,11 +132,9 @@ var commentHandler = (function () {
   function submitComment() {
     // 중복 제출 방지
     if (isSubmitting) {
-      console.log('이미 제출 중입니다.');
       return;
     }
 
-    console.log('댓글 제출 시작');
 
     const content = elements.textarea.value.trim();
     if (!content) {
@@ -331,7 +326,6 @@ var commentHandler = (function () {
               === 'function') {
             window.AddReplyFormHandler.handleButtonClick(e);
           } else {
-            console.log('답글 버튼 클릭 - 이벤트 발생');
             // 커스텀 이벤트 발생 (이벤트 위임 방식을 사용하는 핸들러를 위해)
             const clickEvent = new MouseEvent('click', {
               bubbles: true,
@@ -387,14 +381,12 @@ var commentHandler = (function () {
 
 // DOM 로드 완료 시 초기화
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('DOMContentLoaded 이벤트 발생');
   commentHandler.init();
 });
 
 // 페이지가 이미 로드되었을 경우를 대비
 if (document.readyState === 'complete' || document.readyState
     === 'interactive') {
-  console.log('페이지가 이미 로드됨, 즉시 초기화');
   setTimeout(function () {
     commentHandler.init();
   }, 1);

@@ -1,54 +1,75 @@
-/* 답글 작성 폼 스타일 */
+/* 답글 작성 폼 스타일 - 댓글 작성 폼과 일치하도록 수정 */
 .add-reply-form {
   margin-bottom: 1rem;
   animation: fadeIn 0.3s ease-in-out;
 }
 
+/* 입력 필드 래퍼 스타일 */
+.add-reply-form .input-wrapper {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  transition: border-color 0.2s ease;
+}
+
+.add-reply-form .input-wrapper:focus-within {
+  border-bottom-color: #000;
+}
+
 .add-reply-form textarea {
   width: 100%;
+  font-size: 14px;
+  padding: 6px 0;
+  border: none;
+  background: transparent;
+  color: #000;
+  line-height: 1.5;
   resize: none;
-  border: 1px solid #E5E7EB;
-  border-radius: 0.375rem;
-  padding: 0.5rem;
-  font-size: 0.875rem;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .add-reply-form textarea:focus {
   outline: none;
-  border-color: #3B82F6;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.add-reply-form .submit-btn {
-  background-color: #3B82F6;
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.25rem;
-  font-size: 0.875rem;
-  transition: background-color 0.2s ease;
+/* 버튼 스타일 */
+.add-reply-form .button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
-.add-reply-form .submit-btn:hover {
-  background-color: #2563EB;
-}
-
-.add-reply-form .submit-btn:disabled {
-  background-color: #93C5FD;
-  cursor: not-allowed;
+.add-reply-form .button-custom {
+  border: 1px solid transparent;
+  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+  background-color: transparent;
 }
 
 .add-reply-form .cancel-btn {
-  color: #6B7280;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.25rem;
-  font-size: 0.875rem;
-  transition: color 0.2s ease, background-color 0.2s ease;
+  color: #666;
 }
 
 .add-reply-form .cancel-btn:hover {
-  color: #374151;
-  background-color: #F3F4F6;
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.add-reply-form .submit-btn {
+  color: black;
+  border: 1px solid #4f46e5;
+  background-color: #fff;
+}
+
+.add-reply-form .submit-btn:hover {
+  background-color: lightblue;
+  border-color: #4338ca;
+}
+
+.add-reply-form .submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 /* 애니메이션 */
@@ -63,7 +84,7 @@
   }
 }
 
-/* 버튼 스타일 */
+/* 답글 버튼 스타일 */
 .add-reply-button {
   display: flex;
   align-items: center;

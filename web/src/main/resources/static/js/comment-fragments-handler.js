@@ -102,5 +102,7 @@ document.addEventListener("DOMContentLoaded", function () {
       isLoading = false;
       hideElement(loadingIndicator);
     }
+
+    RelativeTimeUtils.updateAllRelativeTimes(".comment-date-relative")
   }
 });

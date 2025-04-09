@@ -26,8 +26,14 @@
   gap: 0.75rem;
 }
 
+.reply-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 /* 프로필 이미지 */
-.comment-profile {
+.comment-profile, .reply-profile {
   width: 40px;
   height: 40px;
   border-radius: 9999px;
@@ -36,33 +42,33 @@
 }
 
 /* 댓글 메타 정보 */
-.comment-meta {
+.comment-meta, .reply-meta {
   display: flex;
   flex-direction: column;
 }
 
 /* 작성자 닉네임 */
-.comment-nickname {
+.comment-nickname, .reply-nickname {
   font-weight: 600;
   font-size: 1rem;
 }
 
 /* 작성 날짜 */
-.comment-date {
+.comment-date, .reply-date {
   color: #888;
   font-size: 0.8rem;
 }
 
 /* 댓글 내용 */
-.comment-body {
+.comment-body, .reply-body {
   font-size: 1rem;
   line-height: 1.5;
   white-space: pre-line;
   word-break: break-word;
 }
 
-/* 댓글 하단 (좋아요, 싫어요, 답글 버튼 등) */
-.comment-footer {
+/* 댓글/답글 하단 (좋아요, 싫어요, 답글 버튼 등) */
+.comment-footer, .reply-footer {
   display: flex;
   flex-wrap: wrap;
   gap: 1.5rem; /* 버튼 간격 증가 */
@@ -72,32 +78,37 @@
   margin-top: 0.5rem;
 }
 
-/* 좋아요, 싫어요, 답글 버튼 */
-.like-button, .dislike-button, .add-reply-button, .view-replies-btn {
+/* 좋아요, 싫어요, 답글 버튼 공통 스타일 */
+.like-button, .dislike-button, .add-reply-button, .view-replies-btn,
+.like-btn, .dislike-btn {
   cursor: pointer;
-  display: flex;
+  display: flex !important;
   align-items: center;
   gap: 0.4rem;
   transition: color 0.2s ease, transform 0.2s ease;
   padding: 0.25rem 0.5rem; /* 버튼 패딩 추가 */
+  font-size: 1rem !important; /* 답글 버튼 폰트 크기 통일 */
 }
 
-.like-button i, .dislike-button i, .add-reply-button i {
-  font-size: 1.1rem; /* 아이콘 크기 증가 */
+.like-button i, .dislike-button i, .add-reply-button i,
+.like-btn i, .dislike-btn i {
+  font-size: 1.1rem !important; /* 아이콘 크기 증가 및 통일 */
+  margin-right: 0.5rem !important; /* 아이콘 우측 여백 통일 */
 }
 
-.like-button:hover, .dislike-button:hover, .add-reply-button:hover, .view-replies-btn:hover {
+.like-button:hover, .dislike-button:hover, .add-reply-button:hover,
+.view-replies-btn:hover, .like-btn:hover, .dislike-btn:hover {
   transform: translateY(-2px);
 }
 
 /* 선택된(클릭된) 버튼 스타일 */
 .like-button.clicked, .like-btn.clicked {
-  color: #2563eb; /* Tailwind blue-600 */
+  color: #2563eb !important; /* Tailwind blue-600 */
   font-weight: 600;
 }
 
 .dislike-button.clicked, .dislike-btn.clicked {
-  color: #ef4444; /* Tailwind red-500 */
+  color: #ef4444 !important; /* Tailwind red-500 */
   font-weight: 600;
 }
 
@@ -116,12 +127,33 @@
   padding-left: 1rem;
 }
 
-/* 답글 폼 */
-.reply-form {
-  margin-top: 0.5rem;
+/* 답글 내 좋아요/싫어요 버튼 스타일 강화 */
+.reply .like-btn, .reply .dislike-btn {
+  margin-right: 1.5rem;
+  text-align: center;
 }
 
-.reply-textarea {
+.reply .like-btn .count, .reply .dislike-btn .count {
+  margin-left: 0.25rem;
+}
+
+/* 답글 아이템 */
+.reply {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.reply:last-child {
+  border-bottom: none;
+}
+
+/* 답글 폼 */
+.add-reply-form {
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.add-reply-form textarea {
   width: 100%;
   resize: none;
   border: 1px solid #e2e8f0;
@@ -131,29 +163,10 @@
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.reply-textarea:focus {
+.add-reply-form textarea:focus {
   outline: none;
   border-color: #2563eb;
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-/* 답글 작성 버튼 */
-.submit-reply-btn {
-  background-color: #2563eb;
-  color: white;
-  padding: 0.25rem 0.75rem;
-  border-radius: 0.25rem;
-  font-size: 0.875rem;
-  transition: background-color 0.2s ease;
-}
-
-.submit-reply-btn:hover {
-  background-color: #1d4ed8;
-}
-
-.submit-reply-btn:disabled {
-  background-color: #93c5fd;
-  cursor: not-allowed;
 }
 
 /* 로딩 인디케이터 */
@@ -165,7 +178,7 @@
 
 /* 모바일 최적화 */
 @media (max-width: 640px) {
-  .comment-footer {
+  .comment-footer, .reply-footer {
     gap: 1rem;
   }
 

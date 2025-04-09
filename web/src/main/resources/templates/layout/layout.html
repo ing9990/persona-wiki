@@ -618,10 +618,7 @@
   document.addEventListener('DOMContentLoaded', function () {
     // Alpine.js가 정상적으로 로드되었는지 확인
     if (typeof Alpine !== 'undefined') {
-      console.log('Alpine.js 로드 완료');
     } else {
-      console.error('Alpine.js 로드 실패');
-      // Alpine.js 수동 로딩 시도
       const script = document.createElement('script');
       script.src = 'https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js';
       document.body.appendChild(script);

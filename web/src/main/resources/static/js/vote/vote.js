@@ -40,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
       hideLoading(button);
       if (response.ok || response.status === 204) {
         handleVoteSuccess(sentiment);
+        updateReputationSidebar(sentiment);
       } else {
         showError('투표 중 오류가 발생했습니다.');
       }
@@ -140,12 +141,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // 성공 메시지 표시
   function showSuccess(figureName, sentiment) {
-    console.log(sentiment)
-
     window.toastManager.success("투표를 성공적으로 완료했습니다");
   }
 
   function showError(message) {
     window.toastManager.error(message)
   }
+
+  function updateReputationSidebar(voteType) {
+
+    // 1. 총 투표 수 업데이트
+    const totalVotesEl = document.querySelector('[data-total-votes]');
+    if (totalVotesEl) {
+      const currentTotal = parseInt(totalVotesEl.textContent.trim()) || 0;
+      totalVotesEl.textContent = currentTotal + 1;
+    }
+
+    // 2. 해당 항목 업데이트 (소문자 변환)
+    const typeKey = voteType.toLowerCase();
+    const target = document.querySelector(
+        `[data-reputation-type="${typeKey}"]`);
+    if (target) {
+      const rawText = target.textContent.trim(); // 예: "10 (25%)"
+      const match = rawText.match(/^(\d+)\s+\((\d+)%\)$/);
+      if (match) {
+        const currentCount = parseInt(match[1]);
+        const total = parseInt(
+            document.querySelector('[data-total-votes]').textContent);
+        const newCount = currentCount + 1;
+        const newPercent = Math.round((newCount / total) * 100);
+        target.textContent = `${newCount} (${newPercent}%)`;
+
+        // 3. 진행 바 너비 업데이트
+        const bar = target.closest('.transform').querySelector(
+            '.reputation-meter > div');
+        if (bar) {
+          bar.style.width = `${newPercent}%`;
+        }
+      }
+    }
+  }
+
 });
