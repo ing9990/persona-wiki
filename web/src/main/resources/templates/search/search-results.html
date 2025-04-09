@@ -76,8 +76,8 @@
 
       <!-- 새 인물 추가 버튼 -->
       <div class="mb-6">
-        <a th:href="@{/add-figure(name=${query})}"
-           class="add-figure-button inline-flex items-center px-6 py-3 text-white font-medium rounded-lg shadow-md">
+        <a
+            class="add-figure-button open-figure-modal inline-flex items-center px-6 py-3 text-white font-medium rounded-lg shadow-md">
           <i class="fas fa-user-plus mr-2"></i>
           <span th:text="'&quot;' + ${query} + '&quot; 인물 추가하기'">인물 추가하기</span>
         </a>
@@ -125,13 +125,13 @@
            class="bg-white rounded-lg shadow-md overflow-hidden search-result-card fade-in">
         <div class="relative">
           <!-- 인물 이미지 -->
-          <img th:src="${figure.imageUrl}"
+          <img th:src="${figure.image}"
                alt="인물 이미지"
                class="w-full h-48 object-cover"
                data-handle-error="true"
                data-placeholder="/img/profile-placeholder.svg">
           <!-- 카테고리 배지 -->
-          <span th:if="${figure.category != null}" th:text="${figure.category.displayName}"
+          <span th:text="${figure.categoryName}"
                 class="absolute top-4 right-4 bg-indigo-600 text-white text-sm px-3 py-1 rounded-full">
             카테고리
           </span>
@@ -142,7 +142,7 @@
           <h3 class="text-xl font-bold text-gray-800 mb-2" th:text="${figure.name}">인물 이름</h3>
 
           <!-- 인물 소개 (일부만 표시) -->
-          <p class="text-gray-600 mb-4" th:text="${#strings.abbreviate(figure.bio, 100)}">
+          <p class="text-gray-600 mb-4" th:text="${#strings.abbreviate(figure.bio, 40)}">
             인물 소개 텍스트...
           </p>
 
@@ -150,20 +150,20 @@
           <div class="flex items-center mb-4">
             <div class="flex items-center mr-4">
               <i class="fas fa-crown text-green-500 mr-1"></i>
-              <span th:text="${figure.reputation.likeCount}">0</span>
+              <span th:text="${figure.positives}">0</span>
             </div>
             <div class="flex items-center mr-4">
               <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
-              <span th:text="${figure.reputation.neutralCount}">0</span>
+              <span th:text="${figure.neutrals}">0</span>
             </div>
             <div class="flex items-center">
               <i class="fas fa-skull text-red-500 mr-1"></i>
-              <span th:text="${figure.reputation.dislikeCount}">0</span>
+              <span th:text="${figure.negatives}">0</span>
             </div>
           </div>
 
           <!-- 상세 페이지 링크 -->
-          <a th:href="@{'/' + ${figure.category.id} + '/@' + ${figure.name}}"
+          <a th:href="@{'/' + ${figure.categoryId} + '/@' + ${figure.name}}"
              class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
             자세히 보기
           </a>

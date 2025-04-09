@@ -152,32 +152,182 @@ function handleReplyWriteButtonClick(e) {
 }
 
 /**
- * 답글 작성 폼 생성
+ * 답글 폼 생성
  * @param {string} figureId - 피규어 ID
  * @param {string} commentId - 댓글 ID
  * @returns {string} - 폼 HTML
  */
 function createReplyForm(figureId, commentId) {
   return `
-    <div class="reply-form mb-4">
+    <div class="add-reply-form mb-4">
       <form data-figure-id="${figureId}" data-comment-id="${commentId}">
-        <textarea
-          class="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-          placeholder="답글을 입력하세요..."
-          rows="2"
-          required
-        ></textarea>
-        <div class="flex justify-end mt-2 gap-2">
-          <button type="button" class="cancel-btn px-3 py-1 text-sm text-gray-600 hover:text-gray-800">
+        <div class="input-wrapper">
+          <input
+            class="requires-login w-full py-1 bg-transparent border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
+            placeholder="답글을 입력하세요..."
+            rows="2"
+            required
+          ></input>
+        </div>
+        <div class="button-group flex justify-end mt-2 gap-2">
+          <button type="button" class="cancel-btn button-custom">
             취소
           </button>
-          <button type="submit" class="submit-btn px-3 py-1 bg-blue-500 text-white rounded-md text-sm hover:bg-blue-600">
-            등록
+          <button type="submit" class="submit-btn button-custom requires-login">
+            <i class="fas fa-paper-plane mr-1"></i> 등록
           </button>
         </div>
       </form>
     </div>
   `;
+}
+
+/**
+ * 답글 폼 이벤트 바인딩
+ * @param {HTMLElement} formElement - 폼 요소
+ */
+function bindReplyFormEvents(formElement) {
+  const form = formElement.querySelector('form');
+  const textarea = form.querySelector('input');
+  const cancelBtn = form.querySelector('.cancel-btn');
+  const submitBtn = form.querySelector('.submit-btn');
+
+  // 로그인 체크 재적용
+  reapplyLoginCheck();
+
+  // 취소 버튼 이벤트
+  if (cancelBtn) {
+    cancelBtn.addEventListener('click', function () {
+      formElement.remove();
+    });
+  }
+
+  // 폼 제출 이벤트
+  if (form) {
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      // 로그인 상태 확인
+      const isLoggedIn = document.getElementById('userLoginStatus')?.value
+          === 'true';
+      if (!isLoggedIn) {
+        // 로그인 모달 표시
+        if (typeof window.openLoginModal === 'function') {
+          window.openLoginModal();
+        }
+        return;
+      }
+
+      const figureId = form.dataset.figureId;
+      const commentId = form.dataset.commentId;
+      const content = textarea.value.trim();
+
+      if (!content) {
+        return;
+      }
+
+      try {
+        // 로딩 상태 표시
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-1"></i> 등록 중...';
+        submitBtn.classList.add('opacity-75');
+
+        // 답글 등록 요청 (Fragment 방식)
+        const repliesHtml = await CommentAPI.createReplyFragment(figureId,
+            commentId, content);
+
+        // 폼 제거 및 답글 목록 갱신
+        formElement.remove();
+
+        // 댓글 아래 replies-list 요소를 찾아서 업데이트
+        const commentElement = document.querySelector(
+            `${SELECTORS.COMMENT_ITEM} [data-id="${commentId}"]`).closest(
+            SELECTORS.COMMENT_ITEM);
+        const repliesList = commentElement.querySelector(
+            `${SELECTORS.REPLY_CONTAINER} ${SELECTORS.REPLIES_LIST}`);
+
+        if (repliesList) {
+          repliesList.innerHTML = repliesHtml;
+
+          // 좋아요/싫어요 버튼 이벤트 재등록 - CommentInteractions 모듈 사용
+          if (window.CommentInteractions) {
+            window.CommentInteractions.initializeAllLikeDislikeButtons(
+                repliesList);
+          }
+
+          // 답글 컨테이너를 보이게 설정
+          const replyContainer = commentElement.querySelector(
+              SELECTORS.REPLY_CONTAINER);
+          if (replyContainer && replyContainer.classList.contains('hidden')) {
+            replyContainer.classList.remove('hidden');
+          }
+
+          // 답글 카운트 업데이트
+          updateReplyCount(commentElement);
+        } else {
+          console.error('답글 목록 요소를 찾을 수 없습니다.');
+        }
+      } catch (error) {
+        console.error('답글 등록 실패:', error);
+        alert('답글 등록에 실패했습니다. 다시 시도해주세요.');
+
+        // 버튼 상태 복구
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane mr-1"></i> 등록';
+        submitBtn.classList.remove('opacity-75');
+      }
+    });
+  }
+
+  // 포커스
+  if (textarea) {
+    textarea.focus();
+  }
+}
+
+/**
+ * 동적으로 추가된 요소에 로그인 체크 적용
+ */
+function reapplyLoginCheck() {
+  const requiresLoginElements = document.querySelectorAll('.requires-login');
+  const isLoggedIn = document.getElementById('userLoginStatus')?.value
+      === 'true';
+
+  // 이미 로그인된 상태면 아무 처리 안함
+  if (isLoggedIn) {
+    return;
+  }
+
+  // 로그인이 필요한 요소들에 이벤트 리스너 추가
+  requiresLoginElements.forEach(element => {
+    // 이미 이벤트가 등록되어 있으면 건너뜀 (중복 등록 방지)
+    if (element.hasAttribute('data-login-check-applied')) {
+      return;
+    }
+
+    element.setAttribute('data-login-check-applied', 'true');
+
+    element.addEventListener('click', function (e) {
+      // submit 버튼인 경우 폼 제출 방지
+      if (element.type === 'submit') {
+        e.preventDefault();
+      }
+
+      // 로그인 모달 표시
+      if (typeof window.openLoginModal === 'function') {
+        window.openLoginModal();
+      }
+    });
+
+    element.addEventListener('focus', function (e) {
+      // 로그인 모달 표시
+      if (typeof window.openLoginModal === 'function') {
+        window.openLoginModal();
+      }
+      // 포커스 해제
+      element.blur();
+    });
+  });
 }
 
 /**

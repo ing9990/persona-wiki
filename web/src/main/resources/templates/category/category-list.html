@@ -123,12 +123,12 @@
         <div class="category-image-container">
           <img
               th:src="${category.imageUrl != null ? category.imageUrl : '/img/category-placeholder.jpg'}"
-              th:alt="${category.displayName}"
+              th:alt="${category.name}"
               class="category-image"
               data-handle-error="true"
               data-placeholder="/img/category-placeholder.jpg">
           <div class="category-overlay">
-            <h2 class="category-title" th:text="${category.displayName}">카테고리명</h2>
+            <h2 class="category-title" th:text="${category.name}">카테고리명</h2>
           </div>
         </div>
 

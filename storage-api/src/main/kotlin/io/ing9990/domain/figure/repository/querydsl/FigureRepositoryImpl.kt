@@ -12,8 +12,6 @@ import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.querydsl.QFigure
 import io.ing9990.domain.figure.service.dto.FigureCardResult
 import io.ing9990.domain.figure.service.dto.FigureDetailsResult
-import io.ing9990.domain.figure.service.dto.FigureMicroResult
-import io.ing9990.domain.figure.service.dto.FigureMicroResults
 import io.ing9990.domain.vote.Sentiment
 import io.ing9990.domain.vote.querydsl.QVote
 import org.slf4j.LoggerFactory
@@ -32,15 +30,18 @@ class FigureRepositoryImpl(
         private val log = LoggerFactory.getLogger(FigureRepositoryImpl::class.java)
     }
 
-    override fun searchByName(name: String): FigureMicroResults {
+    override fun searchByName(name: String): List<FigureCardResult> {
         val figure = QFigure.figure
         val category = QCategory.category
+        val vote = QVote.vote
 
         val result =
             query
                 .select(figure)
                 .from(figure)
                 .leftJoin(figure.category, category)
+                .fetchJoin()
+                .leftJoin(figure.votes, vote)
                 .fetchJoin()
                 .where(
                     figure.name
@@ -50,16 +51,10 @@ class FigureRepositoryImpl(
                         ),
                 ).limit(5)
                 .fetch()
-                .map {
-                    FigureMicroResult(
-                        categoryName = it.category.displayName,
-                        figureName = it.name,
-                        figureImage = it.imageUrl,
-                        categoryId = it.category.id,
-                    )
-                }
 
-        return FigureMicroResults(data = result)
+        return result.map {
+            FigureCardResult.from(it)
+        }
     }
 
     override fun findPopularFigues(): List<FigureCardResult> {

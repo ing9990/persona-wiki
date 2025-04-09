@@ -11,6 +11,37 @@
   <link rel="stylesheet" href="/css/fingure-detail.css">
   <link rel="stylesheet" href="/css/scroll-to-top.css">
   <link rel="stylesheet" href="/css/vote.css">
+
+  <!-- 모바일 최적화를 위한 인라인 스타일 추가 -->
+  <style>
+    /* 모바일 환경에서 댓글 버튼 레이아웃 최적화 */
+    @media (max-width: 640px) {
+      /* 댓글과 답글 버튼 그룹에 적용 */
+      .comment-footer, .reply-footer,
+      .like-button, .dislike-button, .add-reply-button,
+      .view-replies-btn, .like-btn, .dislike-btn {
+        margin-right: 0.5rem !important;
+      }
+
+      /* 버튼 그룹의 줄바꿈 처리 개선 */
+      .flex.items-center.text-sm.text-gray-500,
+      .reply-footer {
+        flex-wrap: wrap;
+        row-gap: 0.5rem;
+        column-gap: 0.75rem;
+      }
+
+      /* 아이콘과 텍스트 간격 조정 */
+      .far, .fa-regular {
+        margin-right: 0.25rem !important;
+      }
+
+      /* 버튼 간 좌우 간격 조정 */
+      .like-button, .dislike-button, .add-reply-button, .view-replies-btn {
+        margin-right: 0.35rem;
+      }
+    }
+  </style>
 </head>
 
 <body>
@@ -146,6 +177,101 @@
           }
         });
       });
+    });
+  </script>
+
+  <!-- 추가: 모바일 환경에서 댓글 레이아웃 최적화 -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // 모바일 환경에서 댓글 UI 최적화
+      function optimizeCommentUIForMobile() {
+        if (window.innerWidth <= 640) {
+          // 이미 로드된 댓글에 flex-wrap 적용
+          document.querySelectorAll(
+              '.comment-item .flex.items-center.text-sm.text-gray-500').forEach(el => {
+            el.classList.add('flex-wrap');
+            el.style.gap = '0.5rem';
+          });
+
+          // 버튼 간 간격 최적화
+          document.querySelectorAll(
+              '.like-button, .dislike-button, .add-reply-button, .view-replies-btn').forEach(
+              btn => {
+                btn.style.marginRight = '0.35rem';
+              });
+        }
+      }
+
+      // 초기 실행 및 화면 크기 변경 시 실행
+      optimizeCommentUIForMobile();
+      window.addEventListener('resize', optimizeCommentUIForMobile);
+
+      // 댓글 로드 후에도 실행되도록 MutationObserver 설정
+      const commentList = document.getElementById('comment-list');
+      if (commentList) {
+        const observer = new MutationObserver(function (mutations) {
+          optimizeCommentUIForMobile();
+        });
+
+        observer.observe(commentList, {
+          childList: true,
+          subtree: true
+        });
+      }
+    });
+  </script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // MutationObserver를 사용하여 동적으로 추가되는 답글 폼에 로그인 체크 적용
+      const commentSection = document.getElementById('comment-section');
+      if (commentSection) {
+        const observer = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+              // 동적으로 추가된 요소 중 로그인 체크가 필요한 요소 찾기
+              mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) { // Element 노드인 경우만
+                  const loginElements = node.querySelectorAll ?
+                      node.querySelectorAll('.requires-login') : [];
+
+                  if (loginElements.length > 0 && typeof window.openLoginModal === 'function') {
+                    loginElements.forEach(element => {
+                      // 이미 이벤트가 등록되어 있으면 건너뜀
+                      if (element.hasAttribute('data-login-check-applied')) {
+                        return;
+                      }
+
+                      element.setAttribute('data-login-check-applied', 'true');
+
+                      const isLoggedIn = document.getElementById('userLoginStatus')?.value === 'true';
+                      if (!isLoggedIn) {
+                        element.addEventListener('click', function(e) {
+                          if (element.type === 'submit') {
+                            e.preventDefault();
+                          }
+                          window.openLoginModal();
+                        });
+
+                        element.addEventListener('focus', function(e) {
+                          window.openLoginModal();
+                          element.blur();
+                        });
+                      }
+                    });
+                  }
+                }
+              });
+            }
+          });
+        });
+
+        // 모든 변화 관찰
+        observer.observe(commentSection, {
+          childList: true,
+          subtree: true
+        });
+      }
     });
   </script>
 </th:block>

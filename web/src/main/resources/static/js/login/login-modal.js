@@ -10,11 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const continueWithoutLoginBtn = document.getElementById(
       'continueWithoutLogin');
 
-  // 로그인 필요한 요소들 (class="requires-login"이 있는 모든 요소)
-  const requiresLoginElements = document.querySelectorAll('.requires-login');
-  // 직접 로그인 버튼
-  const loginButtons = document.querySelectorAll('.login-button');
-
   // 로그인 상태 확인
   const isLoggedIn = document.getElementById('userLoginStatus')?.value
       === 'true';
@@ -79,37 +74,125 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // 로그인 버튼 클릭 시 모달 열기
-  loginButtons.forEach(button => {
-    button.addEventListener('click', function (e) {
-      e.preventDefault();
-      window.openLoginModal();
-    });
-  });
+  /**
+   * 동적으로 추가되는 요소를 포함하여 모든 로그인 필요 요소에 이벤트 등록
+   */
+  function setupLoginRequiredElements() {
+    // 직접 로그인 버튼
+    const loginButtons = document.querySelectorAll('.login-button');
 
-  // 로그인 필요한 기능 클릭 시 모달 열기
-  requiresLoginElements.forEach(element => {
-    element.addEventListener('click', function (e) {
-      if (!isLoggedIn) {
+    // 로그인 버튼 클릭 시 모달 열기
+    loginButtons.forEach(button => {
+      button.addEventListener('click', function (e) {
         e.preventDefault();
         window.openLoginModal();
+      });
+    });
+
+    // 이미 존재하는 로그인 필요 요소에 이벤트 추가
+    setupExistingLoginRequiredElements();
+
+    // 동적으로 추가되는 요소를 위한 MutationObserver 설정
+    setupMutationObserver();
+  }
+
+  /**
+   * 이미 존재하는 로그인 필요 요소에 이벤트 추가
+   */
+  function setupExistingLoginRequiredElements() {
+    // 로그인 필요한 기능 클릭 시 모달 열기
+    const requiresLoginElements = document.querySelectorAll('.requires-login');
+    requiresLoginElements.forEach(element => {
+      // 이미 이벤트가 등록되어 있으면 건너뜀
+      if (element.hasAttribute('data-login-check-applied')) {
+        return;
+      }
+
+      element.setAttribute('data-login-check-applied', 'true');
+
+      if (!isLoggedIn) {
+        element.addEventListener('click', function (e) {
+          // submit 버튼인 경우 폼 제출 방지
+          if (element.type === 'submit') {
+            e.preventDefault();
+          }
+          window.openLoginModal();
+        });
+
+        element.addEventListener('focus', function (e) {
+          window.openLoginModal();
+          // 포커스 해제
+          element.blur();
+        });
       }
     });
-  });
+  }
 
-  // 모달 외부 클릭 시 닫기
-  loginModal?.addEventListener('click', function (e) {
-    if (e.target === loginModal) {
-      window.closeLoginModal();
+  /**
+   * 동적으로 추가되는 요소를 감시하는 MutationObserver 설정
+   */
+  function setupMutationObserver() {
+    // 이미 로그인된 상태면 불필요
+    if (isLoggedIn) {
+      return;
     }
-  });
 
-  // ESC 키 누를 때 모달 닫기
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape' && !loginModal?.classList.contains('hidden')) {
-      window.closeLoginModal();
-    }
-  });
+    const observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+          // 새로 추가된 DOM 요소에서 로그인 필요 요소 찾기
+          mutation.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1) { // Element 노드인 경우만
+              // 요소 자체가 로그인 필요 요소인 경우
+              if (node.classList && node.classList.contains('requires-login') &&
+                  !node.hasAttribute('data-login-check-applied')) {
+                applyLoginCheckToElement(node);
+              }
+
+              // 요소 내부에 로그인 필요 요소가 있는 경우
+              const loginElements = node.querySelectorAll ?
+                  node.querySelectorAll('.requires-login') : [];
+
+              loginElements.forEach(element => {
+                if (!element.hasAttribute('data-login-check-applied')) {
+                  applyLoginCheckToElement(element);
+                }
+              });
+            }
+          });
+        }
+      });
+    });
+
+    // body 전체를 관찰
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  /**
+   * 요소에 로그인 체크 이벤트 적용
+   */
+  function applyLoginCheckToElement(element) {
+    element.setAttribute('data-login-check-applied', 'true');
+
+    element.addEventListener('click', function (e) {
+      // submit 버튼인 경우 폼 제출 방지
+      if (element.type === 'submit') {
+        e.preventDefault();
+      }
+      window.openLoginModal();
+    });
+
+    element.addEventListener('focus', function (e) {
+      window.openLoginModal();
+      element.blur();
+    });
+  }
+
+  // 로그인 필요 요소 설정 실행
+  setupLoginRequiredElements();
 
   // URL에 login=required 파라미터가 있으면 모달 자동 열기
   const urlParams = new URLSearchParams(window.location.search);
