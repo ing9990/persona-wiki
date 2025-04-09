@@ -14,9 +14,9 @@ data class CommentResult(
     val createdAt: LocalDateTime,
     val userName: String,
     val userId: Long,
-    val replyCount: Int, // 답글 개수
-    val interactionType: InteractionType?, // 사용자의 상호작용 타입 (좋아요/싫어요)
-    val isLikedByUser: Boolean = false, // 사용자가 좋아요를 눌렀는지 여부
+    val replyCount: Int,
+    val interactionType: InteractionType?,
+    val isLikedByUser: Boolean = false,
 ) {
     fun hasReplies(): Boolean = replyCount > 0
 

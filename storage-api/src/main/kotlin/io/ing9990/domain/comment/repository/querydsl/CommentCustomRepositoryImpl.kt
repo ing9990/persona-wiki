@@ -131,7 +131,7 @@ class CommentCustomRepositoryImpl(
                     createdAt = reply.createdAt,
                     userName = reply.user?.nickname ?: "알 수 없음",
                     userId = reply.user?.id ?: -1,
-                    replyCount = 0, // 답글에는 답글이 없음
+                    replyCount = 0,
                     interactionType = null,
                     isLikedByUser = false,
                 )
@@ -171,7 +171,7 @@ class CommentCustomRepositoryImpl(
                 createdAt = reply.createdAt,
                 userName = reply.user?.nickname ?: "알 수 없음",
                 userId = reply.user?.id ?: -1,
-                replyCount = 0, // 답글에는 답글이 없음
+                replyCount = 0,
                 interactionType = userInteractionType,
                 isLikedByUser = isLikedByUser,
             )
