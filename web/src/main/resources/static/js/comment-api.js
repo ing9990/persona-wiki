@@ -60,7 +60,7 @@ class CommentAPI {
   static async fetchRepliesFragment(figureId, commentId) {
     try {
       const response = await fetch(
-          `/figures/${figureId}/comments/fragment/${commentId}/replies`,
+          `/figures/${figureId}/comments/fragment/${commentId}/replies/fragment`,
           {method: "GET"}
       );
 
@@ -137,11 +137,12 @@ class CommentAPI {
    * 좋아요/싫어요 토글
    * @param {string} figureId - 피규어 ID
    * @param {string} commentId - 댓글 ID
+   * @param {string} type - 상호작용 타입 ('LIKE' 또는 'DISLIKE')
    * @returns {Promise<Object>} - 응답 데이터
    */
-  static async toggleLikeDislike(figureId, commentId) {
+  static async toggleLikeDislike(figureId, commentId, type) {
     try {
-      const url = `/api/v1/figures/${figureId}/comments/${commentId}/toggle`;
+      const url = `/api/v1/figures/${figureId}/comments/${commentId}/toggle/${type}`;
       const response = await fetch(url, {
         method: "POST",
         headers: {"Content-Type": "application/json"}
@@ -150,6 +151,8 @@ class CommentAPI {
       if (!(response.ok || response.status === 204)) {
         throw new Error("요청 실패");
       }
+
+      return response.status === 204 ? {} : await response.json();
     } catch (error) {
       console.error("좋아요/싫어요 처리 실패:", error);
       throw error;

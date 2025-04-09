@@ -30,6 +30,7 @@ class CommentFragmentController(
         @PathVariable commentId: Long,
         @RequestParam content: String,
         model: Model,
+        @PathVariable figureId: String,
     ): String {
         commentService.addReply(
             user = user,
@@ -37,19 +38,21 @@ class CommentFragmentController(
             content = content,
         )
 
-        val replies =
+        val replies: List<CommentResponse> =
             commentService
                 .getReplies(
                     commentId = commentId,
                     userId = user.id!!,
                 ).map {
-                    io.ing9990.api.comments.dto.response.CommentResponse
+                    CommentResponse
                         .from(it)
                 }
 
         model.addAttribute("replies", replies)
         model.addAttribute("commentId", commentId)
-        return "fragments/comments/reply-list :: replyList"
+        model.addAttribute("figureId", figureId)
+
+        return "fragments/comments/comment-replies :: replies"
     }
 
     /**
@@ -82,7 +85,7 @@ class CommentFragmentController(
     /**
      * 답글 목록 Fragment 반환
      */
-    @GetMapping("/{commentId}/replies")
+    @GetMapping("/{commentId}/replies/fragment")
     fun getRepliesFragment(
         @CurrentUser currentUser: CurrentUserDto,
         @PathVariable figureId: Long,
@@ -90,7 +93,7 @@ class CommentFragmentController(
         model: Model,
     ): String {
         val userId = currentUser.getUserIdOrDefault()
-        val replies =
+        val replies: List<CommentResponse> =
             commentService
                 .getReplies(commentId, userId)
                 .map { CommentResponse.from(it) }

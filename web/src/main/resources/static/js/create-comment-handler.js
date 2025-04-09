@@ -269,7 +269,8 @@ var commentHandler = (function () {
     // 댓글 ID 및 figure ID 설정
     const likeButton = commentNode.querySelector('.like-button');
     const dislikeButton = commentNode.querySelector('.dislike-button');
-    const replyButton = commentNode.querySelector('.reply-button');
+    const addReplyButton = commentNode.querySelector('.add-reply-button');
+    const viewRepliesBtn = commentNode.querySelector('.view-replies-btn');
 
     const figureId = elements.commentList.getAttribute('data-figure-id');
 
@@ -283,8 +284,8 @@ var commentHandler = (function () {
       dislikeButton.setAttribute('data-figure-id', figureId);
     }
 
-    if (replyButton) {
-      replyButton.setAttribute('data-id', commentData.id);
+    if (addReplyButton) {
+      addReplyButton.setAttribute('data-id', commentData.id);
     }
 
     // 좋아요/싫어요 상태 클래스 설정
@@ -296,29 +297,51 @@ var commentHandler = (function () {
       dislikeButton.classList.add('clicked', 'text-red-600');
     }
 
-    // 답글 수 설정
-    if (replyButton) {
-      const replyCountSpan = replyButton.querySelector('.reply-count');
+    // 답글 수 설정 (새 디자인)
+    if (commentData.replyCount > 0 && viewRepliesBtn) {
+      viewRepliesBtn.classList.remove('hidden');
+      viewRepliesBtn.setAttribute('data-id', commentData.id);
+      const replyCountSpan = viewRepliesBtn.querySelector('.reply-count');
       if (replyCountSpan) {
-        replyCountSpan.textContent = commentData.replyCount > 0
-            ? `(${commentData.replyCount})` : '';
+        replyCountSpan.textContent = `답글 ${commentData.replyCount}개`;
       }
     }
 
     // 댓글 아이템 요소 가져오기
     const commentItem = commentNode.querySelector('.comment-item');
 
-    // '답글 쓰기' 버튼 스타일 조정
-    const commentBtnText = commentItem.querySelector(
-        '.reply-button span:first-child');
-    if (commentBtnText) {
-      commentBtnText.textContent = '답글';
-    }
-
     // 댓글 목록 맨 위에 추가
     if (commentItem) {
       elements.commentList.insertBefore(commentItem,
           elements.commentList.firstChild);
+
+      // 새로 추가된 댓글의 버튼들에 이벤트 리스너 등록
+      // 1. 댓글 좋아요/싫어요 버튼 이벤트 등록
+      if (window.CommentInteractions) {
+        window.CommentInteractions.initializeAllLikeDislikeButtons(commentItem);
+      }
+
+      // 2. 답글 작성 버튼에 이벤트 등록 - 이 부분이 중요
+      const addReplyBtn = commentItem.querySelector('.add-reply-button');
+      if (addReplyBtn) {
+        addReplyBtn.addEventListener('click', function (e) {
+          // AddReplyFormHandler가 있으면 직접 메서드 호출
+          if (window.AddReplyFormHandler
+              && typeof window.AddReplyFormHandler.handleButtonClick
+              === 'function') {
+            window.AddReplyFormHandler.handleButtonClick(e);
+          } else {
+            console.log('답글 버튼 클릭 - 이벤트 발생');
+            // 커스텀 이벤트 발생 (이벤트 위임 방식을 사용하는 핸들러를 위해)
+            const clickEvent = new MouseEvent('click', {
+              bubbles: true,
+              cancelable: true,
+              view: window
+            });
+            addReplyBtn.dispatchEvent(clickEvent);
+          }
+        });
+      }
     }
   }
 

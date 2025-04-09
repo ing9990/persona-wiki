@@ -65,38 +65,54 @@
 .comment-footer {
   display: flex;
   flex-wrap: wrap;
-  gap: 1rem;
-  font-size: 0.9rem;
+  gap: 1.5rem; /* 버튼 간격 증가 */
+  font-size: 1rem; /* 폰트 크기 증가 */
   color: #555;
   align-items: center;
   margin-top: 0.5rem;
 }
 
 /* 좋아요, 싫어요, 답글 버튼 */
-.comment-footer span {
+.like-button, .dislike-button, .add-reply-button, .view-replies-btn {
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 0.4rem;
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, transform 0.2s ease;
+  padding: 0.25rem 0.5rem; /* 버튼 패딩 추가 */
+}
+
+.like-button i, .dislike-button i, .add-reply-button i {
+  font-size: 1.1rem; /* 아이콘 크기 증가 */
+}
+
+.like-button:hover, .dislike-button:hover, .add-reply-button:hover, .view-replies-btn:hover {
+  transform: translateY(-2px);
 }
 
 /* 선택된(클릭된) 버튼 스타일 */
-.comment-footer .clicked.like-btn {
+.like-button.clicked, .like-btn.clicked {
   color: #2563eb; /* Tailwind blue-600 */
   font-weight: 600;
 }
 
-.comment-footer .clicked.dislike-btn {
+.dislike-button.clicked, .dislike-btn.clicked {
   color: #ef4444; /* Tailwind red-500 */
   font-weight: 600;
+}
+
+/* 답글 보기 버튼 */
+.view-replies-btn {
+  color: #2563eb; /* Tailwind blue-600 */
+  font-weight: 500;
+  margin-left: 1rem; /* 간격 증가 */
 }
 
 /* 답글 컨테이너 */
 .reply-container {
   transition: all 0.3s ease-in-out;
   border-left: 2px solid #dbeafe; /* Tailwind blue-100 */
-  margin-left: 0.5rem;
+  margin-top: 0.75rem;
   padding-left: 1rem;
 }
 
@@ -150,7 +166,7 @@
 /* 모바일 최적화 */
 @media (max-width: 640px) {
   .comment-footer {
-    gap: 0.75rem;
+    gap: 1rem;
   }
 
   .reply-container {

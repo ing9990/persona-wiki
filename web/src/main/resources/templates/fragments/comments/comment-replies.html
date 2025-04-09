@@ -5,10 +5,11 @@
       <img
           th:src="${@layoutHelper.getProfileImageByString(reply.userProfileImage)}"
           class="reply-profile w-7 h-7 rounded-full object-cover"
-          alt="프로필 이미지"/>
+          alt="프로필 이미지"
+          onerror="this.src='/img/profile-placeholder.svg'">
       <div class="reply-meta">
         <span class="reply-nickname font-semibold text-sm"
-              th:text="${reply.userNickname != null} ? ${reply.userNickname} : '익명'"></span>
+              th:text="${reply.userNickname }"></span>
         <span class="reply-date ml-2 text-xs text-gray-400"
               th:text="${reply.createdAt}"></span>
       </div>

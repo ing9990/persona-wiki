@@ -77,6 +77,8 @@
   </div>
 </div>
 
+
+<!-- 기존 스크립트 부분 변경 -->
 <th:block layout:fragment="script">
   <!-- 공통 유틸리티 -->
   <script src="/js/utils/utils.js"></script>
@@ -87,12 +89,26 @@
 
   <!-- 먼저 comment-api.js를 로드 -->
   <script src="/js/comment-api.js"></script><!-- 필수 스크립트 -->
+
+  <!-- 댓글 CSS -->
+  <link rel="stylesheet" href="/css/comment-form.css">
+  <link rel="stylesheet" href="/css/comment-style.css">
+  <link rel="stylesheet" href="/css/comment-reply.css">
+  <link rel="stylesheet" href="/css/add-reply-form.css"><!-- 새로 추가 -->
+
   <!--  댓글 Fragment 로드-->
   <script src="/js/comment-fragments-handler.js"></script>
-  <!-- 먼저 답글 Fragment 로드 -->
-  <script src="/js/comment-replies-handler.js"></script>
+
+  <!-- 댓글 상호작용 핸들러 -->
+  <script src="/js/comment/comment-interactions-handler.js"></script>
+
+  <!-- 답글 기능 관련 스크립트 - 분리된 파일들 -->
+  <script src="/js/comment/view-replies-handler.js"></script><!-- 새로 추가: 답글 보기 기능 -->
+  <script src="/js/comment/add-reply-form-handler.js"></script><!-- 새로 추가: 답글 작성 기능 -->
+
   <!-- 스크롤 상단 이동 버튼 -->
   <script src="/js/utils/scroll-to-top.js"></script>
+
   <!--  댓글 작성 스크립트 로드-->
   <script src="/js/create-comment-handler.js"></script>
 
@@ -132,5 +148,6 @@
     });
   </script>
 </th:block>
+
 </body>
 </html>
