@@ -1,0 +1,172 @@
+<!-- fragments/comment-section.html -->
+<section th:fragment="commentSection(detailsResult, current)"
+         class="bg-white rounded-lg shadow-md p-6 fade-in">
+
+  <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+    <i class="fas fa-comments text-indigo-500 mr-2"></i>
+    <span>의견</span>
+    <span class="ml-2 text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full"
+          th:text="${detailsResult.totalCommentCount}">0</span>
+  </h2>
+
+  <style>
+    .comment-input-wrapper {
+      position: relative;
+      border-bottom: 1px solid #ccc;
+      transition: border-color 0.2s ease;
+    }
+
+    .comment-input-wrapper:focus-within {
+      border-bottom-color: #000;
+    }
+
+    #comment-textarea {
+      width: 100%;
+      font-size: 14px;
+      padding: 6px 0;
+      border: none;
+      background: transparent;
+      color: #000;
+      line-height: 1.5;
+    }
+
+    #comment-textarea:focus {
+      outline: none;
+    }
+
+    /* 버튼 스타일 */
+    .comment-button-custom {
+      border: 1px solid transparent;
+      font-size: 13px;
+      padding: 5px 12px;
+      border-radius: 16px;
+      transition: all 0.2s ease;
+      background-color: transparent;
+    }
+
+    .comment-cancel-custom {
+      color: #666;
+    }
+
+    .comment-cancel-custom:hover {
+      background-color: #f3f4f6;
+      color: #4b5563;
+    }
+
+    .comment-submit-custom {
+      color: black;
+      border: 1px solid #4f46e5;
+      background-color: #fff;
+    }
+
+    .comment-submit-custom:hover {
+      background-color: lightblue;
+      border-color: #4338ca;
+    }
+
+    .comment-submit-custom:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+  </style>
+
+  <!-- 댓글 작성 영역 -->
+  <div class="mb-8">
+    <div class="flex items-start">
+      <div class="flex-shrink-0 mr-3">
+        <img class="h-10 w-10 rounded-full object-cover"
+             th:src="${current.image()}"
+             alt="프로필 이미지">
+      </div>
+      <div class="flex-grow">
+        <form id="comment-form" class="w-full">
+          <div class="comment-input-group">
+            <div class="relative comment-input-wrapper">
+              <input name="content" id="comment-textarea"
+                     class="comment-login-trigger requires-login w-full py-1 bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:border-black comment-box placeholder-gray-500"
+                     placeholder="댓글 추가..."
+                     th:readonly="${current.notLoggedIn()}">
+            </div>
+            <div class="comment-button-group flex justify-end mt-2 gap-2">
+              <button type="button" id="comment-cancel-button"
+                      class="comment-button-custom comment-cancel-custom">
+                취소
+              </button>
+              <button type="submit" id="comment-submit-button"
+                      class="requires-login comment-button-custom comment-submit-custom">
+                <i class="fas fa-paper-plane mr-1"></i> 댓글
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 댓글 목록 -->
+  <div class="comments-container">
+    <div id="comment-list" class="flex flex-col gap-4"
+         th:attr="data-figure-id=${detailsResult.getId()}"></div>
+  </div>
+
+  <p class="js-empty-comment-message text-sm text-gray-400 py-4 text-center hidden">
+    아직 댓글이 없습니다.
+  </p>
+
+  <div class="js-loading-indicator text-center py-4 hidden">
+    <div
+        class="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+    <p class="text-gray-500 mt-2">댓글을 불러오는 중...</p>
+  </div>
+
+  <div class="js-no-comments text-center py-8 hidden">
+    <div class="text-gray-400 mb-2">
+      <i class="far fa-comment-dots text-4xl"></i>
+    </div>
+    <p class="text-gray-500">아직 댓글이 없습니다. 첫 번째 의견을 남겨보세요!</p>
+  </div>
+
+  <div class="js-error-message text-center py-4 text-red-500 hidden">
+    댓글을 불러오는 중 오류가 발생했습니다. 다시 시도해 주세요.
+  </div>
+
+  <!-- 댓글 템플릿 -->
+  <template id="comment-template">
+    <div class="comment-item border-b border-gray-200 py-4">
+      <div class="flex">
+        <div class="flex-shrink-0 mr-3">
+          <img class="user-profile h-10 w-10 rounded-full object-cover"
+               src="" alt="프로필 이미지"
+               data-handle-error="true"
+               data-placeholder="/img/profile-placeholder.svg">
+        </div>
+
+        <div class="flex-grow">
+          <div class="flex items-center mb-1">
+            <span class="user-nickname font-medium text-gray-900 mr-2"></span>
+            <span class="comment-date text-sm text-gray-500"></span>
+          </div>
+          <div class="comment-content text-gray-700 mb-2"></div>
+
+          <div class="flex items-center text-sm text-gray-500">
+            <button class="like-button requires-login flex items-center mr-4 hover:text-indigo-600">
+              <i class="far fa-thumbs-up mr-1"></i><span class="like-count">0</span>
+            </button>
+            <button class="dislike-button requires-login flex items-center mr-4 hover:text-red-600">
+              <i class="far fa-thumbs-down mr-1"></i><span class="dislike-count">0</span>
+            </button>
+            <button class="add-reply-button requires-login flex items-center hover:text-indigo-600">
+              <i class="far fa-comment mr-1"></i><span>답글</span><span
+                class="reply-count ml-1"></span>
+            </button>
+          </div>
+
+          <div class="reply-container mt-3 pl-3 border-l-2 border-gray-200 hidden">
+            <div class="replies-list"></div>
+            <div class="reply-form mt-2 hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+</section>

@@ -6,7 +6,6 @@
  */
 
 document.addEventListener('DOMContentLoaded', function () {
-  console.log('국민사형투표 웹 애플리케이션이 로드되었습니다.');
 
   // 공통 초기화 함수 실행
   initNavActiveState();

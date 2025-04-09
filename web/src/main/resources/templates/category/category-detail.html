@@ -3,32 +3,13 @@
       layout:decorate="~{layout/layout}">
 
 <head>
-  <title th:text="${category.displayName} + ' - 국민사형투표'">카테고리 상세</title>
-  <meta name="description" th:content="${category.description}">
+  <title th:text="${category.displayName} + ' - 국민사형투표'">카테고리 - 국민사형투표</title>
+  <meta name="description" th:content="${category.displayName} + ' 카테고리에 속한 인물들을 둘러보세요.'">
 
-  <!-- 추가 스타일 -->
   <style>
     .category-header {
-      position: relative;
-      overflow: hidden;
-      border-radius: 0.5rem;
-    }
-
-    .category-header-image {
-      width: 100%;
-      height: 300px;
-      object-fit: cover;
-      filter: brightness(70%);
-    }
-
-    .category-header-content {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 2rem;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-      color: white;
+      margin-bottom: 2rem;
+      animation: fadeIn 0.6s ease-in;
     }
 
     .figure-card {
@@ -40,9 +21,31 @@
       box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
     }
 
-    /* 애니메이션 효과 */
-    .fade-in {
-      animation: fadeIn 0.6s ease-in;
+    .figure-image-container {
+      height: 200px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .figure-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 15%;
+      transition: transform 0.3s ease;
+    }
+
+    .figure-card:hover .figure-image {
+      transform: scale(1.05);
+    }
+
+    .related-category {
+      transition: all 0.3s ease;
+    }
+
+    .related-category:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     }
 
     @keyframes fadeIn {
@@ -55,201 +58,119 @@
         transform: translateY(0);
       }
     }
-
-    /* 추천 카테고리 섹션 스타일 */
-    .related-categories {
-      margin-top: 3rem;
-      border-radius: 0.5rem;
-      overflow: hidden;
-    }
-
-    .related-category-card {
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-      border-radius: 0.5rem;
-    }
-
-    .related-category-card:hover {
-      transform: scale(1.03);
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-    }
-
-    .related-category-image {
-      width: 100%;
-      height: 160px;
-      object-fit: cover;
-      filter: brightness(70%);
-    }
-
-    .related-category-content {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 1.5rem;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-      color: white;
-    }
   </style>
 </head>
 
 <body>
 <div layout:fragment="content">
   <!-- 카테고리 헤더 -->
-  <section class="mb-8">
-    <div class="category-header shadow-lg">
-      <img
-          th:src="${category.imageUrl != null ? category.imageUrl : '/img/category-placeholder.jpg'}"
-          th:alt="${category.displayName}" class="category-header-image"
-          data-handle-error="true"
-          data-placeholder="/img/category-placeholder.jpg">
-      <div class="category-header-content">
-        <div>
-          <h1 class="text-4xl font-bold mb-2" th:text="${category.displayName}">카테고리 이름</h1>
-          <p class="text-xl opacity-90" th:text="${category.description}">카테고리 설명</p>
-        </div>
-
-        <!-- 카테고리 통계 (옵션) -->
-        <div class="mt-6 pt-6 border-t border-white border-opacity-20">
-          <div class="flex flex-wrap gap-4">
-            <div class="bg-white bg-opacity-20 rounded-lg px-4 py-3">
-              <div class="text-sm opacity-80">인물 수</div>
-              <div class="text-2xl font-bold" th:text="${figures.size()}">0</div>
-            </div>
-
-            <div class="bg-white bg-opacity-20 rounded-lg px-4 py-3">
-              <div class="text-sm opacity-80">최근 추가</div>
-              <div class="text-2xl font-bold"
-                   th:text="${figures.isEmpty() ? '-' : #temporals.format(figures[0].createdAt, 'yyyy-MM-dd')}">
-                -
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <section class="category-header">
+    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg shadow-lg p-8">
+      <h1 class="text-4xl font-bold mb-2" th:text="${category.displayName}">카테고리명</h1>
+      <p class="text-xl opacity-90" th:text="'총 ' + ${figures.size()} + '명의 인물이 있습니다'">인물 수</p>
     </div>
   </section>
 
-  <!-- 인물 목록 -->
-  <section>
-    <!-- 카테고리 인물 목록 -->
-    <div class="flex flex-wrap justify-between items-center mb-6">
-      <h2 class="text-2xl font-bold text-gray-800" th:text="${category.displayName} + ' 인물 목록'">
-        카테고리 인물 목록
-      </h2>
-      <a th:href="@{'/add-figure?category=' + ${category.id}}"
-         class="mt-2 sm:mt-0 inline-flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
-        <i class="fas fa-plus-circle mr-1"></i>
-        <span>이 카테고리에 인물 추가</span>
-      </a>
-    </div>
+  <!-- 인물 목록 섹션 -->
+  <section class="mb-10">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+      <i class="fas fa-users text-indigo-500 mr-2"></i>
+      <span th:text="${category.displayName} + ' 인물 목록'">카테고리 인물 목록</span>
+    </h2>
 
-    <!-- 목록이 비어있을 경우 -->
-    <div th:if="${#lists.isEmpty(figures)}" class="bg-gray-50 p-8 rounded-lg text-center fade-in">
-      <i class="fas fa-info-circle text-indigo-500 text-4xl mb-4"></i>
-      <p class="text-xl text-gray-600">아직 등록된 인물이 없습니다.</p>
-      <p class="text-gray-500 mt-2">새로운 인물이 곧 추가될 예정입니다.</p>
+    <!-- 인물이 없는 경우 메시지 표시 -->
+    <div th:if="${figures.isEmpty()}" class="bg-gray-100 rounded-lg p-8 text-center">
+      <i class="fas fa-exclamation-circle text-gray-400 text-4xl mb-4"></i>
+      <p class="text-xl text-gray-600">이 카테고리에는 아직 등록된 인물이 없습니다.</p>
     </div>
 
     <!-- 인물 카드 그리드 -->
-    <div th:if="${not #lists.isEmpty(figures)}"
-         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- 인물 카드 (Thymeleaf로 반복) -->
+    <div th:unless="${figures.isEmpty()}"
+         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <!-- 인물 카드 (반복) -->
       <div th:each="figure : ${figures}"
-           class="bg-white rounded-lg shadow-md overflow-hidden figure-card fade-in">
-        <div class="relative">
+           class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 figure-card">
+        <div class="figure-image-container">
           <!-- 인물 이미지 -->
           <img
-              th:src="${@layoutHelper.getProfileImage(figure.imageUrl)}"
-              th:alt="${figure.name}"
-              class="w-full h-48 object-cover"
+              th:src="${@layoutHelper.getProfileImageByString(figure.image)}"
+              th:alt="${figure.name}" class="figure-image"
               data-handle-error="true"
               data-placeholder="/img/profile-placeholder.svg">
+
+          <!-- 이름을 이미지 위에 오버레이로 배치 -->
+          <div
+              class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+            <h3 class="text-xl font-bold text-white mb-0 drop-shadow-lg" th:text="${figure.name}">인물
+              이름</h3>
+          </div>
         </div>
 
-        <div class="p-6">
-          <!-- 인물 이름 -->
-          <h3 class="text-xl font-bold text-gray-800 mb-2" th:text="${figure.name}">인물 이름</h3>
-
+        <div class="p-5">
           <!-- 인물 소개 (일부만 표시) -->
           <p class="text-gray-600 mb-4"
-             th:text="${figure.bio != null ? #strings.abbreviate(figure.bio, 100) : '소개가 등록되지 않았습니다.'}">
+             th:text="${#strings.abbreviate(figure.bio, 50)}">
             인물 소개 텍스트...
           </p>
 
-          <!-- 평판 지표 -->
-          <div class="flex items-center mb-4">
-            <div class="flex items-center mr-4 tooltip" data-tooltip="숭배">
-              <i class="fas fa-crown text-green-500 mr-1"></i>
-              <span th:text="${figure.reputation.likeCount}">0</span>
+          <!-- 하단 정보 영역 -->
+          <div class="flex items-center justify-between">
+            <!-- 평판 지표 -->
+            <div class="flex items-center">
+              <div class="flex items-center mr-3 tooltip" data-tooltip="숭배">
+                <i class="fas fa-crown text-green-500 mr-1"></i>
+                <span th:text="${figure.positives}">0</span>
+              </div>
+              <div class="flex items-center mr-3 tooltip" data-tooltip="중립">
+                <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
+                <span th:text="${figure.neutrals}">0</span>
+              </div>
+              <div class="flex items-center tooltip" data-tooltip="사형">
+                <i class="fas fa-skull text-red-500 mr-1"></i>
+                <span th:text="${figure.negatives}">0</span>
+              </div>
             </div>
-            <div class="flex items-center mr-4 tooltip" data-tooltip="중립">
-              <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
-              <span th:text="${figure.reputation.neutralCount}">0</span>
-            </div>
-            <div class="flex items-center tooltip" data-tooltip="사형">
-              <i class="fas fa-skull text-red-500 mr-1"></i>
-              <span th:text="${figure.reputation.dislikeCount}">0</span>
-            </div>
-          </div>
 
-          <!-- 상세 페이지 링크 -->
-          <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name}}"
-             class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
-            자세히 보기
-          </a>
+            <!-- 상세 페이지 링크 -->
+            <a th:href="@{'/' + ${figure.categoryId} + '/@' + ${figure.name}}"
+               class="inline-block bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 transition text-sm">
+              자세히 보기
+            </a>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 페이지네이션 (향후 구현) -->
-  <section th:if="${not #lists.isEmpty(figures) and figures.size() > 10}"
-           class="mt-8 flex justify-center">
-    <nav class="inline-flex rounded-md shadow">
-      <a href="#"
-         class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
-        이전
+  <!-- 관련 카테고리 섹션 -->
+  <section class="mt-12" th:if="${!relatedCategories.isEmpty()}">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+      <i class="fas fa-project-diagram text-indigo-500 mr-2"></i>
+      관련 카테고리
+    </h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <a th:each="relatedCategory : ${relatedCategories}"
+         th:href="@{'/categories/' + ${relatedCategory.id}}"
+         class="block bg-white rounded-lg shadow-md p-6 hover:bg-indigo-50 transition-all duration-300 related-category">
+        <h3 class="text-xl font-semibold text-indigo-600 mb-2"
+            th:text="${relatedCategory.name}">관련 카테고리명</h3>
+        <p class="text-gray-600" th:text="${relatedCategory.description ?: '관련 카테고리입니다.'}">카테고리
+          설명</p>
       </a>
-      <a href="#" class="px-3 py-2 border-t border-b border-gray-300 bg-indigo-50 text-indigo-600">
-        1
-      </a>
-      <a href="#"
-         class="px-3 py-2 border-t border-b border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
-        2
-      </a>
-      <a href="#"
-         class="px-3 py-2 border-t border-b border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
-        3
-      </a>
-      <a href="#"
-         class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
-        다음
-      </a>
-    </nav>
+    </div>
   </section>
 
-  <!-- 검색 섹션 (추가됨) -->
-  <section class="mt-12 bg-gray-50 rounded-lg p-8 text-center fade-in">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">특정 인물을 찾고 계신가요?</h2>
-    <p class="text-gray-600 mb-6">이름으로 바로 검색해보세요. 초성 검색도 지원합니다.</p>
-
-    <form action="/search" method="get" class="max-w-lg mx-auto">
-      <div class="flex rounded-md shadow-lg">
-        <input type="text" name="query"
-               class="flex-1 px-4 py-3 rounded-l-md border-0 focus:ring-2 focus:ring-indigo-500"
-               placeholder="인물 이름 검색 (예: 윤석열, ㅇㅅㄹ)">
-        <button type="submit"
-                class="px-6 py-3 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 transition">
-          <i class="fas fa-search mr-1"></i> 검색
-        </button>
-      </div>
-    </form>
-  </section>
+  <!-- 카테고리 목록으로 돌아가기 버튼 -->
+  <div class="mt-12 text-center">
+    <a href="/figures"
+       class="inline-block bg-indigo-600 text-white px-6 py-3 rounded-md hover:bg-indigo-700 transition">
+      <i class="fas fa-list mr-2"></i> 카테고리 목록으로 돌아가기
+    </a>
+  </div>
 </div>
 
 <!-- 페이지 자바스크립트 -->
-<script src="/js/category/category-detail-handler.js"></script>
+<script src="/js/utils/image-handler.js"></script>
 </body>
 </html>

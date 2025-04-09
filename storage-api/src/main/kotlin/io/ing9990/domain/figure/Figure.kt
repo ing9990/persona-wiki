@@ -1,10 +1,11 @@
 package io.ing9990.domain.figure
 
-import io.ing9990.domain.user.User
+import io.ing9990.domain.category.Category
+import io.ing9990.domain.comment.Comment
+import io.ing9990.domain.vote.Vote
 import io.ing9990.model.BaseEntity
 import jakarta.persistence.CascadeType.ALL
 import jakarta.persistence.Column
-import jakarta.persistence.Embedded
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
 import jakarta.persistence.GeneratedValue
@@ -15,6 +16,7 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
+import org.hibernate.annotations.Check
 import java.util.Locale
 
 @Table(
@@ -26,56 +28,69 @@ import java.util.Locale
         ),
     ],
 )
+@Check(
+    // 이름 제약조건입니다.
+    constraints = "figure_name REGEXP '^[가-힣]{1,20}$' OR figure_name REGEXP '^[a-zA-Z]{1,20}$'",
+)
 @Entity(name = "figure")
-class Figure(
+class Figure protected constructor(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "figure_id")
-    val id: Long? = null,
-    @Column(name = "name", nullable = false)
-    var name: String,
-    @Column(name = "image_url")
-    var imageUrl: String? = null,
-    @Column(name = "biography")
-    var bio: String? = null,
-    @Embedded
-    val reputation: Reputation = Reputation(),
+    @Column(name = "figure_id") val id: Long? = null,
+    @Column(name = "name", nullable = false, length = 20) var name: String,
+    @Column(name = "image_url", nullable = false, length = 500) var imageUrl: String,
+    @Column(name = "biography", nullable = true, length = 50) var bio: String? = null,
+    @Column(name = "chosung") val chosung: String = "",
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
-    var category: Category,
-    @OneToMany(mappedBy = "figure", cascade = [ALL], orphanRemoval = true)
-    val votes: MutableList<Vote> = mutableListOf(),
-    @OneToMany(mappedBy = "figure", cascade = [ALL], orphanRemoval = true)
-    val comments: MutableList<Comment> = mutableListOf(),
+    @JoinColumn(
+        name = "category_id",
+        nullable = false,
+    ) var category: Category,
+    @OneToMany(
+        mappedBy = "figure",
+        cascade = [ALL],
+        orphanRemoval = true,
+    ) val votes: MutableSet<Vote> = mutableSetOf(),
+    @OneToMany(
+        mappedBy = "figure",
+        cascade = [ALL],
+        orphanRemoval = true,
+    ) val comments: MutableList<Comment> = mutableListOf(),
 ) : BaseEntity() {
-    /**
-     * 사용자의 투표를 추가하거나 업데이트합니다.
-     */
-    fun addOrUpdateVote(
-        user: User,
-        sentiment: Sentiment,
-    ): Vote {
-        // 기존 투표가 있는지 확인
-        val existingVote = votes.find { it.user.id == user.id }
-
-        return if (existingVote != null) {
-            // 기존 투표 업데이트
-            existingVote.sentiment = sentiment
-            existingVote
-        } else {
-            // 새 투표 추가
-            val vote = Vote(user = user, figure = this, sentiment = sentiment)
-            votes.add(vote)
-
-            // Reputation 업데이트
-            when (sentiment) {
-                Sentiment.POSITIVE -> reputation.likeCount++
-                Sentiment.NEUTRAL -> reputation.neutralCount++
-                Sentiment.NEGATIVE -> reputation.dislikeCount++
-            }
-
-            vote
+    companion object {
+        fun create(
+            name: String,
+            imageUrl: String,
+            bio: String?,
+            category: Category,
+        ): Figure {
+            val chosung = getChosungFrom(name) // 함수 만들어서 초성 추출
+            return Figure(
+                name = name,
+                imageUrl = imageUrl,
+                bio = bio,
+                category = category,
+                chosung = chosung,
+            )
         }
+
+        private fun getChosungFrom(name: String): String =
+            name
+                .filter { it.isLetter() }
+                .map {
+                    when (it) {
+                        in '가'..'힣' -> ((it.code - 0xAC00) / 28 / 21 + 0x1100).toChar() // 초성 추출
+                        in 'A'..'Z', in 'a'..'z' -> it.uppercaseChar()
+                        else -> null
+                    }
+                }.joinToString("")
+    }
+
+    /**
+     * Vote를 추가합니다.
+     */
+    fun addVote(savedVote: Vote) {
+        votes.add(savedVote)
     }
 
     /**

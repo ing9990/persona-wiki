@@ -1,0 +1,113 @@
+<!-- fragments/reputation-sidebar.html - 수정된 진행 바 계산 -->
+<div th:fragment="reputationSidebar(detailsResult)" class="space-y-6">
+  <!-- 평판 카드 -->
+  <div class="bg-white rounded-xl shadow-lg p-6 stat-card fade-in border border-gray-100">
+    <h3 class="text-xl font-bold text-gray-800 mb-5 flex items-center">
+      <i class="fas fa-chart-pie text-indigo-600 mr-2"></i>
+      <span>평판 통계</span>
+    </h3>
+
+    <!-- 평판 그래프 -->
+    <div class="space-y-6 mb-5">
+      <!-- 숭배 -->
+      <div class="transform transition-all duration-200 hover:scale-105">
+        <div class="flex justify-between text-sm mb-2">
+      <span class="font-medium text-green-600 flex items-center">
+        <i class="fas fa-crown mr-1.5 text-xs"></i>
+        <span class="font-semibold">숭배</span>
+      </span>
+          <span class="font-medium text-gray-700" th:text="${detailsResult.positivePercentage()}">0 (0%)</span>
+        </div>
+        <div class="reputation-meter bg-gray-200 rounded-full h-2.5 overflow-hidden">
+          <div
+              class="h-2.5 bg-gradient-to-r from-green-400 to-green-600 rounded-full transition-all duration-500 ease-out"
+              th:style="${detailsResult.totalVotes() == 0} ? 'width: 0%' : 'width: ' + ${detailsResult.getPositivePercentValue()} + '%'">
+          </div>
+        </div>
+      </div>
+
+      <!-- 중립 -->
+      <div class="transform transition-all duration-200 hover:scale-105">
+        <div class="flex justify-between text-sm mb-2">
+      <span class="font-medium text-blue-600 flex items-center">
+        <i class="fas fa-balance-scale mr-1.5 text-xs"></i>
+        <span class="font-semibold">중립</span>
+      </span>
+          <span class="font-medium text-gray-700" th:text="${detailsResult.neutralPercentage()}">0 (0%)</span>
+        </div>
+        <div class="reputation-meter bg-gray-200 rounded-full h-2.5 overflow-hidden">
+          <div
+              class="h-2.5 bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-500 ease-out"
+              th:style="${detailsResult.totalVotes() == 0} ? 'width: 0%' : 'width: ' + ${detailsResult.getNeutralPercentValue()} + '%'">
+          </div>
+        </div>
+      </div>
+
+      <!-- 사형 -->
+      <div class="transform transition-all duration-200 hover:scale-105">
+        <div class="flex justify-between text-sm mb-2">
+      <span class="font-medium text-red-600 flex items-center">
+        <i class="fas fa-skull mr-1.5 text-xs"></i>
+        <span class="font-semibold">사형</span>
+      </span>
+          <span class="font-medium text-gray-700" th:text="${detailsResult.negativePercentage()}">0 (0%)</span>
+        </div>
+        <div class="reputation-meter bg-gray-200 rounded-full h-2.5 overflow-hidden">
+          <div
+              class="h-2.5 bg-gradient-to-r from-red-400 to-red-600 rounded-full transition-all duration-500 ease-out"
+              th:style="${detailsResult.totalVotes() == 0} ? 'width: 0%' : 'width: ' + ${detailsResult.getNegativePercentValue()} + '%'">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+        class="text-center font-medium text-gray-600 mt-4 py-2 bg-gray-50 rounded-lg border border-gray-100">
+      총 <span th:text="${detailsResult.totalVotes()}" class="font-bold text-indigo-600">0</span>개의
+      평가 기록
+    </div>
+  </div>
+
+  <!-- CSS를 추가 -->
+  <style>
+    .reputation-meter {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .reputation-meter::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.1) 100%);
+      z-index: 1;
+    }
+
+    .stat-card {
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-out forwards;
+    }
+  </style>
+</div>

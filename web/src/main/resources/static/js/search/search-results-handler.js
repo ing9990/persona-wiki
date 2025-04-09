@@ -20,14 +20,14 @@ class SearchResultsHandler {
       const regex = new RegExp(query, 'gi');
 
       // 이름 하이라이트
-      document.querySelectorAll('.search-result-card h3').forEach(element => {
+      document.querySelectorAll('.search-categoryResult-card h3').forEach(element => {
         const text = element.textContent;
         element.innerHTML = text.replace(regex,
             match => `<span class="highlight">${match}</span>`);
       });
 
       // 소개글 하이라이트
-      document.querySelectorAll('.search-result-card p').forEach(element => {
+      document.querySelectorAll('.search-categoryResult-card p').forEach(element => {
         const text = element.textContent;
         element.innerHTML = text.replace(regex,
             match => `<span class="highlight">${match}</span>`);

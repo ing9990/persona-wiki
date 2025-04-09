@@ -1,7 +1,10 @@
 package io.ing9990.web.controller
 
-import io.ing9990.domain.figure.service.CategoryService
+import io.ing9990.aop.CurrentUser
+import io.ing9990.aop.resolver.CurrentUserDto
+import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
+import io.ing9990.domain.figure.service.dto.FigureCardResult
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -16,18 +19,19 @@ class WebController(
     private val categoryService: CategoryService,
 ) {
     /**
-     * 메인 페이지를 렌더링합니다.
-     * 카테고리별 인물 목록과 인기 카테고리를 표시합니다.
+     * 메인 페이지입니다.
+     *
+     * 주목받는 인물들
+     * 투표 수와 댓글 수를 합친 값을 내림차 순으로 보여줍니다.
      */
     @GetMapping("/")
-    fun index(model: Model): String {
-        // 인기 인물 6명 조회 (평판투표 + 댓글 수 기준)
-        val popularFigures = figureService.getPopularFigures(6)
-        model.addAttribute("figures", popularFigures)
+    fun index(
+        @CurrentUser currentUser: CurrentUserDto,
+        model: Model,
+    ): String {
+        val popularFigures: List<FigureCardResult> = figureService.getPopularFigures(5)
 
-        // 모든 카테고리 조회
-        val allCategories = categoryService.getAllCategories()
-        model.addAttribute("allCategories", allCategories)
+        model.addAttribute("figures", popularFigures)
 
         return "index"
     }
@@ -37,18 +41,8 @@ class WebController(
         @RequestParam query: String,
         model: Model,
     ): String {
-        // 검색어가 비어 있는지 확인
-        if (query.isBlank()) {
-            throw IllegalArgumentException("검색어를 입력해주세요")
-        }
-
-        // 검색어로 인물 검색 (이제 서비스에서 예외를 발생시키므로 try-catch 불필요)
         val searchResults =
-            if (query.length <= 3 && query.any { it in 'ㄱ'..'ㅎ' }) {
-                figureService.searchByNameWithInitials(query)
-            } else {
-                figureService.searchByName(query)
-            }
+            figureService.searchByName(query)
 
         model.addAttribute("searchResults", searchResults)
         model.addAttribute("query", query)

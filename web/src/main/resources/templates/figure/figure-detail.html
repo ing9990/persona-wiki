@@ -3,211 +3,40 @@
       layout:decorate="~{layout/layout}">
 
 <head>
-  <title th:text="${figure.name} + ' - 국민사형투표'">인물 상세</title>
-  <meta name="description" th:content="${figure.bio}">
+  <title th:text="${detailsResult.getName()} + ' - 국민사형투표'">인물 상세</title>
+  <meta name="description" th:content="${#strings.abbreviate(detailsResult.bio,15)}">
 
   <link rel="stylesheet" href="/css/comment-reply.css">
-
-  <!-- 통합된 스타일 -->
-  <style>
-    /* 프로필 헤더 스타일 */
-    .profile-header {
-      position: relative;
-      height: 300px;
-      overflow: hidden;
-      border-radius: 0.5rem;
-    }
-
-    .profile-header-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: brightness(70%);
-    }
-
-    .profile-header-content {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 2rem;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-      color: white;
-    }
-
-    .profile-image {
-      border: 4px solid white;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    /* 카드 및 UI 요소 스타일 */
-    .badge-category {
-      background: linear-gradient(135deg, #6366F1, #8B5CF6);
-    }
-
-    .comment-box {
-      transition: all 0.3s ease;
-    }
-
-    .comment-box:hover {
-      border-color: #6366F1;
-    }
-
-    .stat-card {
-      transition: transform 0.3s ease;
-    }
-
-    .stat-card:hover {
-      transform: translateY(-5px);
-    }
-
-    /* 평판 측정기 */
-    .reputation-meter {
-      height: 8px;
-      border-radius: 4px;
-      overflow: hidden;
-    }
-
-    /* 카테고리 카드 */
-    .category-card {
-      position: relative;
-      border-radius: 0.5rem;
-      overflow: hidden;
-      height: 120px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .category-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      filter: brightness(70%);
-    }
-
-    .category-content {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      padding: 1.5rem;
-      background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-      color: white;
-      z-index: 10;
-    }
-
-    /* 애니메이션 효과 */
-    .fade-in {
-      animation: fadeIn 0.6s ease-in;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* 투표 버튼 스타일 */
-    .vote-button {
-      transition: all 0.3s ease;
-    }
-
-    .vote-button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .vote-button-disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .vote-button-disabled:hover {
-      transform: none;
-      box-shadow: none;
-    }
-
-    /* 로그인 프롬프트 */
-    .login-prompt {
-      background-color: #EFF6FF;
-      border: 1px solid #DBEAFE;
-      border-radius: 0.5rem;
-      padding: 1.5rem;
-      text-align: center;
-    }
-
-    .login-button {
-      background: linear-gradient(135deg, #6366F1, #8B5CF6);
-      transition: all 0.3s ease;
-    }
-
-    .login-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(99, 102, 241, 0.3);
-    }
-
-    /* 투표 결과 표시 */
-    .vote-result {
-      background-color: #F9FAFB;
-      border-radius: 0.5rem;
-      padding: 1rem;
-      text-align: center;
-      margin-top: 1rem;
-      border: 1px solid #E5E7EB;
-    }
-
-    .vote-sentiment-badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25rem 0.75rem;
-      border-radius: 9999px;
-      font-weight: 600;
-    }
-
-    .sentiment-positive {
-      background-color: #D1FAE5;
-      color: #047857;
-    }
-
-    .sentiment-neutral {
-      background-color: #DBEAFE;
-      color: #1D4ED8;
-    }
-
-    .sentiment-negative {
-      background-color: #FEE2E2;
-      color: #B91C1C;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/comment-style.css">
+  <link rel="stylesheet" href="/css/fingure-detail.css">
+  <link rel="stylesheet" href="/css/scroll-to-top.css">
+  <link rel="stylesheet" href="/css/vote.css">
 </head>
 
 <body>
 <div layout:fragment="content">
+  <div id="comment-section" th:attr="data-figure-id=${detailsResult.id}"></div>
+
   <!-- 인물 프로필 헤더 -->
-  <section class="profile-header mb-8 shadow-lg" th:attr="data-figure-id=${figure.id}">
-    <img th:src="${figure.category.imageUrl}" th:alt="${figure.name}" class="profile-header-image">
+  <section class="profile-header mb-8 shadow-lg" th:attr="data-figure-id=${detailsResult.getId()}">
+    <img th:src="${detailsResult.getCategoryImage()}" th:alt="${detailsResult.getName()}"
+         class="profile-header-image">
     <div class="profile-header-content">
       <div class="flex items-end justify-between w-full">
         <div class="flex items-end">
-          <img th:src="${figure.imageUrl}" th:alt="${figure.name}"
+          <img th:src="${detailsResult.getImageUrl()}" th:alt="${detailsResult.getName()}"
                class="w-24 h-24 rounded-full profile-image object-cover mr-6"
                data-handle-error="true"
                data-placeholder="/img/profile-placeholder.svg">
           <div>
             <div class="flex items-center mb-2">
-              <h1 class="text-4xl font-bold mr-3" th:text="${figure.name}">인물 이름</h1>
-              <span th:text="${category.displayName}"
+              <h1 class="text-4xl font-bold mr-3" th:text="${detailsResult.getName()}">인물 이름</h1>
+              <span th:text="${detailsResult.getCategoryDisplayName()}"
                     class="badge-category text-white text-sm px-3 py-1 rounded-full">카테고리</span>
             </div>
             <p class="text-gray-200 text-lg">
               <i class="fas fa-quote-left text-sm opacity-50 mr-1"></i>
-              <span th:text="${#strings.abbreviate(figure.bio, 100)}">인물 소개 요약</span>
+              <span th:text="${#strings.abbreviate(detailsResult.getBio(), 50)}">인물 소개 요약</span>
               <i class="fas fa-quote-right text-sm opacity-50 ml-1"></i>
             </p>
           </div>
@@ -217,513 +46,109 @@
   </section>
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <!-- 왼쪽: 인물 정보 -->
+    <!-- 왼쪽: 인물 정보 및 댓글 (2칸 차지) -->
     <div class="lg:col-span-2">
       <!-- 인물 평가 투표 섹션 -->
-      <section class="bg-white rounded-lg shadow-md p-6 mb-8 fade-in">
-        <h2 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-vote-yea text-indigo-500 mr-2"></i>
-          <span>인물 평가</span>
-        </h2>
+      <div
+          th:replace="~{fragments/vote-section :: voteSection(${detailsResult}, ${current})}"></div>
+      <!-- 인물 평가 투표 섹션 종료 -->
 
-        <!-- 로그인 상태 -->
-        <div th:if="${@layoutHelper.isLoggedIn(session.user)}">
-          <!-- 이미 투표한 경우: 투표 결과 표시 -->
-          <div th:if="${hasVoted}" class="vote-result">
-            <p class="text-gray-700 mb-2">이 인물에 대해 다음과 같이 평가하셨습니다:</p>
-
-            <div th:with="vote=${userVote}">
-        <span th:if="${vote.sentiment == T(io.ing9990.domain.figure.Sentiment).POSITIVE}"
-              class="vote-sentiment-badge sentiment-positive">
-          <i class="fas fa-crown mr-1"></i> 숭배
-        </span>
-              <span th:if="${vote.sentiment == T(io.ing9990.domain.figure.Sentiment).NEUTRAL}"
-                    class="vote-sentiment-badge sentiment-neutral">
-          <i class="fas fa-balance-scale mr-1"></i> 중립
-        </span>
-              <span th:if="${vote.sentiment == T(io.ing9990.domain.figure.Sentiment).NEGATIVE}"
-                    class="vote-sentiment-badge sentiment-negative">
-          <i class="fas fa-skull mr-1"></i> 사형
-        </span>
-            </div>
-
-            <p class="text-sm text-gray-500 mt-3">
-              <i class="fas fa-clock mr-1"></i>
-              평가일: <span
-                th:text="${#temporals.format(userVote.updatedAt, 'yyyy-MM-dd HH:mm')}"></span>
-            </p>
-          </div>
-
-          <!-- 아직 투표하지 않은 경우: 투표 버튼 표시 -->
-          <div th:unless="${hasVoted}" class="text-gray-700 mb-4">
-            <p class="mb-4">이 인물에 대한 평가를 선택해 주세요. 한 번 투표하면 변경할 수 없습니다.</p>
-
-            <div class="grid grid-cols-3 gap-4">
-              <!-- 숭배 버튼 -->
-              <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/vote'}"
-                    method="post">
-                <input type="hidden" name="sentiment" value="POSITIVE">
-                <button type="submit"
-                        class="vote-button w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-green-200 hover:border-green-500 hover:bg-green-50 transition-all">
-                  <i class="fas fa-crown text-3xl text-green-500 mb-2"></i>
-                  <span class="font-bold text-lg text-green-600">숭배</span>
-                  <p class="text-xs text-gray-500 mt-2 text-center">이 인물은 존경받아 마땅합니다</p>
-                </button>
-              </form>
-
-              <!-- 중립 버튼 -->
-              <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/vote'}"
-                    method="post">
-                <input type="hidden" name="sentiment" value="NEUTRAL">
-                <button type="submit"
-                        class="vote-button w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-blue-200 hover:border-blue-500 hover:bg-blue-50 transition-all">
-                  <i class="fas fa-balance-scale text-3xl text-blue-500 mb-2"></i>
-                  <span class="font-bold text-lg text-blue-600">중립</span>
-                  <p class="text-xs text-gray-500 mt-2 text-center">이 인물에 대해 중립적입니다</p>
-                </button>
-              </form>
-
-              <!-- 사형 버튼 -->
-              <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/vote'}"
-                    method="post">
-                <input type="hidden" name="sentiment" value="NEGATIVE">
-                <button type="submit"
-                        class="vote-button w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-red-200 hover:border-red-500 hover:bg-red-50 transition-all">
-                  <i class="fas fa-skull text-3xl text-red-500 mb-2"></i>
-                  <span class="font-bold text-lg text-red-600">사형</span>
-                  <p class="text-xs text-gray-500 mt-2 text-center">이 인물은 비판받아 마땅합니다</p>
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <!-- 비로그인 상태: 로그인 알림과 비활성화 버튼 표시 -->
-        <div th:unless="${@layoutHelper.isLoggedIn(session.user)}">
-          <!-- 로그인 알림 배너 (반응형) -->
-          <div
-              class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex flex-col sm:flex-row items-center sm:justify-between">
-            <div class="flex items-center mb-2 sm:mb-0">
-              <i class="fas fa-info-circle text-blue-500 text-xl mr-2"></i>
-              <p class="text-gray-700 text-sm sm:text-base">
-                인물에 대한 평가를 하려면 로그인이 필요합니다.
-              </p>
-            </div>
-            <a href="/login"
-               class="mt-2 sm:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition-colors duration-200 flex items-center">
-              <i class="fas fa-sign-in-alt mr-2"></i>
-              로그인하기
-            </a>
-          </div>
-
-          <!-- 비활성화된 투표 버튼들 (3개) -->
-          <div class="grid grid-cols-3 gap-4">
-            <!-- 숭배 버튼 (비활성화) -->
-            <div
-                class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
-              <i class="fas fa-crown text-3xl text-green-400 mb-2"></i>
-              <span class="font-bold text-lg text-green-500">숭배</span>
-              <p class="text-xs text-gray-400 mt-2 text-center">이 인물은 존경받아 마땅합니다</p>
-            </div>
-            <!-- 중립 버튼 (비활성화) -->
-            <div
-                class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
-              <i class="fas fa-balance-scale text-3xl text-blue-400 mb-2"></i>
-              <span class="font-bold text-lg text-blue-500">중립</span>
-              <p class="text-xs text-gray-400 mt-2 text-center">이 인물에 대해 중립적입니다</p>
-            </div>
-            <!-- 사형 버튼 (비활성화) -->
-            <div
-                class="w-full flex flex-col items-center justify-center p-6 rounded-lg border-2 border-gray-200 bg-gray-50 opacity-60 cursor-not-allowed">
-              <i class="fas fa-skull text-3xl text-red-400 mb-2"></i>
-              <span class="font-bold text-lg text-red-500">사형</span>
-              <p class="text-xs text-gray-400 mt-2 text-center">이 인물은 비판받아 마땅합니다</p>
-            </div>
-          </div>
-        </div>
-
-      </section>
-
-      <section class="bg-white rounded-lg shadow-md p-6 fade-in">
-        <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-          <i class="fas fa-comments text-indigo-500 mr-2"></i>
-          <span>의견</span>
-          <span class="ml-2 text-sm bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full"
-                th:text="${commentPage.totalElements}">0</span>
-        </h2>
-
-        <!-- 댓글 작성 폼: 로그인한 사용자 -->
-        <div th:if="${@layoutHelper.isLoggedIn(session.user)}">
-          <form th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/comment'}"
-                method="post" class="mb-8">
-            <div class="mb-3">
-        <textarea name="content" rows="3"
-                  class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 comment-box"
-                  placeholder="이 인물에 대한 의견을 남겨주세요..."></textarea>
-            </div>
-            <div class="text-right">
-              <button type="submit"
-                      class="bg-indigo-600 text-white px-6 py-2 rounded-md hover:bg-indigo-700 transition">
-                <i class="fas fa-paper-plane mr-1"></i> 게시하기
-              </button>
-            </div>
-          </form>
-        </div>
-        <!-- 댓글 작성 폼: 로그인하지 않은 사용자 (반응형 로그인 프롬프트) -->
-        <div th:unless="${@layoutHelper.isLoggedIn(session.user)}" class="mb-8">
-          <div
-              class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex flex-col md:flex-row items-center">
-            <i class="fas fa-info-circle text-blue-500 text-xl mb-2 md:mb-0 mr-0 md:mr-3"></i>
-            <p class="text-gray-700 text-center md:text-left flex-grow">
-              댓글 작성은 로그인이 필요합니다.
-            </p>
-            <a href="/login"
-               class="mt-2 md:mt-0 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded transition-colors duration-200 flex items-center">
-              <i class="fas fa-sign-in-alt mr-2"></i> 로그인하기
-            </a>
-          </div>
-          <div class="mb-3">
-      <textarea disabled
-                class="w-full p-3 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
-                placeholder="로그인 후 댓글을 작성할 수 있습니다."></textarea>
-          </div>
-        </div>
-
-        <!-- 댓글 목록 -->
-        <div class="space-y-6">
-          <!-- 댓글이 없는 경우 -->
-          <div th:if="${commentPage.isEmpty()}" class="text-center py-8 text-gray-500">
-            <i class="fas fa-comment-slash text-4xl mb-3 opacity-30"></i>
-            <p>아직 의견이 없습니다. 첫 번째 의견을 남겨보세요!</p>
-          </div>
-
-          <!-- 각 댓글 항목 (최상위 댓글만 반복, 답글은 지연로드) -->
-          <div th:each="comment : ${commentPage.content}"
-               th:if="${comment.isRootComment()}"
-               class="border-b border-gray-200 pb-6 comment-item fade-in"
-               th:id="'comment-' + ${comment.id}">
-            <div class="flex justify-between mb-2">
-              <div class="flex items-center">
-                <!-- 사용자 프로필 이미지 추가 -->
-                <a th:if="${comment.user != null}"
-                   th:href="@{'/users/' + ${comment.user.nickname}}">
-                  <img th:src="${@layoutHelper.getProfileImage(comment.user)}"
-                       alt="프로필 이미지"
-                       class="w-8 h-8 rounded-full mr-2"
-                       onerror="this.src='/img/profile-placeholder.svg';">
-                </a>
-                <img th:unless="${comment.user != null}"
-                     src="/img/profile-placeholder.svg"
-                     alt="익명"
-                     class="w-8 h-8 rounded-full mr-2">
-
-                <div class="text-sm">
-                  <!-- 사용자 닉네임 표시 -->
-                  <a th:if="${comment.user != null}"
-                     th:href="@{'/users/' + ${comment.user.nickname}}"
-                     class="font-medium text-gray-900 hover:text-indigo-600 transition">
-                    <span th:text="${comment.user.nickname}">사용자 닉네임</span>
-                  </a>
-                  <span th:unless="${comment.user != null}" class="text-gray-500">익명</span>
-                  <span class="text-gray-500 ml-3"
-                        th:text="${@layoutHelper.toRelative(comment.createdAt)}">날짜</span>
-                </div>
-              </div>
-            </div>
-            <p class="text-gray-800 mb-3" th:text="${comment.content}">댓글 내용</p>
-            <div class="flex items-center text-sm">
-              <button class="flex items-center mr-4 text-gray-500 hover:text-green-500 transition"
-                      data-action="like-comment" th:data-comment-id="${comment.id}">
-                <i class="fas fa-thumbs-up mr-1"></i>
-                <span th:text="${comment.likes}" class="like-count">0</span>
-              </button>
-              <button class="flex items-center mr-4 text-gray-500 hover:text-red-500 transition"
-                      data-action="dislike-comment" th:data-comment-id="${comment.id}">
-                <i class="fas fa-thumbs-down mr-1"></i>
-                <span th:text="${comment.dislikes}" class="dislike-count">0</span>
-              </button>
-              <!-- 답글 달기 버튼: 로그인한 사용자는 활성화, 비로그인 사용자는 비활성화 -->
-              <div th:if="${@layoutHelper.isLoggedIn(session.user)}">
-                <button
-                    class="flex items-center text-gray-500 hover:text-indigo-500 transition reply-toggle-btn"
-                    th:data-comment-id="${comment.id}">
-                  <i class="fas fa-reply mr-1"></i>
-                  <span>답글 달기</span>
-                </button>
-              </div>
-              <div th:unless="${@layoutHelper.isLoggedIn(session.user)}">
-                <button
-                    class="flex items-center text-gray-500 opacity-60 cursor-not-allowed transition"
-                    disabled>
-                  <i class="fas fa-reply mr-1"></i>
-                  <span>답글 달기</span>
-                </button>
-              </div>
-              <!-- 답글 보기 버튼 (댓글에 답글이 있을 경우) -->
-              <button th:if="${comment.repliesCount > 0}"
-                      class="flex items-center ml-4 text-blue-500 hover:text-blue-700 transition view-replies-btn"
-                      th:data-comment-id="${comment.id}"
-                      th:data-reply-count="${comment.repliesCount}">
-                <span th:text="'답글 ' + ${comment.repliesCount} + '개'">답글 0개</span>
-                <i class="fas fa-chevron-down ml-1 text-xs"></i>
-              </button>
-            </div>
-
-            <!-- 답글 작성 폼 -->
-            <div th:id="'reply-form-' + ${comment.id}"
-                 class="mt-4 pl-6 border-l-2 border-gray-200 reply-form"
-                 style="display: none;">
-              <div th:if="${@layoutHelper.isLoggedIn(session.user)}">
-                <form
-                    th:action="@{'/' + ${category.id} + '/@' + ${figure.name} + '/comment/' + ${comment.id} + '/reply'}"
-                    method="post" class="reply-form-content">
-                  <div class="mb-2">
-              <textarea name="content" rows="2"
-                        class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                        placeholder="답글을 입력하세요..."></textarea>
-                  </div>
-                  <div class="flex justify-end space-x-2">
-                    <button type="button"
-                            class="text-gray-500 px-3 py-1 rounded text-sm cancel-reply-btn"
-                            th:data-comment-id="${comment.id}">
-                      취소
-                    </button>
-                    <button type="submit"
-                            class="bg-indigo-600 text-white px-3 py-1 rounded text-sm hover:bg-indigo-700 transition">
-                      <i class="fas fa-reply mr-1"></i> 답글 작성
-                    </button>
-                  </div>
-                </form>
-              </div>
-              <div th:unless="${@layoutHelper.isLoggedIn(session.user)}"
-                   class="p-2 text-center text-gray-500">
-                <a href="/login" class="text-indigo-600 hover:underline">로그인 후 답글 작성 가능합니다.</a>
-              </div>
-            </div>
-
-            <!-- 답글 목록 컨테이너 -->
-            <div th:id="'replies-' + ${comment.id}"
-                 class="mt-4 pl-6 border-l-2 border-indigo-100 space-y-4 replies-container"
-                 style="display: none;">
-              <div class="text-center py-2 replies-loading">
-                <i class="fas fa-spinner fa-spin text-indigo-500"></i>
-                <span class="ml-2 text-gray-500">답글을 불러오는 중...</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- 페이지네이션 -->
-        <div th:if="${commentPage.totalPages > 1}" class="mt-8 flex justify-center">
-          <nav aria-label="댓글 페이지 탐색" class="pagination">
-            <!-- 이전 페이지 링크 -->
-            <ul class="inline-flex rounded-md shadow">
-              <li th:classappend="${commentPage.first} ? 'disabled' : ''">
-                <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name} + '?page=' + ${commentPage.number - 1}}"
-                   class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                   th:classappend="${commentPage.first} ? 'pointer-events-none opacity-50' : ''">
-                  이전
-                </a>
-              </li>
-
-              <!-- 페이지 번호 -->
-              <li th:each="i : ${#numbers.sequence(0, commentPage.totalPages - 1)}"
-                  th:classappend="${commentPage.number == i} ? 'active' : ''">
-                <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name} + '?page=' + ${i}}"
-                   th:text="${i + 1}"
-                   class="px-3 py-2 border-t border-b border-gray-300"
-                   th:classappend="${commentPage.number == i} ? 'bg-indigo-50 text-indigo-600' : 'bg-white text-gray-500 hover:bg-gray-50'">
-                  1
-                </a>
-              </li>
-
-              <!-- 다음 페이지 링크 -->
-              <li th:classappend="${commentPage.last} ? 'disabled' : ''">
-                <a th:href="@{'/' + ${category.id} + '/@' + ${figure.name} + '?page=' + ${commentPage.number + 1}}"
-                   class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50"
-                   th:classappend="${commentPage.last} ? 'pointer-events-none opacity-50' : ''">
-                  다음
-                </a>
-              </li>
-            </ul>
-          </nav>
-        </div>
-      </section>
+      <!-- 댓글 섹션 부분 -->
+      <div
+          th:replace="~{fragments/comment-section :: commentSection(${detailsResult}, ${current})}"></div>
+      <!-- 댓글 섹션 부분 종료-->
     </div>
 
-    <!-- 오른쪽: 통계 및 정보 사이드바 -->
-    <div class="space-y-6">
-      <!-- 평판 카드 -->
-      <div class="bg-white rounded-lg shadow-md p-6 stat-card fade-in">
-        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-chart-pie text-indigo-500 mr-2"></i>
-          <span>평판 통계</span>
-        </h3>
+    <!-- 오른쪽: 평판, 카테고리, 공유하기 (1칸 차지) -->
+    <div class="lg:col-span-1">
+      <!-- 페이지 우측 평판 통계 부분 -->
+      <div
+          th:replace="~{fragments/reputation-sidebar :: reputationSidebar(${detailsResult})}"></div>
+      <!-- 페이지 우측 평판 통계 부분 종료 -->
 
-        <!-- 평판 그래프 -->
-        <div class="space-y-4 mb-4">
-          <!-- 숭배 평가 -->
-          <div>
-            <div class="flex justify-between text-sm mb-1">
-              <span class="font-medium text-green-600 flex items-center">
-                <i class="fas fa-crown mr-1 text-xs"></i>숭배
-              </span>
-              <span class="text-gray-600"
-                    th:text="${figure.reputation.likeCount} + ' (' + ${#numbers.formatPercent(figure.reputation.likeRatio(), 0, 0)} + ')'">
-                0 (0%)
-              </span>
-            </div>
-            <div class="reputation-meter bg-gray-200">
-              <div class="h-full bg-green-500"
-                   th:style="'width: ' + ${figure.reputation.likeRatio() * 100} + '%'"></div>
-            </div>
-          </div>
-
-          <!-- 중립 평가 -->
-          <div>
-            <div class="flex justify-between text-sm mb-1">
-              <span class="font-medium text-blue-600 flex items-center">
-                <i class="fas fa-balance-scale mr-1 text-xs"></i>중립
-              </span>
-              <span class="text-gray-600"
-                    th:text="${figure.reputation.neutralCount} + ' (' + ${#numbers.formatPercent(figure.reputation.neutralRatio(), 0, 0)} + ')'">
-                0 (0%)
-              </span>
-            </div>
-            <div class="reputation-meter bg-gray-200">
-              <div class="h-full bg-blue-500"
-                   th:style="'width: ' + ${figure.reputation.neutralRatio() * 100} + '%'"></div>
-            </div>
-          </div>
-
-          <!-- 사형 평가 -->
-          <div>
-            <div class="flex justify-between text-sm mb-1">
-              <span class="font-medium text-red-600 flex items-center">
-                <i class="fas fa-skull mr-1 text-xs"></i>사형
-              </span>
-              <span class="text-gray-600"
-                    th:text="${figure.reputation.dislikeCount} + ' (' + ${#numbers.formatPercent(figure.reputation.dislikeRatio(), 0, 0)} + ')'">
-                0 (0%)
-              </span>
-            </div>
-            <div class="reputation-meter bg-gray-200">
-              <div class="h-full bg-red-500"
-                   th:style="'width: ' + ${figure.reputation.dislikeRatio() * 100} + '%'"></div>
-            </div>
-          </div>
-        </div>
-
-        <div class="text-center text-sm text-gray-500">
-          총 <span th:text="${figure.reputation.total()}" class="font-bold">0</span>개의 평가 기록
-        </div>
-      </div>
-
-      <!-- 카테고리 정보 -->
-      <div class="bg-white rounded-lg shadow-md overflow-hidden stat-card fade-in">
-        <div class="category-card">
-          <img
-              th:src="${category.imageUrl != null ? category.imageUrl : '/img/category-placeholder.jpg'}"
-              th:alt="${category.displayName}" class="category-image">
-          <div class="category-content">
-            <h3 class="text-xl font-bold mb-1" th:text="${category.displayName}">카테고리명</h3>
-          </div>
-        </div>
-
-        <div class="p-4">
-          <p class="text-gray-600 text-sm mb-4" th:text="${category.description}">카테고리 설명</p>
-          <div class="mt-2">
-            <a th:href="@{'/categories/' + ${category.id}}"
-               class="text-indigo-600 hover:text-indigo-800 text-sm flex items-center">
-              <span>이 카테고리의 다른 인물 보기</span>
-              <i class="fas fa-chevron-right ml-1 text-xs"></i>
-            </a>
-          </div>
-        </div>
-      </div>
+      <!-- 페이지 우측 카테고리 섹션 -->
+      <div th:replace="~{fragments/category-section :: categorySection(${detailsResult})}"></div>
+      <!-- 페이지 우측 카테고리 섹션 종료-->
 
       <!-- 공유하기 -->
-      <div class="bg-white rounded-lg shadow-md p-6 stat-card fade-in">
-        <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
-          <i class="fas fa-share-alt text-indigo-500 mr-2"></i>
-          <span>공유하기</span>
-        </h3>
-
-        <div class="flex justify-center space-x-4">
-          <a href="#" data-action="share-twitter"
-             class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-400 text-white hover:bg-blue-500 transition">
-            <i class="fab fa-twitter"></i>
-          </a>
-          <a href="#" data-action="share-facebook"
-             class="w-10 h-10 flex items-center justify-center rounded-full bg-blue-600 text-white hover:bg-blue-700 transition">
-            <i class="fab fa-facebook-f"></i>
-          </a>
-          <a href="#" data-action="share-link"
-             class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-500 text-white hover:bg-gray-600 transition">
-            <i class="fas fa-link"></i>
-          </a>
-        </div>
-      </div>
+      <div th:replace="~{fragments/share-section :: shareSection}"></div>
+      <!-- 공유하기 종료-->
     </div>
   </div>
 </div>
 
-<!-- 답글 아이템 템플릿 -->
-<template id="reply-template">
-  <div class="reply-item pb-4 mb-4 border-b border-gray-100">
-    <div class="flex justify-between mb-1">
-      <div class="flex items-center">
-        <!-- 프로필 사진 -->
-        <a class="user-profile-link" href="#">
-          <img class="reply-profile-image w-8 h-8 rounded-full mr-2"
-               src="/img/profile-placeholder.svg"
-               alt="프로필 이미지"
-               onerror="this.src='/img/profile-placeholder.svg';">
-        </a>
-        <div class="text-sm">
-          <!-- 사용자 닉네임 -->
-          <a class="reply-author-link font-medium text-gray-900 hover:text-indigo-600 transition"
-             href="#">
-            <span class="reply-author">사용자 닉네임</span>
-          </a>
-          <span class="text-gray-500 ml-3 reply-date">날짜</span>
-        </div>
-      </div>
-    </div>
-    <p class="text-gray-800 mb-2 pl-10 reply-content">답글 내용</p>
 
-    <!-- 좋아요/싫어요 버튼 -->
-    <div class="flex items-center text-sm pl-10">
-      <button
-          class="flex items-center mr-4 text-gray-500 hover:text-green-500 transition reply-like-btn">
-        <i class="fas fa-thumbs-up mr-1"></i>
-        <span class="reply-likes">0</span>
-      </button>
-      <button
-          class="flex items-center text-gray-500 hover:text-red-500 transition reply-dislike-btn">
-        <i class="fas fa-thumbs-down mr-1"></i>
-        <span class="reply-dislikes">0</span>
-      </button>
-    </div>
-  </div>
-</template>
-<!-- 페이지 자바스크립트 -->
-
-<!-- 수정 코드 -->
+<!-- 기존 스크립트 부분 변경 -->
 <th:block layout:fragment="script">
   <!-- 공통 유틸리티 -->
   <script src="/js/utils/utils.js"></script>
+  <script src="/js/utils/relative-time.js"></script>
   <script src="/js/utils/toast-manager.js"></script>
-  <!-- 페이지별 스크립트 -->
-  <script src="/js/figure/figure-detail-handler.js"></script>
-  <script src="/js/figure/comment-reply-handler.js"></script>
-  <script src="/js/figure/notification-handler.js"></script>
+
+  <!-- InfiniteScroll 라이브러리 -->
+  <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
+
+  <!-- 먼저 comment-api.js를 로드 -->
+  <script src="/js/apis/comment-api.js"></script><!-- 필수 스크립트 -->
+
+  <!-- 댓글 CSS -->
+  <link rel="stylesheet" href="/css/comment-form.css">
+  <link rel="stylesheet" href="/css/comment-style.css">
+  <link rel="stylesheet" href="/css/comment-reply.css">
+  <link rel="stylesheet" href="/css/add-reply-form.css"><!-- 새로 추가 -->
+
+  <!--  댓글 Fragment 로드-->
+  <script src="/js/comment-fragments-handler.js"></script>
+
+  <!-- 댓글 상호작용 핸들러 -->
+  <script src="/js/comment/comment-interactions-handler.js"></script>
+
+  <!-- 답글 기능 관련 스크립트 - 분리된 파일들 -->
+  <script src="/js/comment/view-replies-handler.js"></script><!-- 새로 추가: 답글 보기 기능 -->
+  <script src="/js/comment/add-reply-form-handler.js"></script><!-- 새로 추가: 답글 작성 기능 -->
+
+  <!-- 스크롤 상단 이동 버튼 -->
+  <script src="/js/utils/scroll-to-top.js"></script>
+
+  <!--  댓글 작성 스크립트 로드-->
+  <script src="/js/create-comment-handler.js"></script>
+
+
+  <!-- 추가 페이지별 스크립트 -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      new CommentReplyHandler();
-      new NotificationHandler();
+    document.addEventListener('DOMContentLoaded', function () {
+      const figureId = document.querySelector('.profile-header').getAttribute('data-figure-id');
+
+      console.log('Figure detail page loaded with figure ID:', figureId);
+
+      // 공유 버튼 기능
+      document.querySelectorAll('[data-action^="share-"]').forEach(button => {
+        button.addEventListener('click', function (e) {
+          e.preventDefault();
+          const action = this.getAttribute('data-action');
+          const url = window.location.href;
+          const title = document.title;
+
+          switch (action) {
+            case 'share-twitter':
+              window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(
+                  url)}&text=${encodeURIComponent(title)}`, '_blank');
+              break;
+            case 'share-facebook':
+              window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+                  '_blank');
+              break;
+            case 'share-link':
+              navigator.clipboard.writeText(url).then(() => {
+                alert('링크가 클립보드에 복사되었습니다.');
+              });
+              break;
+          }
+        });
+      });
     });
   </script>
 </th:block>
+
 </body>
 </html>

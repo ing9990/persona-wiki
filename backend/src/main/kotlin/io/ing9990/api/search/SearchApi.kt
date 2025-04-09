@@ -1,6 +1,7 @@
 package io.ing9990.api.search
 
 import io.ing9990.domain.figure.service.FigureService
+import io.ing9990.domain.figure.service.dto.FigureMicroResults
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -18,24 +19,17 @@ class SearchApi(
     @GetMapping("/search/suggestions")
     fun getSearchSuggestions(
         @RequestParam query: String,
-    ): ResponseEntity<List<SearchSuggestion>> {
-        // 초성 검색을 위한 처리
-        val searchResults =
-            if (query.length <= 3) {
-                figureService.searchByNameWithInitials(query)
-            } else {
-                figureService.searchByName(query)
-            }
+    ): ResponseEntity<List<SearchSuggestionResponse>> {
+        val searchResults: FigureMicroResults =
+            figureService.searchByName(query)
 
-        // 최대 10개만 반환
         val suggestions =
-            searchResults.take(10).map { figure ->
-                SearchSuggestion(
-                    id = figure.id ?: 0,
-                    name = figure.name,
-                    categoryId = figure.category.id,
-                    categoryName = figure.category.displayName,
-                    imageUrl = figure.imageUrl ?: "",
+            searchResults.data.take(5).map { figure ->
+                SearchSuggestionResponse(
+                    name = figure.figureName,
+                    categoryId = figure.categoryId,
+                    categoryName = figure.categoryName,
+                    imageUrl = figure.figureImage,
                 )
             }
 

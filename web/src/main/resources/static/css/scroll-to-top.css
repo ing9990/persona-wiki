@@ -1,0 +1,47 @@
+/* 스크롤 상단 이동 버튼 스타일 */
+.scroll-to-top-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #3b82f6; /* 파란색 버튼 */
+  color: white;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1000;
+  opacity: 0.8;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.scroll-to-top-btn:hover {
+  opacity: 1;
+  transform: translateY(-3px);
+}
+
+.scroll-to-top-btn i {
+  font-size: 20px;
+}
+
+.scroll-to-top-btn.hidden {
+  display: none;
+}
+
+/* 작은 화면에서는 버튼 크기 감소 */
+@media (max-width: 768px) {
+  .scroll-to-top-btn {
+    width: 40px;
+    height: 40px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .scroll-to-top-btn i {
+    font-size: 16px;
+  }
+}
