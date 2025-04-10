@@ -2,13 +2,16 @@ package io.ing9990.domain.user.repositories
 
 import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.User
+import io.ing9990.domain.user.repositories.querydsl.UserCustomRepository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository : JpaRepository<User, Long> {
+interface UserRepository :
+    JpaRepository<User, Long>,
+    UserCustomRepository {
     /**
      * 프로바이더 ID와 프로바이더 타입으로 사용자를 찾습니다.
      * @param providerId 소셜 로그인 제공자 ID

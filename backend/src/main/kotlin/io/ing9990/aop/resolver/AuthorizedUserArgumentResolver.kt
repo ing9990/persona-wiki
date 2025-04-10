@@ -2,6 +2,7 @@ package io.ing9990.aop.resolver
 
 import io.ing9990.aop.AuthorizedUser
 import io.ing9990.domain.user.User
+import io.ing9990.exceptions.ErrorCode
 import io.ing9990.exceptions.UnauthorizedException
 import io.ing9990.service.UserService
 import jakarta.servlet.http.HttpServletRequest
@@ -16,6 +17,10 @@ import org.springframework.web.method.support.ModelAndViewContainer
 class AuthorizedUserArgumentResolver(
     private val userService: UserService,
 ) : HandlerMethodArgumentResolver {
+    companion object {
+        const val KEY_NAME = "userId"
+    }
+
     override fun supportsParameter(parameter: MethodParameter): Boolean =
         parameter.hasParameterAnnotation(AuthorizedUser::class.java) &&
             parameter.parameterType == User::class.java
@@ -30,8 +35,8 @@ class AuthorizedUserArgumentResolver(
             webRequest
                 .getNativeRequest(HttpServletRequest::class.java)
                 ?.session
-                ?.getAttribute("userId") as? Long
-                ?: throw UnauthorizedException()
+                ?.getAttribute(KEY_NAME) as? Long
+                ?: throw UnauthorizedException(ErrorCode.UNAUTHORIZED)
 
         return userService.getUserById(userId)
     }

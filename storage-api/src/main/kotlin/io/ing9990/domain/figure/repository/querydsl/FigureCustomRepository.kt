@@ -16,7 +16,7 @@ interface FigureCustomRepository {
     /**
      * 주목받는 인물들, 투표 수와 댓글 수가 가장 많은 사람부터 5개 가져옵니다.
      */
-    fun findPopularFigues(): List<FigureCardResult>
+    fun findPopularFigues(limit: Int = 5): List<FigureCardResult>
 
     /**
      * 카테고리와 함께 인기 순서로 조회합니다.

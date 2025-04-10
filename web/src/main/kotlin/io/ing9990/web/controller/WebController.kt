@@ -29,7 +29,7 @@ class WebController(
         @CurrentUser currentUser: CurrentUserDto,
         model: Model,
     ): String {
-        val popularFigures: List<FigureCardResult> = figureService.getPopularFigures(5)
+        val popularFigures: List<FigureCardResult> = figureService.getPopularFigures(3 * 30 - 1)
 
         model.addAttribute("figures", popularFigures)
 

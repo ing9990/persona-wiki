@@ -81,8 +81,8 @@ class FigureService(
      * @return 인기 있는 인물 목록
      */
     @Transactional(readOnly = true)
-    fun getPopularFigures(limit: Int = 6): List<FigureCardResult> {
-        val result: List<FigureCardResult> = figureRepository.findPopularFigues()
+    fun getPopularFigures(limit: Int): List<FigureCardResult> {
+        val result: List<FigureCardResult> = figureRepository.findPopularFigues(limit)
 
         return result
     }

@@ -5,175 +5,43 @@
 <head>
   <title>내 정보 - 국민사형투표</title>
   <meta name="description" content="내 계정 정보를 관리할 수 있습니다.">
-
-  <!-- 마이페이지 전용 스타일 -->
-  <style>
-    .profile-section {
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    .profile-image-container {
-      position: relative;
-      width: 150px;
-      height: 150px;
-      margin: 0 auto;
-    }
-
-    .profile-image {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-      border: 4px solid white;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s ease;
-    }
-
-    .profile-image-overlay {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      border-radius: 50%;
-      opacity: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      transition: opacity 0.3s ease;
-      cursor: pointer;
-    }
-
-    .profile-image-container:hover .profile-image-overlay {
-      opacity: 1;
-    }
-
-    .profile-image-text {
-      color: white;
-      font-size: 0.875rem;
-      font-weight: 500;
-    }
-
-    .info-card {
-      background-color: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .info-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .edit-button {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.25rem 0.5rem;
-      font-size: 0.875rem;
-      color: #6366F1;
-      background-color: #EEF2FF;
-      border-radius: 0.25rem;
-      transition: all 0.2s ease;
-    }
-
-    .edit-button:hover {
-      background-color: #C7D2FE;
-    }
-
-    .withdraw-button {
-      background-color: #FEE2E2;
-      color: #DC2626;
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      font-weight: 500;
-      transition: all 0.2s ease;
-      border: none;
-      cursor: pointer;
-    }
-
-    .withdraw-button:hover {
-      background-color: #FCA5A5;
-    }
-
-    /* 모달 스타일 */
-    .modal-backdrop {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 50;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    .modal-backdrop.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .modal-content {
-      background-color: white;
-      border-radius: 0.5rem;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      width: 95%;
-      max-width: 500px;
-      padding: 1.5rem;
-      transform: scale(0.95);
-      opacity: 0;
-      transition: transform 0.3s ease, opacity 0.3s ease;
-    }
-
-    .modal-backdrop.active .modal-content {
-      transform: scale(1);
-      opacity: 1;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="/css/users/my-page.css">
 </head>
 
 <body>
 <div layout:fragment="content">
   <!-- 페이지 헤더 -->
-  <section class="mb-8">
-    <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg shadow-md p-6">
-      <h1 class="text-3xl font-bold mb-2">내 정보</h1>
-      <p class="text-lg text-indigo-100">회원 정보를 확인하고 관리할 수 있습니다.</p>
+  <section class="mb-8 animate-fade-in">
+    <div
+        class="bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-500 text-white rounded-lg shadow-lg p-6 relative overflow-hidden">
+      <div class="absolute inset-0 bg-pattern opacity-10"></div>
+      <div class="relative z-10">
+        <h1 class="text-3xl font-bold mb-2 flex items-center">
+          <span
+              class="bg-white text-indigo-600 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+            <i class="fas fa-user"></i>
+          </span>
+          내 정보
+        </h1>
+        <p class="text-lg text-indigo-100">회원 정보를 확인하고 관리할 수 있습니다.</p>
+      </div>
     </div>
   </section>
 
   <!-- 알림 메시지 (성공/에러) -->
   <div th:if="${success}"
-       class="mb-6 p-4 bg-green-100 border border-green-200 text-green-700 rounded-md">
+       class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded-md animate-fade-in">
     <div class="flex">
-      <i class="fas fa-check-circle text-green-500 mr-3"></i>
-      <span th:text="${success}">성공 메시지</span>
+      <i class="fas fa-check-circle text-green-500 mr-3 text-xl"></i>
+      <span th:text="${success}" class="self-center">성공 메시지</span>
     </div>
   </div>
 
-  <div th:if="${error}" class="mb-6 p-4 bg-red-100 border border-red-200 text-red-700 rounded-md">
+  <div th:if="${error}"
+       class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-md animate-fade-in">
     <div class="flex">
-      <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
-      <span th:text="${error}">오류 메시지</span>
+      <i class="fas fa-exclamation-circle text-red-500 mr-3 text-xl"></i>
+      <span th:text="${error}" class="self-center">오류 메시지</span>
     </div>
   </div>
 
@@ -182,7 +50,7 @@
     <div class="lg:col-span-2 space-y-6">
       <!-- 프로필 사진 섹션 -->
       <div class="info-card profile-section">
-        <h2 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
+        <h2 class="section-title">
           <i class="fas fa-user-circle text-indigo-500 mr-2"></i>
           <span>회원 정보</span>
         </h2>
@@ -217,8 +85,7 @@
             </div>
 
             <div class="mb-4">
-              <span
-                  class="inline-block bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm">
+              <span class="badge">
                 <i class="fas fa-sign-in-alt mr-1"></i>
                 <span th:text="${user.provider}">소셜 로그인 제공자</span> 계정으로 로그인
               </span>
@@ -229,29 +96,34 @@
 
       <!-- 활동 요약 섹션 -->
       <div class="info-card profile-section">
-        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+        <h2 class="section-title">
           <i class="fas fa-chart-line text-indigo-500 mr-2"></i>
           <span>활동 요약</span>
         </h2>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="bg-gray-50 p-4 rounded-lg text-center">
-            <div class="text-3xl font-bold text-indigo-600 mb-1">0</div>
+          <div class="stat-card comment">
+            <div class="text-3xl font-bold text-indigo-600 mb-1"
+                 th:text="${activityOverview.commentCount}">0
+            </div>
             <div class="text-sm text-gray-600">작성한 댓글</div>
           </div>
-          <div class="bg-gray-50 p-4 rounded-lg text-center">
-            <div class="text-3xl font-bold text-green-600 mb-1">0</div>
+          <div class="stat-card vote">
+            <div class="text-3xl font-bold text-green-600 mb-1"
+                 th:text="${activityOverview.voteCount}">0
+            </div>
             <div class="text-sm text-gray-600">참여한 투표</div>
           </div>
-          <div class="bg-gray-50 p-4 rounded-lg text-center">
-            <div class="text-3xl font-bold text-blue-600 mb-1">0</div>
+          <div class="stat-card person">
+            <div class="text-3xl font-bold text-blue-600 mb-1"
+                 th:text="${activityOverview.personAddCount}">0
+            </div>
             <div class="text-sm text-gray-600">추가한 인물</div>
           </div>
         </div>
 
         <div class="mt-6 text-center">
-          <a href="/activity"
-             class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+          <a href="/activity" class="primary-button">
             <i class="fas fa-history mr-1"></i> 모든 활동 보기
           </a>
         </div>
@@ -262,21 +134,71 @@
     <div class="space-y-6">
       <!-- 최근 활동 -->
       <div class="info-card profile-section">
-        <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+        <h2 class="section-title">
           <i class="fas fa-history text-indigo-500 mr-2"></i>
           <span>최근 활동</span>
         </h2>
 
         <!-- 활동이 없는 경우 -->
-        <div class="text-center py-4 text-gray-500">
-          <i class="fas fa-info-circle text-xl mb-2"></i>
+        <div th:if="${#lists.isEmpty(recentActivities)}" class="text-center py-4 text-gray-500">
+          <i class="fas fa-info-circle text-xl mb-2 block"></i>
           <p>아직 활동 내역이 없습니다.</p>
+        </div>
+
+        <!-- 활동이 있는 경우 -->
+        <div th:unless="${#lists.isEmpty(recentActivities)}" class="space-y-3">
+          <div th:each="activity : ${recentActivities}" class="activity-item">
+            <div class="flex items-start">
+              <div th:switch="${activity.activityType.name()}" class="activity-icon">
+                <i th:case="'COMMENT'" class="fas fa-comment text-indigo-500"></i>
+                <i th:case="'VOTE'" class="fas fa-vote-yea text-green-500"></i>
+                <i th:case="'PERSON_ADD'" class="fas fa-user-plus text-blue-500"></i>
+                <i th:case="'PERSON_EDIT'" class="fas fa-user-edit text-yellow-500"></i>
+                <i th:case="'REPLY'" class="fas fa-reply text-purple-500"></i>
+              </div>
+              <div>
+                <div class="text-sm">
+                  <span th:switch="${activity.activityType.name()}">
+                    <span th:case="'COMMENT'">💬 댓글을 작성했습니다:  </span>
+                    <span th:case="'VOTE'">🗳️ 투표에 참여했습니다: </span>
+                    <span th:case="'PERSON_ADD'">👤 인물을 추가했습니다:</span>
+                    <span th:case="'PERSON_EDIT'">👤 인물 정보를 수정했습니다:</span>
+                    <span th:case="'REPLY'">💬 답글을 작성했습니다:</span>
+                  </span>
+                  <a th:href="@{'/search/' + ${activity.targetName}}" class="activity-target"
+                     th:text="${activity.targetName}">대상 이름</a>
+                </div>
+                <div class="text-xs text-gray-500 activity-date" th:data-original-date="${#temporals.format(activity.createdAt, 'yyyy-MM-dd HH:mm:ss')}" th:text="${#temporals.format(activity.createdAt, 'yyyy년 MM월 dd일 HH:mm')}">
+                  2023년 01월 01일 12:34
+                </div>
+                <div th:if="${activity.description}" class="activity-description mt-1"
+                     th:text="${activity.description}">
+                  활동 설명
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="mt-4 text-center">
           <a href="/activity" class="text-indigo-600 hover:text-indigo-800 transition">
             모든 활동 보기 <i class="fas fa-arrow-right ml-1"></i>
           </a>
+        </div>
+      </div>
+
+      <!-- 계정 설정 섹션 -->
+      <div class="info-card profile-section">
+        <h2 class="section-title">
+          <i class="fas fa-cog text-indigo-500 mr-2"></i>
+          <span>계정 설정</span>
+        </h2>
+
+        <div class="space-y-3 mt-4">
+          <button id="withdrawTrigger"
+                  class="withdraw-button w-full flex items-center justify-center">
+            <i class="fas fa-user-times mr-2"></i> 로그아웃
+          </button>
         </div>
       </div>
     </div>
@@ -345,6 +267,16 @@
   <!-- 회원 탈퇴 확인 모달 -->
   <div id="withdrawModal" class="modal-backdrop">
     <div class="modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-red-600">회원 탈퇴 확인</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="mb-6 bg-red-50 p-4 rounded-md">
+        <p class="text-red-600">탈퇴하시면 계정 정보와 모든 활동 내역이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
+      </div>
 
       <form action="/me/withdraw" method="post">
         <div class="text-right space-x-3">
@@ -364,77 +296,8 @@
 
 <!-- 페이지 자바스크립트 -->
 <th:block layout:fragment="script">
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      // 모달 요소들
-      const profileImageModal = document.getElementById('profileImageModal');
-      const editNicknameModal = document.getElementById('editNicknameModal');
-      const withdrawModal = document.getElementById('withdrawModal');
-
-      // 모달 트리거 버튼들
-      const profileImageTrigger = document.getElementById('profileImageTrigger');
-      const editNicknameTrigger = document.getElementById('editNicknameTrigger');
-      const withdrawTrigger = document.getElementById('withdrawTrigger');
-
-      // 모달 닫기 버튼들
-      const closeButtons = document.querySelectorAll('.modal-close');
-
-      // 모달 열기 함수
-      function openModal(modal) {
-        modal.classList.add('active');
-        document.body.style.overflow = 'hidden'; // 배경 스크롤 방지
-      }
-
-      // 모달 닫기 함수
-      function closeModal(modal) {
-        modal.classList.remove('active');
-        document.body.style.overflow = ''; // 배경 스크롤 복원
-      }
-
-      // 모든 모달 닫기
-      function closeAllModals() {
-        const modals = document.querySelectorAll('.modal-backdrop');
-        modals.forEach(modal => closeModal(modal));
-      }
-
-      // 트리거 버튼에 이벤트 리스너 추가
-      if (profileImageTrigger) {
-        profileImageTrigger.addEventListener('click', () => openModal(profileImageModal));
-      }
-
-      if (editNicknameTrigger) {
-        editNicknameTrigger.addEventListener('click', () => openModal(editNicknameModal));
-      }
-
-      if (withdrawTrigger) {
-        withdrawTrigger.addEventListener('click', () => openModal(withdrawModal));
-      }
-
-      // 닫기 버튼에 이벤트 리스너 추가
-      closeButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const modal = button.closest('.modal-backdrop');
-          closeModal(modal);
-        });
-      });
-
-      // 모달 외부 클릭 시 닫기
-      document.querySelectorAll('.modal-backdrop').forEach(modal => {
-        modal.addEventListener('click', (e) => {
-          if (e.target === modal) {
-            closeModal(modal);
-          }
-        });
-      });
-
-      // ESC 키로 모달 닫기
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          closeAllModals();
-        }
-      });
-    });
-  </script>
+  <script src="/js/users/my-page.js"></script>
+  <script src="/js/utils/relative-time.js"></script>
 </th:block>
 </body>
 </html>
