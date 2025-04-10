@@ -39,9 +39,20 @@
 }
 
 /* 모달 기본 스타일 */
+/* multi-step-modal.css */
+
+/* 기존 애니메이션 키프레임 코드 유지 */
+
+/* 모달 기본 스타일 업데이트 */
 .figure-modal-container {
   perspective: 1500px;
   transition: all 0.3s ease;
+}
+
+.figure-modal-wrapper {
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .figure-modal-card {
@@ -74,6 +85,25 @@
   pointer-events: none;
 }
 
+/* 카테고리 그리드 스타일 */
+.category-grid {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+.category-grid::-webkit-scrollbar {
+  width: 4px;
+}
+
+.category-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.category-grid::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 20px;
+}
+
 /* 카테고리 버튼 스타일 */
 .category-button {
   position: relative;
@@ -85,35 +115,6 @@
   transform: translateY(-3px);
 }
 
-.category-button::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 5px;
-  height: 5px;
-  background: rgba(79, 70, 229, 0.3);
-  opacity: 0;
-  border-radius: 100%;
-  transform: scale(1, 1) translate(-50%, -50%);
-  transform-origin: 50% 50%;
-}
-
-.category-button:focus:not(:active)::after {
-  animation: ripple 1s ease-out;
-}
-
-@keyframes ripple {
-  0% {
-    transform: scale(0, 0);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(30, 30);
-    opacity: 0;
-  }
-}
-
 /* 폼 요소 스타일 */
 .form-group {
   transition: all 0.3s ease;
@@ -123,15 +124,59 @@
   transform: translateY(-2px);
 }
 
-input:focus, select:focus, textarea:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.3);
+/* 검색어 추천 목록 스타일 수정 */
+#searchSuggestions {
+  transform-origin: top center;
+  animation: suggestionsPopIn 0.2s ease forwards;
+  max-height: 300px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
-/* 버튼 애니메이션 */
+@keyframes suggestionsPopIn {
+  from {
+    transform: translateY(-10px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+#searchSuggestions ul {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+}
+
+#searchSuggestions ul::-webkit-scrollbar {
+  width: 4px;
+}
+
+#searchSuggestions ul::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+#searchSuggestions ul::-webkit-scrollbar-thumb {
+  background-color: rgba(156, 163, 175, 0.5);
+  border-radius: 20px;
+}
+
+#searchSuggestions ul li {
+  transition: all 0.15s ease;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+}
+
+#searchSuggestions ul li:hover {
+  background-color: rgba(79, 70, 229, 0.1);
+  padding-left: 20px;
+}
+
+/* 버튼 스타일 개선 */
 button {
   position: relative;
   overflow: hidden;
+  transition: all 0.2s ease;
 }
 
 button:disabled {
@@ -148,79 +193,42 @@ button:hover:not(:disabled) {
   animation: fadeIn 0.3s ease-in-out forwards;
 }
 
-.animate-fade-out {
-  animation: fadeOut 0.3s ease-in-out forwards;
-}
-
-.animate-pulse {
-  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* 로딩 스피너 애니메이션 */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
-}
-
-/* 단계 전환 애니메이션 */
-.modal-step {
-  opacity: 0;
-  transform: translateY(10px);
-  animation: stepIn 0.3s forwards;
-}
-
-@keyframes stepIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* 이미지 확대/축소 효과 */
-#figureImage {
-  transition: transform 0.3s ease;
-}
-
-#figureImage:hover {
-  transform: scale(1.05);
-}
-
-/* 반응형 모바일 스타일 */
+/* 모바일 대응 스타일 */
 @media (max-width: 640px) {
   .figure-modal-wrapper {
-    width: 90%;
-    margin: 0 auto;
+    margin: 0;
+    width: 95%;
+    max-height: 85vh;
+  }
+
+  .figure-modal-card {
+    max-height: 85vh;
   }
 
   .modal-body {
     padding: 1rem;
   }
 
-  .form-group {
-    margin-bottom: 1rem;
+  #searchSuggestions {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    width: 100% !important;
   }
 
-  button {
-    padding-left: 1rem;
-    padding-right: 1rem;
+  #searchSuggestions ul {
+    max-height: 200px;
+  }
+
+  .category-grid {
+    max-height: 40vh;
   }
 }
 
 /* 다크 모드 대응 */
 @media (prefers-color-scheme: dark) {
-  .figure-modal-card {
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
-  }
-
-  .modal-header::after {
-    background: linear-gradient(45deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+  .category-grid::-webkit-scrollbar-thumb,
+  #searchSuggestions ul::-webkit-scrollbar-thumb {
+    background-color: rgba(156, 163, 175, 0.3);
   }
 }

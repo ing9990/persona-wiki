@@ -24,7 +24,7 @@ class VoteService(
     @Transactional
     fun voteFigure(voteData: VoteData) {
         val figure: Figure =
-            figureService.findFigureByCategoryIdAndName(
+            figureService.searchByCategoryIdAndName(
                 voteData.categoryId,
                 voteData.figureName,
             )

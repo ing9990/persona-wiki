@@ -1,7 +1,9 @@
 package io.ing9990.api.search
 
+import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.figure.service.dto.FigureCardResult
+import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
@@ -34,5 +36,20 @@ class SearchApi(
             }
 
         return ResponseEntity.ok(suggestions)
+    }
+
+    @GetMapping("/search/present-validation")
+    fun isPresent(
+        @RequestParam(required = true) categoryId: String,
+        @RequestParam(required = true) figureName: String,
+    ): ResponseEntity<FigureCardResult> {
+        try {
+            val result: FigureCardResult =
+                figureService.searchByCategoryIdAndNameOrNull(categoryId, figureName)
+
+            return ResponseEntity.status(HttpStatus.OK).body(result)
+        } catch (e: EntityNotFoundException) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null)
+        }
     }
 }

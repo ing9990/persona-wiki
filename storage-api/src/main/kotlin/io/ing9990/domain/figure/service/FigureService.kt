@@ -34,7 +34,7 @@ class FigureService(
         figureRepository.findByIdWithVotes(id)
             ?: throw IllegalArgumentException("해당 ID의 인물이 존재하지 않습니다: $id")
 
-    fun findFigureByCategoryIdAndName(
+    fun searchByCategoryIdAndName(
         categoryId: String,
         figureName: String,
     ) = figureRepository.findFigureByCategoryIdAndName(categoryId, figureName)
@@ -42,6 +42,19 @@ class FigureService(
             "Figure",
             "$categoryId/figureName",
             "해당 인물을 찾을 수 없습니다.",
+        )
+
+    fun searchByCategoryIdAndNameOrNull(
+        categoryId: String,
+        figureName: String,
+    ): FigureCardResult =
+        FigureCardResult.from(
+            figureRepository.findFigureByCategoryIdAndName(categoryId, figureName)
+                ?: throw EntityNotFoundException(
+                    "Figure",
+                    "$categoryId/figureName",
+                    "해당 인물을 찾을 수 없습니다.",
+                ),
         )
 
     /**
