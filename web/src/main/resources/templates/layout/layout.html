@@ -74,20 +74,55 @@
   <script src="/js/utils/relative-time.js"></script>
   <!-- Alpine.js 지연 로드 -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.3/dist/cdn.min.js"></script>
+
+  <script async custom-element="amp-auto-ads"
+          src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+  </script>
   <script async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
           crossorigin="anonymous"></script>
   <script>
-    (function(){var w=window;if(w.ChannelIO){return w.console.error("ChannelIO script included twice.");}var ch=function(){ch.c(arguments);};ch.q=[];ch.c=function(args){ch.q.push(args);};w.ChannelIO=ch;function l(){if(w.ChannelIOInitialized){return;}w.ChannelIOInitialized=true;var s=document.createElement("script");s.type="text/javascript";s.async=true;s.src="https://cdn.channel.io/plugin/ch-plugin-web.js";var x=document.getElementsByTagName("script")[0];if(x.parentNode){x.parentNode.insertBefore(s,x);}}if(document.readyState==="complete"){l();}else{w.addEventListener("DOMContentLoaded",l);w.addEventListener("load",l);}})();
+    (function () {
+      var w = window;
+      if (w.ChannelIO) {
+        return w.console.error("ChannelIO script included twice.");
+      }
+      var ch = function () {
+        ch.c(arguments);
+      };
+      ch.q = [];
+      ch.c = function (args) {
+        ch.q.push(args);
+      };
+      w.ChannelIO = ch;
+
+      function l() {
+        if (w.ChannelIOInitialized) {
+          return;
+        }
+        w.ChannelIOInitialized = true;
+        var s = document.createElement("script");
+        s.type = "text/javascript";
+        s.async = true;
+        s.src = "https://cdn.channel.io/plugin/ch-plugin-web.js";
+        var x = document.getElementsByTagName("script")[0];
+        if (x.parentNode) {
+          x.parentNode.insertBefore(s, x);
+        }
+      }
+
+      if (document.readyState === "complete") {
+        l();
+      } else {
+        w.addEventListener("DOMContentLoaded", l);
+        w.addEventListener("load", l);
+      }
+    })();
 
     ChannelIO('boot', {
       "pluginKey": "99d403ba-c558-47c0-a2ed-d70ed6eb7827"
     });
   </script>
-  <!--  구글 애드센스-->
-  <script async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
-          crossorigin="anonymous"></script>
   <title layout:title-pattern="$CONTENT_TITLE - 국민사형투표">국민사형투표</title>
 
   <style>
@@ -178,6 +213,10 @@
 
   <!-- 페이지별 추가 스타일시트 -->
   <th:block layout:fragment="css"></th:block>
+
+  <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+          crossorigin="anonymous"></script>
 </head>
 
 <body class="bg-gray-50 min-h-screen flex flex-col">
@@ -738,7 +777,8 @@
 
 <!-- 페이지별 자바스크립트 -->
 <th:block layout:fragment="script"></th:block>
-
+<!-- 먼저 ToastManager 로드 -->
+<script src="/js/utils/toast-manager.js"></script>
 <!-- 웰컴 모달 스크립트 -->
 <script src="/js/welcome-modal.js"></script>
 
@@ -815,7 +855,8 @@
 <script src="/js/login/login-modal.js"></script>
 
 <!--인물 추가 모달-->
-<script src="/js/utils/figure-modal.js"></script>
+<script src="/js/figure/figure-modal.js"></script>
+<script src="/js/figure/figure-modal-validation.js"></script>
 
 <th:block th:replace="~{fragments/toast/toast :: toast}"></th:block>
 </body>

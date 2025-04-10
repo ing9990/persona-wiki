@@ -57,7 +57,7 @@ class FigureRepositoryImpl(
         }
     }
 
-    override fun findPopularFigues(): List<FigureCardResult> {
+    override fun findPopularFigues(limit: Int): List<FigureCardResult> {
         val figure = QFigure.figure
         val vote = QVote.vote
         val comment = QComment.comment
@@ -71,7 +71,7 @@ class FigureRepositoryImpl(
                 .groupBy(figure)
                 .orderBy(
                     vote.count().add(comment.count()).desc(),
-                ).limit(5)
+                ).limit(limit.toLong())
                 .fetch()
 
         return fetch.map { FigureCardResult.from(it) }

@@ -1,5 +1,6 @@
 package io.ing9990.domain.comment.service
 
+import io.ing9990.domain.activities.events.handler.ActivityEventPublisher
 import io.ing9990.domain.comment.Comment
 import io.ing9990.domain.comment.CommentInteraction
 import io.ing9990.domain.comment.CommentType
@@ -20,6 +21,7 @@ class CommentService(
     private val figureService: FigureService,
     private val commentRepository: CommentRepository,
     private val commentInteractionRepository: CommentInteractionRepository,
+    private val activityEventPublisher: ActivityEventPublisher,
 ) {
     /**
      * 새로운 댓글을 추가합니다.
@@ -43,6 +45,8 @@ class CommentService(
             )
 
         val savedComment: Comment = commentRepository.save(comment)
+        activityEventPublisher
+            .publishCommentCreated(savedComment)
 
         return savedComment
     }
@@ -91,6 +95,7 @@ class CommentService(
                 comment.deleteInteraction(user.id!!, interactionType)
                 commentInteractionRepository.delete(existingInteraction)
             }
+
             // 다른 타입의 상호작용이 존재하면 업데이트 (좋아요→싫어요 또는 싫어요→좋아요)
             existingInteraction != null -> {
                 comment.updateInteraction(user.id!!, interactionType)
@@ -104,6 +109,7 @@ class CommentService(
                         interactionType = interactionType,
                     )
                 comment.addInteraction(interaction)
+                activityEventPublisher.publishCommentInteraction(interaction)
             }
         }
 
@@ -158,7 +164,10 @@ class CommentService(
         // 부모 댓글에 답글 추가
         parentComment.addReply(reply)
 
-        return CommentResult.from(commentRepository.save(reply))
+        val savedReply: Comment = commentRepository.save(reply)
+        activityEventPublisher.publishCommentCreated(savedReply)
+
+        return CommentResult.from(savedReply)
     }
 
     fun getReplies(

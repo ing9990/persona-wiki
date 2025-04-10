@@ -13,7 +13,9 @@ class Redirect {
             figureName: String,
         ): String {
             val encodedFigureName = URLEncoder.encode(figureName, StandardCharsets.UTF_8.name())
-            return "redirect:/$categoryId/@$encodedFigureName"
+            val redirectUrl = "redirect:/$categoryId/@$encodedFigureName"
+
+            return redirectUrl
         }
     }
 }

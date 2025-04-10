@@ -1,5 +1,6 @@
 package io.ing9990.domain.vote.service
 
+import io.ing9990.domain.activities.events.handler.ActivityEventPublisher
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.repository.FigureRepository
 import io.ing9990.domain.figure.service.FigureService
@@ -15,6 +16,7 @@ class VoteService(
     private val figureService: FigureService,
     private val figureRepository: FigureRepository,
     private val voteRepository: VoteRepository,
+    private val activityEventPublisher: ActivityEventPublisher,
 ) {
     /**
      * 투표
@@ -36,6 +38,8 @@ class VoteService(
                 sentiment = voteData.sentiment,
             )
         val voteSaved = voteRepository.save(voteCreated)
+        activityEventPublisher.publishVoteCreated(voteSaved)
+
         figure.addVote(voteSaved)
         figureRepository.save(figure)
     }

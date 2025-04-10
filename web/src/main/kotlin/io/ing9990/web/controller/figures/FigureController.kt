@@ -11,7 +11,6 @@ import io.ing9990.domain.figure.service.dto.FigureDetailsResult
 import io.ing9990.domain.figure.service.dto.PopularFiguresByCategoriesResult
 import io.ing9990.domain.user.User
 import jakarta.validation.Valid
-import org.springframework.http.MediaType.APPLICATION_FORM_URLENCODED_VALUE
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -32,29 +31,24 @@ class FigureController(
     @GetMapping("/figures")
     fun listFiguresByCategory(model: Model): String {
         val result: PopularFiguresByCategoriesResult =
-            categoryService.getPopularFiguresByCategory(3)
+            categoryService.getPopularFiguresByCategory(6)
 
         model.addAttribute("categoryResult", result)
 
         return "figure/figure-list-by-category"
     }
 
-    @GetMapping("/figures/{categoryId}/{figureName}")
-    fun redirectFromLegacyUrl(
-        @PathVariable categoryId: String,
-        @PathVariable figureName: String,
-    ): String = Redirect.to(categoryId, figureName)
-
     /**
      * 인물을 등록합니다 (폼 제출용)
      */
-    @PostMapping("/figures", consumes = [APPLICATION_FORM_URLENCODED_VALUE])
+    @PostMapping("/figures")
     fun addFigure(
         @AuthorizedUser user: User,
         model: Model,
         @Valid @ModelAttribute request: CreateFigureRequest,
     ): String {
         val figure: Figure = figureService.createFigure(request.toData(user))
+
         return Redirect.to(figure.category.id, figure.name)
     }
 
@@ -83,4 +77,10 @@ class FigureController(
 
         return "figure/figure-detail"
     }
+
+    @GetMapping("/figures/{categoryId}/{figureName}")
+    fun redirectFromLegacyUrl(
+        @PathVariable categoryId: String,
+        @PathVariable figureName: String,
+    ): String = Redirect.to(categoryId, figureName)
 }

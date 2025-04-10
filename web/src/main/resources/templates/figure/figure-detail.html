@@ -4,6 +4,9 @@
 
 <head>
   <title th:text="${detailsResult.getName()} + ' - 국민사형투표'">인물 상세</title>
+  <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+          crossorigin="anonymous"></script>
   <meta name="description" th:content="${#strings.abbreviate(detailsResult.bio,15)}">
 
   <link rel="stylesheet" href="/css/comment-reply.css">
@@ -222,15 +225,15 @@
   </script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
       // MutationObserver를 사용하여 동적으로 추가되는 답글 폼에 로그인 체크 적용
       const commentSection = document.getElementById('comment-section');
       if (commentSection) {
-        const observer = new MutationObserver(function(mutations) {
-          mutations.forEach(function(mutation) {
+        const observer = new MutationObserver(function (mutations) {
+          mutations.forEach(function (mutation) {
             if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
               // 동적으로 추가된 요소 중 로그인 체크가 필요한 요소 찾기
-              mutation.addedNodes.forEach(function(node) {
+              mutation.addedNodes.forEach(function (node) {
                 if (node.nodeType === 1) { // Element 노드인 경우만
                   const loginElements = node.querySelectorAll ?
                       node.querySelectorAll('.requires-login') : [];
@@ -244,16 +247,17 @@
 
                       element.setAttribute('data-login-check-applied', 'true');
 
-                      const isLoggedIn = document.getElementById('userLoginStatus')?.value === 'true';
+                      const isLoggedIn = document.getElementById('userLoginStatus')?.value
+                          === 'true';
                       if (!isLoggedIn) {
-                        element.addEventListener('click', function(e) {
+                        element.addEventListener('click', function (e) {
                           if (element.type === 'submit') {
                             e.preventDefault();
                           }
                           window.openLoginModal();
                         });
 
-                        element.addEventListener('focus', function(e) {
+                        element.addEventListener('focus', function (e) {
                           window.openLoginModal();
                           element.blur();
                         });
@@ -275,6 +279,8 @@
     });
   </script>
 </th:block>
-
 </body>
+<amp-auto-ads type="adsense"
+              data-ad-client="ca-pub-1448769500494356">
+</amp-auto-ads>
 </html>

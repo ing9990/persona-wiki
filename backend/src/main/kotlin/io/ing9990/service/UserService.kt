@@ -6,7 +6,6 @@ import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.User
 import io.ing9990.domain.user.User.Companion.regex
 import io.ing9990.domain.user.repositories.UserRepository
-import io.ing9990.exceptions.UnauthorizedException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -76,22 +75,18 @@ class UserService(
     }
 
     @Transactional
-    fun updateProfileImage(userId: Long?): User =
-        userId?.let { id ->
-            getUserById(id).apply { removeProfileImage() }
-        } ?: throw UnauthorizedException()
+    fun updateProfileImage(userId: Long): User = getUserById(userId).apply { removeProfileImage() }
 
     @Transactional
     fun updateNickname(
-        userId: Long?,
+        userId: Long,
         nickname: String,
-    ): User =
-        userId?.let {
-            val user = getUserById(it)
-            updateNickNameValidation(user, nickname)
-            user.nickname = nickname
-            return user
-        } ?: throw UnauthorizedException()
+    ): User {
+        val user = getUserById(userId)
+        updateNickNameValidation(user, nickname)
+        user.nickname = nickname
+        return user
+    }
 
     private fun updateNickNameValidation(
         user: User,

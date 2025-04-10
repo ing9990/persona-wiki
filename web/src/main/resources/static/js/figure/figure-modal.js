@@ -85,36 +85,37 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  submitBtn.addEventListener('click', async () => {
+  submitBtn.addEventListener('click', () => {
     errorAlert.classList.add('hidden');
     loadingOverlay.classList.remove('hidden');
     submitBtn.disabled = true;
     submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
 
+    // 폼 데이터 수집
     const formData = {
       figureName: document.getElementById('figureName').value.trim(),
-      categoryId: document.getElementById('categoryId').value.trim()
-          || 'default',
+      categoryId: document.getElementById('categoryId').value.trim() || 'default',
       imageUrl: document.getElementById('imageUrl').value.trim(),
       bio: document.getElementById('bio').value.trim()
     };
 
     try {
-      const res = await fetch('/figures', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+      // 폼을 직접 생성하여 제출
+      const formElement = document.createElement('form');
+      formElement.method = 'POST';
+      formElement.action = '/figures';
+      formElement.style.display = 'none';
+
+      Object.keys(formData).forEach(key => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = formData[key];
+        formElement.appendChild(input);
       });
 
-      if (!res.ok) {
-        throw new Error('인물 추가에 실패했습니다.');
-      }
-
-      const redirectUrl = await res.text();
-      window.location.href = redirectUrl;
-
+      document.body.appendChild(formElement);
+      formElement.submit();
     } catch (error) {
       loadingOverlay.classList.add('hidden');
       let errorMsg = error.message || '인물 추가 중 오류가 발생했습니다.';

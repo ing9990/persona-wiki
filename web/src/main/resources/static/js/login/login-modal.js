@@ -182,6 +182,7 @@ document.addEventListener('DOMContentLoaded', function () {
       if (element.type === 'submit') {
         e.preventDefault();
       }
+      toastManager.error("로그인이 필요한 작업입니다.")
       window.openLoginModal();
     });
 

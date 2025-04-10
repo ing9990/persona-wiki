@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title>내 활동 내역 - 국민사형투표</title>
+  <meta name="description" content="내 활동 내역을 확인할 수 있습니다.">
+  <link rel="stylesheet" href="/css/users/activity.css">
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- 페이지 헤더 -->
+  <section class="mb-8 animate-fade-in">
+    <div
+        class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-500 text-white rounded-lg shadow-lg p-6 relative overflow-hidden">
+      <div class="absolute inset-0 bg-pattern opacity-10"></div>
+      <div class="relative z-10">
+        <h1 class="text-3xl font-bold mb-2 flex items-center">
+          <span
+              class="bg-white text-indigo-600 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+            <i class="fas fa-history"></i>
+          </span>
+          내 활동 내역
+        </h1>
+        <p class="text-lg text-indigo-100">사이트에서의 모든 활동 내역을 확인할 수 있습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 활동 필터 -->
+  <div class="mb-6 bg-white rounded-lg shadow-md p-4">
+    <div class="flex flex-wrap items-center gap-4">
+      <h3 class="font-semibold text-gray-700 mr-2">활동 유형:</h3>
+      <button class="filter-btn active" data-filter="all">전체</button>
+      <button class="filter-btn" data-filter="COMMENT">댓글</button>
+      <button class="filter-btn" data-filter="VOTE">투표</button>
+      <button class="filter-btn" data-filter="PERSON_ADD">인물 추가</button>
+    </div>
+  </div>
+
+  <!-- 활동 내역 -->
+  <div class="bg-white rounded-lg shadow-md p-6">
+    <!-- 활동이 없는 경우 -->
+    <div th:if="${#lists.isEmpty(activities)}" class="text-center py-8 text-gray-500">
+      <div class="mb-4">
+        <i class="fas fa-info-circle text-4xl text-indigo-400"></i>
+      </div>
+      <h3 class="text-xl font-medium mb-2">아직 활동 내역이 없습니다</h3>
+      <p class="text-gray-600 mb-6">댓글 작성, 투표 참여 등 다양한 활동을 시작해보세요.</p>
+      <a href="/"
+         class="inline-block px-6 py-3 bg-indigo-600 text-white rounded-md shadow-md hover:bg-indigo-700 transition">
+        <i class="fas fa-home mr-2"></i> 홈으로 이동
+      </a>
+    </div>
+
+    <!-- 활동이 있는 경우 -->
+    <div th:unless="${#lists.isEmpty(activities)}" class="activities-container">
+      <div th:each="activity : ${activities}" class="activity-card"
+           th:data-type="${activity.activityType.name()}">
+        <div class="activity-time">
+          <div class="activity-date"
+               th:data-original-date="${#temporals.format(activity.createdAt, 'yyyy-MM-dd')}"
+               th:text="${#temporals.format(activity.createdAt, 'yyyy년 MM월 dd일')}">2023년 01월 01일
+          </div>
+          <div class="activity-hour"
+               th:data-original-date="${#temporals.format(activity.createdAt, 'yyyy-MM-dd HH:mm:ss')}"
+               th:text="${#temporals.format(activity.createdAt, 'HH:mm')}">12:34
+          </div>
+        </div>
+
+        <div class="activity-content">
+          <div class="activity-header">
+            <div th:switch="${activity.activityType.name()}" class="activity-icon">
+              <i th:case="'COMMENT'" class="fas fa-comment text-indigo-500"></i>
+              <i th:case="'VOTE'" class="fas fa-vote-yea text-green-500"></i>
+              <i th:case="'PERSON_ADD'" class="fas fa-user-plus text-blue-500"></i>
+              <i th:case="'PERSON_EDIT'" class="fas fa-user-edit text-yellow-500"></i>
+              <i th:case="'REPLY'" class="fas fa-reply text-purple-500"></i>
+            </div>
+            <div class="activity-type">
+              <span th:switch="${activity.activityType.name()}">
+                <span th:case="'COMMENT'">댓글 작성</span>
+                <span th:case="'VOTE'">투표 참여</span>
+                <span th:case="'PERSON_ADD'">인물 추가</span>
+                <span th:case="'PERSON_EDIT'">인물 정보 수정</span>
+                <span th:case="'REPLY'">답글 작성</span>
+              </span>
+            </div>
+          </div>
+
+          <div class="activity-target">
+            <a th:href="@{'/persons/' + ${activity.targetId}}" class="activity-link"
+               th:text="${activity.targetName}">
+              대상 이름
+            </a>
+          </div>
+
+          <div th:if="${activity.description}" class="activity-description mt-2"
+               th:text="${activity.description}">
+            활동 설명
+          </div>
+        </div>
+      </div>
+
+      <!-- 더 불러오기 버튼 -->
+      <div class="text-center mt-8">
+        <button id="loadMoreBtn"
+                class="px-6 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition">
+          더 불러오기 <i class="fas fa-chevron-down ml-1"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- activity.html의 script 블록 -->
+<th:block layout:fragment="script">
+  <script src="/js/utils/relative-time.js"></script>
+  <script src="/js/users/activity.js"></script>
+</th:block>
