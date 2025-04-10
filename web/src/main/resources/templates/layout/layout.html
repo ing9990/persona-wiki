@@ -54,6 +54,9 @@
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
         rel="stylesheet">
 
+  <!--  인물 등록 CSS-->
+  <link rel="stylesheet" th:href="@{/css/figure/multi-step-modal.css}">
+
   <!-- layout.html head 내부, Tailwind 아래쪽에 추가 -->
   <link rel="stylesheet" href="/css/index.css">
 
@@ -304,7 +307,7 @@
                    class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100">
                   <i class="fas fa-users mr-2"></i> 인물 목록
                 </a>
-                <a href="#"
+                <a href="#" onclick="openFigureModal()"
                    class="open-figure-modal block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100">
                   <i class="fas fa-plus-circle mr-2"></i> 인물 추가
                 </a>
@@ -785,13 +788,11 @@
 <!-- 로그인 모달 -->
 <div th:replace="~{fragments/login/login-fragment :: loginModal}"></div>
 <!-- 인물 추가 모달 -->
-<div th:replace="~{fragments/figure/figure-add-modal :: figureAddModal}"></div>
+<div th:replace="~{fragments/figure/multi-step-modal :: multiStepModal}"></div>
 <!-- 로그인 모달 스크립트 -->
 <script src="/js/login/login-modal.js"></script>
 
-<!--인물 추가 모달-->
-<script src="/js/figure/figure-modal.js"></script>
-<script src="/js/figure/figure-modal-validation.js"></script>
+<script th:src="@{/js/figure/multi-step-modal.js}"></script>
 
 <th:block th:replace="~{fragments/toast/toast :: toast}"></th:block>
 </body>

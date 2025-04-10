@@ -1,0 +1,6 @@
+# application.yml
+google:
+  search:
+    api:
+      key: AIzaSyA6ephGorydHsTI-ksy6QaJMegr4va9VHg
+    cx: 86e73f82375634de1
