@@ -407,7 +407,8 @@
 
         <!-- PC: 로그인 상태 -->
         <th:block th:if="${current.loggedIn()}">
-          <a href="#" class="open-figure-modal text-white hover:text-indigo-100 transition"
+          <a onclick="openFigureModal()"
+             class="open-figure-modal text-white hover:text-indigo-100 transition"
              aria-label="인물 추가">
             <i class="fas fa-plus-circle mr-1" aria-hidden="true"></i>
             <span>추가</span>
@@ -482,7 +483,7 @@
               <i class="fas fa-users text-indigo-600 mr-3 text-lg"></i>
               <span class="text-gray-800 font-medium">인물 목록</span>
             </a>
-            <a href="#"
+            <a onclick="openFigureModal()"
                class="open-figure-modal flex items-center py-3 px-4 bg-gray-100 rounded-lg hover:bg-indigo-50 transition">
               <i class="fas fa-plus-circle text-green-600 mr-3 text-lg"></i>
               <span class="text-gray-800 font-medium">인물 추가</span>

@@ -17,10 +17,6 @@ data class CreateFigureRequest(
     @field:NotBlank(message = "카테고리는 필수입니다.")
     @JsonProperty("categoryId")
     val categoryId: String,
-    @field:Pattern(
-        regexp = "^(https?://)[\\w\\-._~:/?#\\[\\]@!$&'()*+,;=]+$",
-        message = "올바른 URL 형식이 아닙니다. http 또는 https로 시작해야 합니다.",
-    )
     @field:NotBlank(message = "이미지 URL은 필수입니다.")
     @JsonProperty("imageUrl")
     val imageUrl: String,
