@@ -7,7 +7,6 @@ import io.ing9990.domain.activities.ActivityType
 import io.ing9990.domain.activities.querydsl.QActivity
 import io.ing9990.domain.activities.repositories.querydsl.dto.ActivityOverviewResult
 import io.ing9990.domain.activities.repositories.querydsl.dto.RecentActivityResult
-import io.ing9990.domain.activities.repository.querydsl.ActivityCustomRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable

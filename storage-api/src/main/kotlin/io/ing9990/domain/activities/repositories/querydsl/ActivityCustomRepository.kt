@@ -1,4 +1,4 @@
-package io.ing9990.domain.activities.repository.querydsl
+package io.ing9990.domain.activities.repositories.querydsl
 
 import io.ing9990.domain.activities.ActivityType
 import io.ing9990.domain.activities.repositories.querydsl.dto.ActivityOverviewResult

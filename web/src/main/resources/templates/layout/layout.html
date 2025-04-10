@@ -579,68 +579,6 @@
 </main>
 
 
-<!--환영 모달-->
-<div
-    id="welcomeModal"
-    class="fixed inset-0 bg-black bg-opacity-0 z-50 flex items-center justify-center pointer-events-none transition-opacity duration-300 opacity-0"
-    aria-hidden="true"
-    role="dialog"
-    aria-modal="true"
->
-  <!-- 배경 레이어 -->
-  <div
-      id="welcomeModalOverlay"
-      class="absolute inset-0 bg-black bg-opacity-50"
-      tabindex="-1"
-  ></div>
-
-  <!-- 모달 컨테이너 (이 부분에서 width, max-width 조정) -->
-  <div
-      id="welcomeModalContent"
-      class="bg-white rounded-lg shadow-xl w-full max-w-4xl p-8 mx-4 transform transition-all duration-300 scale-95 opacity-0"
-  >
-    <!-- 닫기 아이콘(X) -->
-    <button
-        type="button"
-        id="welcomeModalCloseIcon"
-        class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 focus:outline-none"
-        aria-label="닫기"
-    >
-      <i class="fas fa-times"></i>
-    </button>
-
-    <div class="text-center mb-4">
-      <i class="fas fa-info-circle text-indigo-600 text-4xl"></i>
-    </div>
-    <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">
-      국민사형투표에 오신 것을 환영합니다
-    </h2>
-
-    <!-- 안내 문구들이 표시될 영역 -->
-    <div
-        id="welcomeModalText"
-        class="text-gray-700 mb-6 text-left leading-relaxed"
-    ></div>
-
-    <!-- 버튼들 -->
-    <div class="flex space-x-3 justify-center">
-      <button
-          id="welcomeModalCloseBtn"
-          class="bg-indigo-600 text-white py-2 px-6 rounded-lg hover:bg-indigo-700 transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 hidden"
-      >
-        이해했습니다
-      </button>
-      <button
-          id="welcomeModalOptOutBtn"
-          class="bg-gray-200 text-gray-800 py-2 px-6 rounded-lg hover:bg-gray-300 transition focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 hidden"
-      >
-        다시 보지 않기
-      </button>
-    </div>
-  </div>
-</div>
-
-
 <footer class="bg-gray-800 text-white py-6" itemscope itemtype="https://schema.org/WPFooter">
   <div class="container mx-auto px-4">
     <div class="flex flex-col md:flex-row justify-between items-center">
@@ -780,9 +718,6 @@
 <!-- 먼저 ToastManager 로드 -->
 <script src="/js/utils/toast-manager.js"></script>
 <!-- 웰컴 모달 스크립트 -->
-<script src="/js/welcome-modal.js"></script>
-
-<!-- 로딩 성능 향상을 위한 지연 로드 스크립트 -->
 <script>
 
   // 모바일 메뉴 전용 스크립트

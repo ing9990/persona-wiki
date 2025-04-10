@@ -1,7 +1,7 @@
 package io.ing9990.domain.activities.repositories
 
 import io.ing9990.domain.activities.Activity
-import io.ing9990.domain.activities.repository.querydsl.ActivityCustomRepository
+import io.ing9990.domain.activities.repositories.querydsl.ActivityCustomRepository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
