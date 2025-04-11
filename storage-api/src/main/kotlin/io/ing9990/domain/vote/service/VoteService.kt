@@ -26,7 +26,7 @@ class VoteService(
         val figure: Figure =
             figureService.searchByCategoryIdAndName(
                 voteData.categoryId,
-                voteData.figureName,
+                voteData.slug,
             )
 
         validateVotable(figure, voteData.user)

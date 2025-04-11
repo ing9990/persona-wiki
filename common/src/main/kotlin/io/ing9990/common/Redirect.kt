@@ -10,9 +10,9 @@ class Redirect {
          */
         fun to(
             categoryId: String,
-            figureName: String,
+            slug: String,
         ): String {
-            val encodedFigureName = URLEncoder.encode(figureName, StandardCharsets.UTF_8.name())
+            val encodedFigureName = URLEncoder.encode(slug, StandardCharsets.UTF_8.name())
             val redirectUrl = "redirect:/$categoryId/@$encodedFigureName"
 
             return redirectUrl

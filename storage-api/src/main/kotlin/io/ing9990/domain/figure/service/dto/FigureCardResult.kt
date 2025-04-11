@@ -7,6 +7,7 @@ class FigureCardResult(
     val categoryId: String,
     val categoryName: String,
     val name: String,
+    val slug: String,
     val bio: String,
     val image: String,
     val positives: Long,
@@ -19,7 +20,8 @@ class FigureCardResult(
                 categoryId = figure.category.id,
                 categoryName = figure.category.displayName,
                 name = figure.name,
-                bio = figure.bio ?: "소개가 등록되지 않았습니다.",
+                slug = figure.slug,
+                bio = figure.bio,
                 image = figure.imageUrl,
                 positives = figure.votes.count { it.sentiment == Sentiment.POSITIVE }.toLong(),
                 negatives =
@@ -30,5 +32,5 @@ class FigureCardResult(
             )
     }
 
-    fun toFigureDetailsUri(): String = "/$categoryId/@$name"
+    fun toFigureDetailsUri(): String = "/$categoryId/@$slug"
 }

@@ -1,6 +1,5 @@
 package io.ing9990.api.search
 
-import io.ing9990.common.To
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.figure.service.dto.FigureCardResult
@@ -33,6 +32,7 @@ class SearchApi(
                     categoryId = figure.categoryId,
                     categoryName = figure.categoryName,
                     imageUrl = figure.image,
+                    slug = figure.slug,
                 )
             }
 
@@ -42,13 +42,13 @@ class SearchApi(
     @GetMapping("/search/present-validation")
     fun isPresent(
         @RequestParam(required = true) categoryId: String,
-        @RequestParam(required = true) figureName: String,
+        @RequestParam(required = true) slug: String,
     ): ResponseEntity<FigureCardResult> {
         try {
             val result: FigureCardResult =
                 figureService.searchByCategoryIdAndNameOrNull(
                     categoryId,
-                    To.slug(figureName),
+                    slug,
                 )
 
             return ResponseEntity.status(HttpStatus.OK).body(result)

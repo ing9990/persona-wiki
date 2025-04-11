@@ -1,5 +1,6 @@
 package io.ing9990.domain.figure
 
+import io.ing9990.common.To
 import io.ing9990.domain.category.Category
 import io.ing9990.domain.comment.Comment
 import io.ing9990.domain.vote.Vote
@@ -39,8 +40,10 @@ class Figure protected constructor(
     @Column(name = "figure_id") val id: Long? = null,
     @Column(name = "name", nullable = false, length = 20) var name: String,
     @Column(name = "image_url", nullable = false, length = 1200) var imageUrl: String,
-    @Column(name = "biography", nullable = true, length = 1200) var bio: String? = null,
-    @Column(name = "chosung") val chosung: String = "",
+    @Column(name = "biography", nullable = true, length = 1200) var bio: String,
+    @Column(name = "chosung") val chosung: String,
+    @Column(name = "slug", nullable = false, unique = true, length = 50)
+    val slug: String,
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
         name = "category_id",
@@ -61,7 +64,7 @@ class Figure protected constructor(
         fun create(
             name: String,
             imageUrl: String,
-            bio: String?,
+            bio: String,
             category: Category,
         ): Figure {
             val chosung = getChosungFrom(name) // 함수 만들어서 초성 추출
@@ -71,6 +74,7 @@ class Figure protected constructor(
                 bio = bio,
                 category = category,
                 chosung = chosung,
+                slug = To.slug(name),
             )
         }
 

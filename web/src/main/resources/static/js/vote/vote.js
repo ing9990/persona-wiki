@@ -27,8 +27,10 @@ document.addEventListener('DOMContentLoaded', function () {
     disableVoteButtons();
     showLoading(button);
 
+    const slug = window.makeSlug(figureName)
+
     // API 호출
-    fetch(`/api/v1/categories/${categoryId}/@${figureName}/vote`, {
+    fetch(`/api/v1/categories/${categoryId}/@${slug}/vote`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

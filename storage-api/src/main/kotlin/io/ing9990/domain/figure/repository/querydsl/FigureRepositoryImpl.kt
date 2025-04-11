@@ -134,7 +134,7 @@ class FigureRepositoryImpl(
 
     override fun findByCategoryIdAndNameWithDetails(
         categoryId: String,
-        figureName: String,
+        slug: String,
         userId: Long,
         commentPage: Int,
         commentSize: Int,
@@ -153,11 +153,11 @@ class FigureRepositoryImpl(
                 .where(
                     figure.category.id
                         .eq(categoryId)
-                        .and(figure.name.eq(figureName)),
+                        .and(figure.slug.eq(slug)),
                 ).fetchOne()
                 ?: throw EntityNotFoundException(
                     "Figure",
-                    "$categoryId/$figureName",
+                    "$categoryId/$slug",
                     "해당 인물을 찾을 수 없습니다.",
                 )
 

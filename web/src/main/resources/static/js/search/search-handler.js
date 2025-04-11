@@ -50,7 +50,7 @@ function SearchHandler() {
     // 추천 목록에서 항목 선택
     selectSuggestion(suggestion) {
       // 인물 상세 페이지로 이동
-      window.location.href = `/${suggestion.categoryId}/@${suggestion.name}`;
+      window.location.href = `/${suggestion.categoryId}/@${suggestion.slug}`;
     },
 
     // 검색 폼 제출

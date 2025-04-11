@@ -3,7 +3,7 @@
       layout:decorate="~{layout/layout}">
 
 <head>
-  <title th:text="${detailsResult.getName()} + ' - 국민사형투표'">인물 상세</title>
+  <title th:text="${detailsResult.getDisplayName()} + ' - 국민사형투표'">인물 상세</title>
   <script async
           src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
           crossorigin="anonymous"></script>
@@ -101,18 +101,18 @@
 
   <!-- 인물 프로필 헤더 -->
   <section class="profile-header mb-8 shadow-lg" th:attr="data-figure-id=${detailsResult.getId()}">
-    <img th:src="${detailsResult.getCategoryImage()}" th:alt="${detailsResult.getName()}"
+    <img th:src="${detailsResult.getCategoryImage()}" th:alt="${detailsResult.getDisplayName()}"
          class="profile-header-image">
     <div class="profile-header-content">
       <div class="flex items-end justify-between w-full">
         <div class="flex items-end">
-          <img th:src="${detailsResult.getImageUrl()}" th:alt="${detailsResult.getName()}"
+          <img th:src="${detailsResult.getImageUrl()}" th:alt="${detailsResult.getDisplayName()}"
                class="w-24 h-24 rounded-full profile-image object-cover mr-6"
                data-handle-error="true"
                data-placeholder="/img/profile-placeholder.svg">
           <div>
             <div class="flex items-center mb-2">
-              <h1 class="text-4xl font-bold mr-3" th:text="${detailsResult.getName()}">인물 이름</h1>
+              <h1 class="text-4xl font-bold mr-3" th:text="${detailsResult.getDisplayName()}">인물 이름</h1>
               <span th:text="${detailsResult.getCategoryDisplayName()}"
                     class="badge-category text-white text-sm px-3 py-1 rounded-full">카테고리</span>
             </div>
@@ -159,7 +159,7 @@
     <div class="relative bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4 transform transition-all">
       <div class="p-6">
         <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-semibold text-white" th:text="${detailsResult.getName()} + ' 소개'">인물 소개</h3>
+          <h3 class="text-xl font-semibold text-white" th:text="${detailsResult.getDisplayName()} + ' 소개'">인물 소개</h3>
           <button id="bio-modal-close" class="text-gray-400 hover:text-white">
             <i class="fas fa-times"></i>
           </button>

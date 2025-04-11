@@ -1,25 +1,25 @@
-/* multi-step-modal.css */
+/* add-figure-multi-modal.css */
 
 /* 애니메이션 키프레임 정의 */
 @keyframes modalFadeIn {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.95) translateY(10px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateY(0);
   }
 }
 
 @keyframes modalFadeOut {
   from {
     opacity: 1;
-    transform: scale(1);
+    transform: scale(1) translateY(0);
   }
   to {
     opacity: 0;
-    transform: scale(0.95);
+    transform: scale(0.95) translateY(10px);
   }
 }
 
@@ -38,24 +38,73 @@
   50% { opacity: 0.7; }
 }
 
-/* 모달 기본 스타일 */
-/* multi-step-modal.css */
-
-/* 기존 애니메이션 키프레임 코드 유지 */
-
-/* 모달 기본 스타일 업데이트 */
-.figure-modal-container {
-  perspective: 1500px;
-  transition: all 0.3s ease;
+@keyframes slideInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.figure-modal-wrapper {
+@keyframes slideInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes suggestionsPopIn {
+  from {
+    transform: translateY(-10px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* 모달 기본 스타일 */
+.add-figure-modal-container {
+  perspective: 1500px;
+  transition: all 0.3s ease;
+  z-index: 50;
+}
+
+.add-figure-modal-wrapper {
   max-height: 90vh;
   display: flex;
   flex-direction: column;
 }
 
-.figure-modal-card {
+.add-figure-modal-card {
   transform-origin: center;
   backface-visibility: hidden;
   will-change: transform, opacity;
@@ -63,9 +112,32 @@
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.add-figure-modal-card.scale-95 {
+  transform: scale(0.95);
+  opacity: 0;
+}
+
+.add-figure-modal-card.scale-100 {
+  transform: scale(1);
+  opacity: 1;
+}
+
 /* 모달 스텝 트랜지션 */
 .modal-step {
   transition: all 0.3s ease;
+}
+
+.modal-step:not(.hidden) {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* 단계 표시기 스타일 */
+.step-indicator {
+  transition: all 0.3s ease;
+}
+
+.step-progress {
+  transition: width 0.5s ease-in-out;
 }
 
 /* 헤더 스타일 */
@@ -112,7 +184,38 @@
 }
 
 .category-button:hover {
-  transform: translateY(-3px);
+  transform: translateY(-3px) scale(1.02);
+}
+
+.category-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.category-button:hover::after {
+  left: 100%;
+}
+
+/* 후보 카드 스타일 */
+.candidate-card {
+  transform: translateY(0);
+  transition: all 0.2s ease-out;
+}
+
+.candidate-card:hover {
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 /* 폼 요소 스타일 */
@@ -124,23 +227,12 @@
   transform: translateY(-2px);
 }
 
-/* 검색어 추천 목록 스타일 수정 */
+/* 검색어 추천 목록 스타일 */
 #searchSuggestions {
   transform-origin: top center;
   animation: suggestionsPopIn 0.2s ease forwards;
   max-height: 300px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-}
-
-@keyframes suggestionsPopIn {
-  from {
-    transform: translateY(-10px) scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
 }
 
 #searchSuggestions ul {
@@ -176,7 +268,7 @@
 button {
   position: relative;
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 button:disabled {
@@ -188,20 +280,52 @@ button:hover:not(:disabled) {
   transform: translateY(-1px);
 }
 
+/* 그라데이션 버튼 효과 */
+button.bg-gradient-to-r::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+  );
+  transition: left 0.5s ease;
+}
+
+button.bg-gradient-to-r:hover::after {
+  left: 100%;
+}
+
 /* 알림 메시지 애니메이션 */
 .animate-fade-in {
   animation: fadeIn 0.3s ease-in-out forwards;
 }
 
+/* 로딩 인디케이터 스타일 */
+.shimmer-effect {
+  background: linear-gradient(90deg,
+  rgba(255, 255, 255, 0.1) 25%,
+  rgba(255, 255, 255, 0.2) 50%,
+  rgba(255, 255, 255, 0.1) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
 /* 모바일 대응 스타일 */
 @media (max-width: 640px) {
-  .figure-modal-wrapper {
+  .add-figure-modal-wrapper {
     margin: 0;
     width: 95%;
     max-height: 85vh;
   }
 
-  .figure-modal-card {
+  .add-figure-modal-card {
     max-height: 85vh;
   }
 
@@ -223,6 +347,18 @@ button:hover:not(:disabled) {
   .category-grid {
     max-height: 40vh;
   }
+
+  .candidate-card {
+    flex-direction: column;
+  }
+
+  .candidate-card .w-1/3 {
+  width: 100%;
+}
+
+  .candidate-card .w-2/3 {
+  width: 100%;
+}
 }
 
 /* 다크 모드 대응 */
@@ -230,5 +366,14 @@ button:hover:not(:disabled) {
   .category-grid::-webkit-scrollbar-thumb,
   #searchSuggestions ul::-webkit-scrollbar-thumb {
     background-color: rgba(156, 163, 175, 0.3);
+  }
+
+  .shimmer-effect {
+    background: linear-gradient(90deg,
+    rgba(255, 255, 255, 0.05) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 75%
+    );
+    background-size: 200% 100%;
   }
 }

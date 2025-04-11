@@ -1,7 +1,7 @@
 <div th:fragment="replies">
   <div th:each="reply : ${replies}" class="reply mb-4">
     <div class="reply-header flex items-center gap-3">
-      <a th:href="${comment.toWriterProfile()}">
+      <a th:href="${reply.toWriterProfile()}">
         <img
             th:src="${@layoutHelper.getProfileImageByString(reply.userProfileImage)}"
             class="reply-profile w-7 h-7 rounded-full object-cover"

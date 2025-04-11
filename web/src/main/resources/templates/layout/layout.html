@@ -55,7 +55,7 @@
         rel="stylesheet">
 
   <!--  인물 등록 CSS-->
-  <link rel="stylesheet" th:href="@{/css/figure/multi-step-modal.css}">
+  <link rel="stylesheet" href="/css/figure/add-figure-multi-modal.css">
 
   <!-- layout.html head 내부, Tailwind 아래쪽에 추가 -->
   <link rel="stylesheet" href="/css/index.css">
@@ -74,6 +74,7 @@
 
   <!-- 로그인 모달 스타일 -->
   <link rel="stylesheet" href="/css/login-modal.css">
+  <script src="/js/utils/slug.js"></script>
   <script src="/js/utils/relative-time.js"></script>
   <!-- Alpine.js 지연 로드 -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.12.3/dist/cdn.min.js"></script>
@@ -683,7 +684,7 @@
       // 추천 목록에서 항목 선택
       selectSuggestion(suggestion) {
         // 인물 상세 페이지로 이동
-        window.location.href = `/${suggestion.categoryId}/@${suggestion.name}`;
+        window.location.href = `/${suggestion.categoryId}/@${suggestion.slug}`;
       },
 
       // 검색 폼 제출
@@ -789,12 +790,13 @@
 <!-- 로그인 모달 -->
 <div th:replace="~{fragments/login/login-fragment :: loginModal}"></div>
 <!-- 인물 추가 모달 -->
-<div th:replace="~{fragments/figure/multi-step-modal :: multiStepModal}"></div>
+<div th:replace="~{fragments/figure/add-figure-multi-modal :: addFigureMultiModal}"></div>
 <!-- 로그인 모달 스크립트 -->
 <script src="/js/login/login-modal.js"></script>
-
-<script th:src="@{/js/figure/multi-step-modal.js}"></script>
-
 <th:block th:replace="~{fragments/toast/toast :: toast}"></th:block>
+
+<script src="/js/figure/add-figure-multi-modal-ui.js"></script>
+<script src="/js/figure/add-figure-multi-modal-init.js"></script>
+<script src="/js/figure/add-figure-multi-modal-handler.js"></script>
 </body>
 </html>

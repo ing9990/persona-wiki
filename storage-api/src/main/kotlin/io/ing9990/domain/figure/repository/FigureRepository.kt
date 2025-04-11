@@ -20,10 +20,10 @@ interface FigureRepository :
     @Query("SELECT f FROM figure f JOIN FETCH f.category WHERE f.category.id = :categoryId")
     fun findByCategoryId(categoryId: String): List<Figure>
 
-    @Query("select f from figure f where f.category.id = ?1 and f.name = ?2")
+    @Query("select f from figure f where f.category.id = ?1 and f.slug = ?2")
     fun findFigureByCategoryIdAndName(
         categoryId: String,
-        f: String,
+        slug: String,
     ): Figure?
 
     /**
