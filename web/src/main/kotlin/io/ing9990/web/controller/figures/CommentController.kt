@@ -19,21 +19,21 @@ class CommentController(
     /**
      * 인물에 대한 새 댓글을 추가합니다.
      */
-    @PostMapping("/{categoryId}/@{figureName}/comment")
+    @PostMapping("/{categoryId}/@{slug}/comment")
     fun addComment(
         @PathVariable categoryId: String,
-        @PathVariable figureName: String,
+        @PathVariable slug: String,
         @RequestParam content: String,
         @AuthorizedUser user: User,
         redirectAttributes: RedirectAttributes,
     ): String {
         if (content.isBlank()) {
             redirectAttributes.addFlashAttribute("error", "댓글 내용을 입력해주세요.")
-            return Redirect.to(categoryId, figureName)
+            return Redirect.to(categoryId, slug)
         }
 
         // 인물 찾기
-        val figure = figureService.searchByCategoryIdAndName(categoryId, figureName)
+        val figure = figureService.searchByCategoryIdAndName(categoryId, slug)
 
         // 댓글 추가 (사용자 정보 전달)
         commentService.addComment(figure.id!!, content, user)
@@ -41,7 +41,7 @@ class CommentController(
         // 성공 메시지
         redirectAttributes.addFlashAttribute("success", "댓글이 성공적으로 등록되었습니다.")
 
-        return Redirect.to(categoryId, figureName)
+        return Redirect.to(categoryId, slug)
     }
 
     /**

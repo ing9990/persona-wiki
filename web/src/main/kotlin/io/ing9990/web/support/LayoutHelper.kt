@@ -67,6 +67,6 @@ class LayoutHelper {
 
     fun toDetail(
         categoryId: String,
-        figureName: String,
-    ): String = "/$categoryId/@$figureName"
+        slug: String,
+    ): String = "/$categoryId/@$slug"
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("api/v1/categories/{categoryId}/@{figureName}/vote")
+@RequestMapping("api/v1/categories/{categoryId}/@{slug}/vote")
 class VoteApi(
     private val voteService: VoteService,
 ) {
@@ -25,14 +25,14 @@ class VoteApi(
     fun voteFigure(
         @AuthorizedUser user: User,
         @PathVariable categoryId: String,
-        @PathVariable figureName: String,
+        @PathVariable slug: String,
         @Valid @RequestBody request: VoteRequest,
     ): ResponseEntity<Unit> {
         voteService.voteFigure(
             VoteData(
                 user = user,
                 categoryId = categoryId,
-                figureName = figureName,
+                slug = slug,
                 sentiment = request.sentiment,
             ),
         )

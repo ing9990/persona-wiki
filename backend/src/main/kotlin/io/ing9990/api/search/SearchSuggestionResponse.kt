@@ -8,4 +8,5 @@ data class SearchSuggestionResponse(
     val categoryId: String,
     val categoryName: String,
     val imageUrl: String,
+    val slug: String,
 )

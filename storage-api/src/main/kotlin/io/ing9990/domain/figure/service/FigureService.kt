@@ -38,8 +38,8 @@ class FigureService(
 
     fun searchByCategoryIdAndName(
         categoryId: String,
-        figureName: String,
-    ) = figureRepository.findFigureByCategoryIdAndName(categoryId, figureName)
+        slug: String,
+    ) = figureRepository.findFigureByCategoryIdAndName(categoryId, slug)
         ?: throw EntityNotFoundException(
             "Figure",
             "$categoryId/figureName",
@@ -64,7 +64,7 @@ class FigureService(
      */
     fun findByCategoryIdAndNameWithDetails(
         categoryId: String,
-        figureName: String,
+        slug: String,
         userId: Long,
         page: Int,
         size: Int,
@@ -72,7 +72,7 @@ class FigureService(
         val result: FigureDetailsResult =
             figureRepository.findByCategoryIdAndNameWithDetails(
                 categoryId = categoryId,
-                figureName = figureName,
+                slug = slug,
                 userId = userId,
                 commentPage = page,
                 commentSize = size,

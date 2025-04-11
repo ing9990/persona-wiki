@@ -49,17 +49,17 @@ class FigureController(
     ): String {
         val figure: Figure = figureService.createFigure(request.toData(user))
 
-        return Redirect.to(figure.category.id, figure.name)
+        return Redirect.to(figure.category.id, figure.slug)
     }
 
     /**
      * 인물을 상세조회 합니다.
      */
-    @GetMapping("/{categoryId}/@{figureName}")
+    @GetMapping("/{categoryId}/@{slug}")
     fun figureDetail(
         @CurrentUser user: CurrentUserDto,
         @PathVariable categoryId: String,
-        @PathVariable figureName: String,
+        @PathVariable slug: String,
         @RequestParam(defaultValue = "0") page: Int,
         @RequestParam(defaultValue = "15") size: Int,
         model: Model,
@@ -67,7 +67,7 @@ class FigureController(
         val detailsResult: FigureDetailsResult =
             figureService.findByCategoryIdAndNameWithDetails(
                 categoryId = categoryId,
-                figureName = figureName,
+                slug = slug,
                 userId = user.getUserIdOrDefault(),
                 page = page,
                 size = size,
@@ -78,9 +78,9 @@ class FigureController(
         return "figure/figure-detail"
     }
 
-    @GetMapping("/figures/{categoryId}/{figureName}")
+    @GetMapping("/figures/{categoryId}/{slug}")
     fun redirectFromLegacyUrl(
         @PathVariable categoryId: String,
-        @PathVariable figureName: String,
-    ): String = Redirect.to(categoryId, figureName)
+        @PathVariable slug: String,
+    ): String = Redirect.to(categoryId, slug)
 }

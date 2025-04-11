@@ -31,6 +31,9 @@ data class FigureDetailsResult(
     val createdAt: LocalDateTime,
     val updatedAt: LocalDateTime,
 ) {
+    val displayName: String
+        get() = name.replace("_", " ")
+
     fun hasSentiment(): Boolean = userVote != null
 
     fun positiveCount(): Int = sentimentCounts[POSITIVE] ?: 0

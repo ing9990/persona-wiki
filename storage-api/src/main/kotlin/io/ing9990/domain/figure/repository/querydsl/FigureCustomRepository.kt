@@ -38,7 +38,7 @@ interface FigureCustomRepository {
      */
     fun findByCategoryIdAndNameWithDetails(
         categoryId: String,
-        figureName: String,
+        slug: String,
         userId: Long,
         commentPage: Int,
         commentSize: Int,
