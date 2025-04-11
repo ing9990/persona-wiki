@@ -1,4 +1,4 @@
-package io.ing9990.web.controller.util
+package io.ing9990.web.controller
 
 import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
@@ -12,7 +12,7 @@ import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 @Controller
-class SitemapController(
+class SiteMap(
     private val categoryService: CategoryService,
     private val figureService: FigureService,
 ) {
