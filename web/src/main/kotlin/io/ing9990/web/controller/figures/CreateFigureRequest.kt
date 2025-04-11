@@ -8,8 +8,8 @@ import jakarta.validation.constraints.Pattern
 
 data class CreateFigureRequest(
     @field:Pattern(
-        regexp = "^([가-힣]{1,20}|[a-zA-Z]{1,20})$",
-        message = "이름은 한글 또는 영어만 사용할 수 있으며, 1~20자 이내여야 합니다.",
+        regexp = "^[가-힣a-zA-Z()_]{1,20}$",
+        message = "이름은 한글, 영어, (), _만 사용할 수 있으며, 1~20자 이내여야 합니다.",
     )
     @field:NotBlank(message = "인물 이름은 필수입니다.")
     @JsonProperty("figureName")

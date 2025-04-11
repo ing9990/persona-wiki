@@ -30,7 +30,7 @@ import java.util.Locale
 )
 @Check(
     // 이름 제약조건입니다.
-    constraints = "figure_name REGEXP '^[가-힣]{1,20}$' OR figure_name REGEXP '^[a-zA-Z]{1,20}$'",
+    constraints = "figure_name REGEXP '^[가-힣a-zA-Z()_]{2,20}$'",
 )
 @Entity(name = "figure")
 class Figure protected constructor(

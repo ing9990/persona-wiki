@@ -59,8 +59,8 @@
   <!-- 로그 레벨 설정 -->
   <logger name="io.ing9990" level="DEBUG"/>
   <logger name="org.springframework" level="INFO"/>
-  <logger name="org.hibernate" level="WARN"/>
-  <logger name="org.springframework.web" level="WARN"/>
+  <logger name="org.hibernate" level="INFO"/>
+  <logger name="org.springframework.web" level="INFO"/>
 
   <!-- 500 에러 전용 로거 (특별 관리) -->
   <logger name="500_ERROR_LOGGER" level="ERROR">
@@ -69,11 +69,12 @@
     <appender-ref ref="ASYNC_SLACK"/>
   </logger>
 
+  <!-- prod 환경에서도 INFO 레벨 로그 사용 (개발 환경과 유사하게) -->
   <springProfile name="prod">
-    <root level="WARN">
+    <root level="INFO">
       <appender-ref ref="CONSOLE"/>
       <appender-ref ref="FILE"/>
-      <appender-ref ref="ASYNC_SLACK"/> <!-- prod 환경에서 모든 ERROR 로그가 Slack으로 전송되도록 설정 -->
+      <appender-ref ref="ASYNC_SLACK"/> <!-- ERROR 로그만 Slack으로 전송됨 (필터 적용) -->
     </root>
   </springProfile>
 </configuration>
