@@ -79,8 +79,8 @@
                   <i class="fas fa-pencil-alt mr-1"></i> 수정
                 </button>
               </div>
-              <p class="text-gray-600 mt-1">가입일: <span
-                  th:text="${#temporals.format(user.createdAt, 'yyyy년 MM월 dd일')}">2023년 01월 01일</span>
+              <p class="comment-date-relative text-gray-600 mt-1 ">가입일: <span
+                  th:text="${user.createdAt}">2023년 01월 01일</span>
               </p>
             </div>
 
@@ -155,6 +155,8 @@
                 <i th:case="'PERSON_ADD'" class="fas fa-user-plus text-blue-500"></i>
                 <i th:case="'PERSON_EDIT'" class="fas fa-user-edit text-yellow-500"></i>
                 <i th:case="'REPLY'" class="fas fa-reply text-purple-500"></i>
+                <i th:case="'LIKE'" class="fas fa-thumbs-up text-pink-500"></i>
+                <i th:case="'DISLIKE'" class="fas fa-thumbs-down text-gray-500"></i>
               </div>
               <div>
                 <div class="text-sm">
@@ -163,12 +165,15 @@
                     <span th:case="'VOTE'">🗳️ 투표에 참여했습니다: </span>
                     <span th:case="'PERSON_ADD'">👤 인물을 추가했습니다:</span>
                     <span th:case="'PERSON_EDIT'">👤 인물 정보를 수정했습니다:</span>
-                    <span th:case="'REPLY'">💬 답글을 작성했습니다:</span>
+                    <span th:case="'REPLY'">💬 답글을 작성했습니다: </span>
+                    <span th:case="'LIKE'"> 😆 좋아요를 표시했습니다: </span>
+                    <span th:case="'DISLIKE'"> 😡싫어요를 표시했습니다: </span>
                   </span>
-                  <a th:href="@{'/search/' + ${activity.targetName}}" class="activity-target"
+                  <a th:href="@{'/search?query=' + ${activity.targetName}}" class="activity-target"
                      th:text="${activity.targetName}">대상 이름</a>
                 </div>
-                <div class="text-xs text-gray-500 activity-date" th:data-original-date="${#temporals.format(activity.createdAt, 'yyyy-MM-dd HH:mm:ss')}" th:text="${#temporals.format(activity.createdAt, 'yyyy년 MM월 dd일 HH:mm')}">
+                <div class="comment-date-relative text-xs text-gray-500 activity-date"
+                     th:text="${activity.createdAt}">
                   2023년 01월 01일 12:34
                 </div>
                 <div th:if="${activity.description}" class="activity-description mt-1"
@@ -297,6 +302,7 @@
 <!-- 페이지 자바스크립트 -->
 <th:block layout:fragment="script">
   <script src="/js/users/my-page.js"></script>
+  <script src="/js/utils/relative-time.js"></script>
   <script src="/js/utils/relative-time.js"></script>
 </th:block>
 </body>

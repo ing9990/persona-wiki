@@ -35,8 +35,13 @@ class ActivityEventPublisher(
         eventPublisher.publishEvent(event)
     }
 
-    fun publishCommentInteraction(interaction: CommentInteraction) {
-        val event = CreateActivityEvent.createCommentInteractionEvent(interaction, this)
+    fun publishCommentLike(interaction: CommentInteraction) {
+        val event = CreateActivityEvent.createComentLikeEvent(interaction, this)
+        eventPublisher.publishEvent(event)
+    }
+
+    fun publishCommentDislike(interaction: CommentInteraction) {
+        val event = CreateActivityEvent.createCommentDislikeEvent(interaction, this)
         eventPublisher.publishEvent(event)
     }
 }

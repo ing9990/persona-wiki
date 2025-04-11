@@ -1,5 +1,6 @@
 package io.ing9990.api.search
 
+import io.ing9990.common.To
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.figure.service.dto.FigureCardResult
@@ -45,7 +46,10 @@ class SearchApi(
     ): ResponseEntity<FigureCardResult> {
         try {
             val result: FigureCardResult =
-                figureService.searchByCategoryIdAndNameOrNull(categoryId, figureName)
+                figureService.searchByCategoryIdAndNameOrNull(
+                    categoryId,
+                    To.slug(figureName),
+                )
 
             return ResponseEntity.status(HttpStatus.OK).body(result)
         } catch (e: EntityNotFoundException) {

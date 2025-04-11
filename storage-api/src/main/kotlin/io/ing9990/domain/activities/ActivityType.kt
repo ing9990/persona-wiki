@@ -6,5 +6,6 @@ enum class ActivityType {
     PERSON_ADD, // 인물 추가
     PERSON_EDIT, // 인물 정보 수정
     VOTE, // 투표 참여
-    COMMENT_INTERACTION, // 댓글 좋아요/싫어요
+    LIKE,
+    DISLIKE,
 }

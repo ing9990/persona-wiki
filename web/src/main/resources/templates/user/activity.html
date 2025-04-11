@@ -59,11 +59,7 @@
       <div th:each="activity : ${activities}" class="activity-card"
            th:data-type="${activity.activityType.name()}">
         <div class="activity-time">
-          <div class="activity-date"
-               th:data-original-date="${#temporals.format(activity.createdAt, 'yyyy-MM-dd')}"
-               th:text="${#temporals.format(activity.createdAt, 'yyyy년 MM월 dd일')}">2023년 01월 01일
-          </div>
-          <div class="activity-hour"
+          <div class="activity-hour comment-date-relative"
                th:data-original-date="${#temporals.format(activity.createdAt, 'yyyy-MM-dd HH:mm:ss')}"
                th:text="${#temporals.format(activity.createdAt, 'HH:mm')}">12:34
           </div>
@@ -76,7 +72,8 @@
               <i th:case="'VOTE'" class="fas fa-vote-yea text-green-500"></i>
               <i th:case="'PERSON_ADD'" class="fas fa-user-plus text-blue-500"></i>
               <i th:case="'PERSON_EDIT'" class="fas fa-user-edit text-yellow-500"></i>
-              <i th:case="'REPLY'" class="fas fa-reply text-purple-500"></i>
+              <i th:case="'LIKE'" class="fas fa-thumbs-up text-pink-500"></i>
+              <i th:case="'DISLIKE'" class="fas fa-thumbs-down text-gray-500"></i>
             </div>
             <div class="activity-type">
               <span th:switch="${activity.activityType.name()}">
@@ -85,12 +82,14 @@
                 <span th:case="'PERSON_ADD'">인물 추가</span>
                 <span th:case="'PERSON_EDIT'">인물 정보 수정</span>
                 <span th:case="'REPLY'">답글 작성</span>
+                <span th:case="'LIKE'">답글 작성</span>
+                <span th:case="'DISLIKE'">답글 작성</span>
               </span>
             </div>
           </div>
 
           <div class="activity-target">
-            <a th:href="@{'/persons/' + ${activity.targetId}}" class="activity-link"
+            <a th:href="${activity.toSearchUri()}" class="activity-link"
                th:text="${activity.targetName}">
               대상 이름
             </a>

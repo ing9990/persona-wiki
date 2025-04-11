@@ -29,4 +29,6 @@ class FigureCardResult(
                 neutrals = figure.votes.count { it.sentiment == Sentiment.NEUTRAL }.toLong(),
             )
     }
+
+    fun toFigureDetailsUri(): String = "/$categoryId/@$name"
 }

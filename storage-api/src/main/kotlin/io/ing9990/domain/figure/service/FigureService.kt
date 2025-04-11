@@ -1,6 +1,7 @@
 package io.ing9990.domain.figure.service
 
 import io.ing9990.domain.EntityNotFoundException
+import io.ing9990.domain.activities.events.handler.ActivityEventPublisher
 import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.comment.repository.CommentRepository
 import io.ing9990.domain.comment.repository.querydsl.dto.CommentResult
@@ -23,6 +24,7 @@ class FigureService(
     private val figureRepository: FigureRepository,
     private val commentRepository: CommentRepository,
     private val categoryService: CategoryService,
+    private val activityEventPublisher: ActivityEventPublisher,
 ) {
     private val log: Logger = LoggerFactory.getLogger(FigureService::class.java)
 
@@ -125,7 +127,10 @@ class FigureService(
 
         // 중복 체크
         if (figureRepository.existsByCategoryIdAndName(data.categoryId, data.figureName)) {
-            throw CreateFigureException("이미 '${data.categoryId}' 카테고리에 '${data.figureName}' 인물이 존재합니다.", data)
+            throw CreateFigureException(
+                "이미 '${data.categoryId}' 카테고리에 '${data.figureName}' 인물이 존재합니다.",
+                data,
+            )
         }
 
         val figure =
@@ -136,7 +141,9 @@ class FigureService(
                 category = category,
             )
 
-        return figureRepository.save(figure)
+        val savedFigure = figureRepository.save(figure)
+        activityEventPublisher.publishFigureAdded(savedFigure, userId = data.user.id!!)
+        return savedFigure
     }
 
     @Transactional(readOnly = true)

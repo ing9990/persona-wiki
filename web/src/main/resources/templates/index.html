@@ -150,13 +150,17 @@
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <!-- 인물 카드 (Thymeleaf로 반복) -->
       <div th:each="figure : ${figures}"
-           class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover flex flex-col h-full">
+           class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover flex flex-col h-full"
+      >
         <div class="figure-image-container relative">
           <!-- 인물 이미지 -->
-          <img
-              th:src="${@layoutHelper.getProfileImageByString(figure.image)}"
-              th:alt="${figure.name}" class="figure-image" data-handle-error="true"
-              data-placeholder="/img/profile-placeholder.svg">
+          <a th:href="${figure.toFigureDetailsUri()}">
+            <img
+                th:src="${@layoutHelper.getProfileImageByString(figure.image)}"
+                th:alt="${figure.name}" class="figure-image" data-handle-error="true"
+                data-placeholder="/img/profile-placeholder.svg"
+            >
+          </a>
 
           <!-- 이름을 이미지 위에 오버레이로 배치 -->
           <div

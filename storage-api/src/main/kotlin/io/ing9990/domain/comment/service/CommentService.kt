@@ -90,13 +90,11 @@ class CommentService(
                 .findByUserIdAndCommentId(user.id!!, commentId)
 
         when {
-            // 동일한 타입의 상호작용이 이미 존재하면 삭제 (좋아요 취소 또는 싫어요 취소)
             existingInteraction?.interactionType == interactionType -> {
                 comment.deleteInteraction(user.id!!, interactionType)
                 commentInteractionRepository.delete(existingInteraction)
             }
 
-            // 다른 타입의 상호작용이 존재하면 업데이트 (좋아요→싫어요 또는 싫어요→좋아요)
             existingInteraction != null -> {
                 comment.updateInteraction(user.id!!, interactionType)
             }
@@ -109,11 +107,22 @@ class CommentService(
                         interactionType = interactionType,
                     )
                 comment.addInteraction(interaction)
-                activityEventPublisher.publishCommentInteraction(interaction)
+                toEvent(interactionType, interaction)
             }
         }
 
         return CommentResult.from(comment)
+    }
+
+    private fun toEvent(
+        interactionType: InteractionType,
+        interaction: CommentInteraction,
+    ) {
+        if (interactionType == InteractionType.LIKE) {
+            activityEventPublisher.publishCommentLike(interaction)
+        } else {
+            activityEventPublisher.publishCommentDislike(interaction)
+        }
     }
 
     /**
@@ -163,7 +172,6 @@ class CommentService(
 
         // 부모 댓글에 답글 추가
         parentComment.addReply(reply)
-
         val savedReply: Comment = commentRepository.save(reply)
         activityEventPublisher.publishCommentCreated(savedReply)
 

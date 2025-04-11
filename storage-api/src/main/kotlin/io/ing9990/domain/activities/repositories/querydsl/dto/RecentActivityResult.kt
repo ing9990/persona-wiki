@@ -25,4 +25,6 @@ data class RecentActivityResult(
                 createdAt = activity.createdAt,
             )
     }
+
+    fun toSearchUri() = "/search?query=$targetName"
 }

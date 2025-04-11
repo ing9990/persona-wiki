@@ -48,6 +48,7 @@ class ActivityService(
             ActivityType.VOTE -> "투표"
             ActivityType.PERSON_ADD -> "인물 추가"
             ActivityType.PERSON_EDIT -> "인물 수정"
-            ActivityType.COMMENT_INTERACTION -> "댓글 반응"
+            ActivityType.LIKE -> "댓글 좋아요"
+            ActivityType.DISLIKE -> "댓글 싫어요"
         }
 }
