@@ -46,4 +46,6 @@ data class CommentResponse(
             )
         }
     }
+
+    fun toWriterProfile(): String = "/users/$userNickname"
 }

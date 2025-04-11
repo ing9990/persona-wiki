@@ -19,4 +19,6 @@ data class CurrentUserDto(
     fun image(): String = currentUser?.image ?: DEFAULT_IMAGE
 
     fun getUserIdOrDefault(): Long = currentUser?.id ?: DEFAULT
+
+    fun toProfile(): String = "/users/${currentUser?.nickname}"
 }

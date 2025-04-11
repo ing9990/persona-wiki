@@ -74,9 +74,11 @@
   <div class="mb-8">
     <div class="flex items-start">
       <div class="flex-shrink-0 mr-3">
-        <img class="h-10 w-10 rounded-full object-cover"
-             th:src="${current.image()}"
-             alt="프로필 이미지">
+        <a th:href="${current.toProfile()}">
+          <img class="h-10 w-10 rounded-full object-cover"
+               th:src="${current.image()}"
+               alt="프로필 이미지">
+        </a>
       </div>
       <div class="flex-grow">
         <form id="comment-form" class="w-full">

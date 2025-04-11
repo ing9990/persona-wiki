@@ -2,10 +2,12 @@
   <div th:each="comment : ${comments.content}" class="comment-item border-b border-gray-200 py-4">
     <div class="flex">
       <div class="flex-shrink-0 mr-3">
-        <img th:src="${@layoutHelper.getProfileImageByString(comment.userProfileImage)}"
-             class="h-10 w-10 rounded-full object-cover"
-             alt="프로필 이미지"
-             onerror="this.src='/img/profile-placeholder.svg'">
+        <a th:href="${comment.toWriterProfile()}">
+          <img th:src="${@layoutHelper.getProfileImageByString(comment.userProfileImage)}"
+               class="h-10 w-10 rounded-full object-cover"
+               alt="프로필 이미지"
+               onerror="this.src='/img/profile-placeholder.svg'">
+        </a>
       </div>
 
       <div class="flex-grow">
