@@ -9,13 +9,16 @@
           crossorigin="anonymous"></script>
   <meta name="description" th:content="${#strings.abbreviate(detailsResult.bio,15)}">
 
+  <!-- CSS 파일 -->
   <link rel="stylesheet" href="/css/comment-reply.css">
   <link rel="stylesheet" href="/css/comment-style.css">
   <link rel="stylesheet" href="/css/fingure-detail.css">
   <link rel="stylesheet" href="/css/scroll-to-top.css">
   <link rel="stylesheet" href="/css/vote.css">
+  <link rel="stylesheet" href="/css/comment-form.css">
+  <link rel="stylesheet" href="/css/add-reply-form.css">
 
-  <!-- 모바일 최적화를 위한 인라인 스타일 추가 -->
+  <!-- 인라인 스타일 -->
   <style>
     /* 모바일 환경에서 댓글 버튼 레이아웃 최적화 */
     @media (max-width: 640px) {
@@ -44,6 +47,126 @@
         margin-right: 0.35rem;
       }
     }
+
+    /* 모달 공통 스타일 */
+    .modal-container {
+      transition: opacity 0.3s ease;
+      opacity: 0;
+      z-index: 50;
+    }
+
+    .modal-container.show {
+      opacity: 1;
+    }
+
+    /* Bio 버튼 스타일 */
+    #bio-toggle {
+      height: 24px;
+      width: 24px;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+      position: relative;
+    }
+
+    #bio-toggle:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    #bio-toggle:active {
+      transform: translateY(0);
+    }
+
+    #bio-toggle::after {
+      content: '전체보기';
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%) scale(0);
+      background: rgba(30, 41, 59, 0.9);
+      color: #e2e8f0;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    #bio-toggle:hover::after {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+      top: -25px;
+    }
+
+    /* Bio 모달 스타일 */
+    #bio-modal .modal-content {
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    @media (max-width: 640px) {
+      #bio-modal .modal-content {
+        max-height: 70vh;
+        width: 90%;
+      }
+    }
+
+    /* 프로필 이미지 호버 효과 */
+    #profile-image-thumbnail {
+      position: relative;
+      transition: all 0.3s ease;
+    }
+
+    #profile-image-thumbnail::after {
+      content: '\f00e'; /* fa-search-plus */
+      font-family: 'Font Awesome 5 Free';
+      font-weight: 900;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      font-size: 1.5rem;
+    }
+
+    #profile-image-thumbnail:hover::after {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    /* 모달 애니메이션 */
+    @keyframes modalFadeIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    .modal-animation {
+      animation: modalFadeIn 0.3s ease forwards;
+    }
+
+    /* 이미지 모달 스타일 */
+    #image-modal-content {
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.3);
+    }
   </style>
 </head>
 
@@ -59,19 +182,26 @@
       <div class="flex items-end justify-between w-full">
         <div class="flex items-end">
           <img th:src="${detailsResult.getImageUrl()}" th:alt="${detailsResult.getName()}"
-               class="w-24 h-24 rounded-full profile-image object-cover mr-6"
+               class="w-24 h-24 rounded-full profile-image object-cover mr-6 cursor-pointer hover:ring-4 hover:ring-blue-400 transition-all transform hover:scale-105"
                data-handle-error="true"
-               data-placeholder="/img/profile-placeholder.svg">
+               data-placeholder="/img/profile-placeholder.svg"
+               id="profile-image-thumbnail"
+               title="클릭하여 크게 보기">
           <div>
             <div class="flex items-center mb-2">
               <h1 class="text-4xl font-bold mr-3" th:text="${detailsResult.getName()}">인물 이름</h1>
               <span th:text="${detailsResult.getCategoryDisplayName()}"
                     class="badge-category text-white text-sm px-3 py-1 rounded-full">카테고리</span>
             </div>
-            <p class="text-gray-200 text-lg">
+            <p class="text-gray-200 text-lg flex items-center">
               <i class="fas fa-quote-left text-sm opacity-50 mr-1"></i>
               <span th:text="${#strings.abbreviate(detailsResult.getBio(), 50)}">인물 소개 요약</span>
               <i class="fas fa-quote-right text-sm opacity-50 ml-1"></i>
+              <button id="bio-toggle"
+                      class="ml-2 bg-gray-700 hover:bg-gray-600 text-blue-300 hover:text-blue-200 p-1 rounded-full transition-all shadow-sm flex items-center justify-center"
+                      aria-label="전체 소개 보기">
+                <i class="fas fa-info-circle"></i>
+              </button>
             </p>
           </div>
         </div>
@@ -85,12 +215,10 @@
       <!-- 인물 평가 투표 섹션 -->
       <div
           th:replace="~{fragments/vote-section :: voteSection(${detailsResult}, ${current})}"></div>
-      <!-- 인물 평가 투표 섹션 종료 -->
 
       <!-- 댓글 섹션 부분 -->
       <div
           th:replace="~{fragments/comment-section :: commentSection(${detailsResult}, ${current})}"></div>
-      <!-- 댓글 섹션 부분 종료-->
     </div>
 
     <!-- 오른쪽: 평판, 카테고리, 공유하기 (1칸 차지) -->
@@ -98,61 +226,92 @@
       <!-- 페이지 우측 평판 통계 부분 -->
       <div
           th:replace="~{fragments/reputation-sidebar :: reputationSidebar(${detailsResult})}"></div>
-      <!-- 페이지 우측 평판 통계 부분 종료 -->
 
       <!-- 페이지 우측 카테고리 섹션 -->
       <div th:replace="~{fragments/category-section :: categorySection(${detailsResult})}"></div>
-      <!-- 페이지 우측 카테고리 섹션 종료-->
 
       <!-- 공유하기 -->
       <div th:replace="~{fragments/share-section :: shareSection}"></div>
-      <!-- 공유하기 종료-->
+    </div>
+  </div>
+
+  <!-- Bio 모달 -->
+  <div id="bio-modal" class="fixed inset-0 flex items-center justify-center hidden modal-container">
+    <div class="absolute inset-0 bg-black bg-opacity-75 backdrop-blur-sm"
+         id="bio-modal-backdrop"></div>
+    <div
+        class="relative bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4 transform transition-all border border-gray-700 modal-content modal-animation">
+      <div class="p-6">
+        <div class="flex justify-between items-center mb-4">
+          <h3 class="text-xl font-semibold text-white" th:text="${detailsResult.getName()} + ' 소개'">
+            인물 소개</h3>
+          <button id="bio-modal-close"
+                  class="text-gray-400 hover:text-white bg-gray-700 hover:bg-gray-600 p-1.5 rounded-full transition-all">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="prose prose-invert max-w-none">
+          <div class="bg-gray-700 bg-opacity-50 p-4 rounded-lg border-l-4 border-blue-400">
+            <p class="text-gray-200 whitespace-pre-line leading-relaxed"
+               th:text="${detailsResult.getBio()}">전체 인물 소개</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 이미지 모달 -->
+  <div id="image-modal"
+       class="fixed inset-0 flex items-center justify-center hidden modal-container">
+    <div class="absolute inset-0 bg-black bg-opacity-90 backdrop-blur-sm"
+         id="image-modal-backdrop"></div>
+    <div
+        class="relative transform transition-all max-w-4xl w-full mx-4 flex flex-col items-center modal-animation">
+      <div class="relative">
+        <img id="image-modal-content" th:src="${detailsResult.getImageUrl()}"
+             th:alt="${detailsResult.getName()}"
+             class="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl">
+        <div class="absolute top-3 right-3">
+          <button id="image-modal-close"
+                  class="text-gray-300 hover:text-white bg-gray-800 bg-opacity-70 hover:bg-opacity-90 p-2 rounded-full transition-all shadow-lg">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="absolute -bottom-12 left-1/2 transform -translate-x-1/2 text-center">
+          <h3 class="text-xl font-semibold text-white" th:text="${detailsResult.getName()}">인물
+            이름</h3>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
-
-<!-- 기존 스크립트 부분 변경 -->
+<!-- 스크립트 부분 -->
 <th:block layout:fragment="script">
-  <!-- 공통 유틸리티 -->
+  <!-- 공통 유틸리티 스크립트 -->
   <script src="/js/utils/utils.js"></script>
   <script src="/js/utils/relative-time.js"></script>
   <script src="/js/utils/toast-manager.js"></script>
-
-  <!-- InfiniteScroll 라이브러리 -->
-  <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
-
-  <!-- 먼저 comment-api.js를 로드 -->
-  <script src="/js/apis/comment-api.js"></script><!-- 필수 스크립트 -->
-
-  <!-- 댓글 CSS -->
-  <link rel="stylesheet" href="/css/comment-form.css">
-  <link rel="stylesheet" href="/css/comment-style.css">
-  <link rel="stylesheet" href="/css/comment-reply.css">
-  <link rel="stylesheet" href="/css/add-reply-form.css"><!-- 새로 추가 -->
-
-  <!--  댓글 Fragment 로드-->
-  <script src="/js/comment-fragments-handler.js"></script>
-
-  <!-- 댓글 상호작용 핸들러 -->
-  <script src="/js/comment/comment-interactions-handler.js"></script>
-
-  <!-- 답글 기능 관련 스크립트 - 분리된 파일들 -->
-  <script src="/js/comment/view-replies-handler.js"></script><!-- 새로 추가: 답글 보기 기능 -->
-  <script src="/js/comment/add-reply-form-handler.js"></script><!-- 새로 추가: 답글 작성 기능 -->
-
-  <!-- 스크롤 상단 이동 버튼 -->
   <script src="/js/utils/scroll-to-top.js"></script>
 
-  <!--  댓글 작성 스크립트 로드-->
+  <!-- 외부 라이브러리 -->
+  <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
+
+  <!-- API 관련 스크립트 -->
+  <script src="/js/apis/comment-api.js"></script>
+
+  <!-- 댓글 관련 스크립트 -->
+  <script src="/js/comment-fragments-handler.js"></script>
+  <script src="/js/comment/comment-interactions-handler.js"></script>
+  <script src="/js/comment/view-replies-handler.js"></script>
+  <script src="/js/comment/add-reply-form-handler.js"></script>
   <script src="/js/create-comment-handler.js"></script>
 
-
-  <!-- 추가 페이지별 스크립트 -->
+  <!-- 페이지 특화 스크립트 -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      // 인물 ID 가져오기
       const figureId = document.querySelector('.profile-header').getAttribute('data-figure-id');
-
       console.log('Figure detail page loaded with figure ID:', figureId);
 
       // 공유 버튼 기능
@@ -180,10 +339,104 @@
           }
         });
       });
+
+      // Bio 모달 관련 기능
+      const bioToggle = document.getElementById('bio-toggle');
+      const bioModal = document.getElementById('bio-modal');
+      const bioModalClose = document.getElementById('bio-modal-close');
+      const bioModalBackdrop = document.getElementById('bio-modal-backdrop');
+
+      // 모달 열기
+      if (bioToggle) {
+        bioToggle.addEventListener('click', function () {
+          bioModal.classList.remove('hidden');
+          setTimeout(() => {
+            bioModal.classList.add('show');
+          }, 10);
+          document.body.style.overflow = 'hidden'; // 스크롤 방지
+        });
+      }
+
+      // 모달 닫기 함수
+      const closeBioModal = function () {
+        bioModal.classList.remove('show');
+        setTimeout(() => {
+          bioModal.classList.add('hidden');
+          document.body.style.overflow = ''; // 스크롤 복원
+        }, 300);
+      };
+
+      // 닫기 버튼 이벤트
+      if (bioModalClose) {
+        bioModalClose.addEventListener('click', closeBioModal);
+      }
+
+      // 배경 클릭 시 모달 닫기
+      if (bioModalBackdrop) {
+        bioModalBackdrop.addEventListener('click', closeBioModal);
+      }
+
+      // 이미지 모달 관련 기능
+      const profileImage = document.getElementById('profile-image-thumbnail');
+      const imageModal = document.getElementById('image-modal');
+      const imageModalContent = document.getElementById('image-modal-content');
+      const imageModalClose = document.getElementById('image-modal-close');
+      const imageModalBackdrop = document.getElementById('image-modal-backdrop');
+
+      // 이미지 모달 열기
+      if (profileImage) {
+        profileImage.addEventListener('click', function () {
+          // 이미지 경로 가져오기
+          const imageSrc = this.getAttribute('src');
+          const imageAlt = this.getAttribute('alt');
+
+          // 모달 이미지 설정
+          imageModalContent.setAttribute('src', imageSrc);
+          imageModalContent.setAttribute('alt', imageAlt);
+
+          // 모달 표시
+          imageModal.classList.remove('hidden');
+          setTimeout(() => {
+            imageModal.classList.add('show');
+          }, 10);
+          document.body.style.overflow = 'hidden'; // 스크롤 방지
+        });
+      }
+
+      // 이미지 모달 닫기 함수
+      const closeImageModal = function () {
+        imageModal.classList.remove('show');
+        setTimeout(() => {
+          imageModal.classList.add('hidden');
+          document.body.style.overflow = ''; // 스크롤 복원
+        }, 300);
+      };
+
+      // 닫기 버튼 이벤트
+      if (imageModalClose) {
+        imageModalClose.addEventListener('click', closeImageModal);
+      }
+
+      // 배경 클릭 시 모달 닫기
+      if (imageModalBackdrop) {
+        imageModalBackdrop.addEventListener('click', closeImageModal);
+      }
+
+      // ESC 키 누를 때 모달 닫기
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          if (!bioModal.classList.contains('hidden')) {
+            closeBioModal();
+          }
+          if (!imageModal.classList.contains('hidden')) {
+            closeImageModal();
+          }
+        }
+      });
     });
   </script>
 
-  <!-- 추가: 모바일 환경에서 댓글 레이아웃 최적화 -->
+  <!-- 모바일 최적화 스크립트 -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // 모바일 환경에서 댓글 UI 최적화
@@ -224,6 +477,7 @@
     });
   </script>
 
+  <!-- 로그인 체크 스크립트 -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       // MutationObserver를 사용하여 동적으로 추가되는 답글 폼에 로그인 체크 적용

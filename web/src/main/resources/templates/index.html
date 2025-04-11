@@ -131,9 +131,9 @@
       <h2 class="text-3xl font-bold text-gray-800">인기 급상승 인물 🔥 </h2>
       <div class="flex space-x-3">
         <!-- 인물 추가 버튼 (아이콘만) -->
-        <a href="#" onclick="openFigureModal()"
-           class="open-figure-modal requires-login icon-button bg-indigo-600 text-white hover:bg-indigo-700 transition"
-           title="인물 추가">
+        <a class="requires-login icon-button bg-indigo-600 text-white hover:bg-indigo-700 transition"
+           title="인물 추가"
+           th:onclick="${current.loggedIn()} ? 'openFigureModal()' : ''">
           <i class="fas fa-plus-circle"></i>
         </a>
 
@@ -242,7 +242,6 @@
 
   <!-- 페이지별 스크립트 -->
   <script src="/js/utils/image-handler.js"></script>
-  <script src="/js/home/index-page.js"></script>
 
   <script>
     // 기본 페이지 초기화 코드
