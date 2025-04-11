@@ -21,7 +21,7 @@ interface FigureRepository :
     fun findByCategoryId(categoryId: String): List<Figure>
 
     @Query("select f from figure f where f.category.id = ?1 and f.slug = ?2")
-    fun findFigureByCategoryIdAndName(
+    fun findFigureByCategoryIdAndSlug(
         categoryId: String,
         slug: String,
     ): Figure?

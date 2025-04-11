@@ -38,8 +38,8 @@ class FigureService(
 
     fun searchByCategoryIdAndName(
         categoryId: String,
-        slug: String,
-    ) = figureRepository.findFigureByCategoryIdAndName(categoryId, slug)
+        figureName: String,
+    ) = figureRepository.findFigureByCategoryIdAndSlug(categoryId, figureName)
         ?: throw EntityNotFoundException(
             "Figure",
             "$categoryId/figureName",
@@ -48,10 +48,10 @@ class FigureService(
 
     fun searchByCategoryIdAndNameOrNull(
         categoryId: String,
-        figureName: String,
+        slug: String,
     ): FigureCardResult =
         FigureCardResult.from(
-            figureRepository.findFigureByCategoryIdAndName(categoryId, figureName)
+            figureRepository.findFigureByCategoryIdAndSlug(categoryId, slug)
                 ?: throw EntityNotFoundException(
                     "Figure",
                     "$categoryId/figureName",

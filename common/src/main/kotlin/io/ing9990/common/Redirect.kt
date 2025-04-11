@@ -12,8 +12,8 @@ class Redirect {
             categoryId: String,
             slug: String,
         ): String {
-            val encodedFigureName = URLEncoder.encode(slug, StandardCharsets.UTF_8.name())
-            val redirectUrl = "redirect:/$categoryId/@$encodedFigureName"
+            val encodedSlug = URLEncoder.encode(slug, StandardCharsets.UTF_8.name())
+            val redirectUrl = "redirect:/$categoryId/@$encodedSlug"
 
             return redirectUrl
         }
