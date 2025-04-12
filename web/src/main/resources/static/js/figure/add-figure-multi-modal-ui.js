@@ -501,7 +501,7 @@ class FigureModalUI {
         imageContainer.appendChild(img);
       } else {
         const icon = document.createElement('i');
-        icon.className = 'fas fa-user text-2xl text-indigo-500 dark:text-indigo-400';
+        icon.className = 'fas fa-profile text-2xl text-indigo-500 dark:text-indigo-400';
         imageContainer.appendChild(icon);
       }
 

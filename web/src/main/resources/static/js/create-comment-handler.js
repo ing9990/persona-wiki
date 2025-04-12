@@ -217,7 +217,7 @@ var commentHandler = (function () {
     const commentNode = elements.template.content.cloneNode(true);
 
     // 프로필 이미지 설정
-    const profileImg = commentNode.querySelector('.user-profile');
+    const profileImg = commentNode.querySelector('.profile-profile');
     if (profileImg) {
       profileImg.src = commentData.userProfileImage
           || '/img/profile-placeholder.svg';
@@ -227,7 +227,7 @@ var commentHandler = (function () {
     }
 
     // 닉네임 및 날짜 설정
-    const nicknameEl = commentNode.querySelector('.user-nickname');
+    const nicknameEl = commentNode.querySelector('.profile-nickname');
     if (nicknameEl) {
       nicknameEl.textContent = commentData.userNickname || '익명';
     }

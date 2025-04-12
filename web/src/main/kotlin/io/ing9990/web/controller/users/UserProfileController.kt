@@ -1,5 +1,9 @@
 package io.ing9990.web.controller.users
 
+import io.ing9990.domain.activities.repositories.querydsl.dto.ActivityOverviewResult
+import io.ing9990.domain.activities.repositories.querydsl.dto.RecentActivityResult
+import io.ing9990.domain.activities.service.ActivityService
+import io.ing9990.domain.user.User
 import io.ing9990.service.UserService
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -11,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 @RequestMapping("/users")
 class UserProfileController(
     private val userService: UserService,
+    private val activityService: ActivityService,
 ) {
     /**
      * 사용자 프로필 페이지
@@ -21,14 +26,28 @@ class UserProfileController(
         model: Model,
     ): String {
         // 닉네임으로 사용자 조회
-        val user =
+        val profile: User =
             userService.findByNickname(nickname)
                 ?: throw IllegalArgumentException("존재하지 않는 사용자입니다.")
 
-        model.addAttribute("profileUser", user)
+        val recentActivities:
+            List<RecentActivityResult> =
+            activityService.getRecentActivities(
+                profile.id!!,
+                5,
+            )
+        val activityOverview: ActivityOverviewResult =
+            activityService.getActivityOverview(profile.id!!)
 
-        // 사용자가 작성한 댓글 목록도 추가할 수 있음
-        // model.addAttribute("userComments", commentService.findByUserId(user.id))
+        model.addAttribute(
+            "recentActivities",
+            recentActivities,
+        )
+        model.addAttribute(
+            "activityOverview",
+            activityOverview,
+        )
+        model.addAttribute("profile", profile)
 
         return "user/profile"
     }

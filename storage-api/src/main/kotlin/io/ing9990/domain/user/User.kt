@@ -26,6 +26,8 @@ class User(
     val id: Long? = null,
     @Column(name = "provider_id", nullable = false, unique = true)
     var providerId: String? = null,
+    @Column(name = "bio", nullable = false)
+    var bio: String = "",
     @Enumerated(STRING)
     @Column(name = "oauth_provider", nullable = false)
     var provider: OAuthProviderType? = null,
