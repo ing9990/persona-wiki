@@ -72,12 +72,11 @@ class UserController(
         return "user/activity"
     }
 
-    @PostMapping("/me/update-profile")
-    fun updateProfile(
+    @PostMapping("/me/delete-profile")
+    fun deleteProfile(
         @AuthorizedUser user: User,
-        redirectAttributes: RedirectAttributes,
     ): String {
-        userService.updateProfileImage(user.id!!)
+        userService.removeProfileImage(user.id!!)
 
         return "redirect:/me"
     }

@@ -2,7 +2,6 @@ package io.ing9990.web.controller
 
 import io.ing9990.aop.CurrentUser
 import io.ing9990.aop.resolver.CurrentUserDto
-import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.figure.service.dto.FigureCardResult
 import org.springframework.stereotype.Controller
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestParam
 @Controller
 class WebController(
     private val figureService: FigureService,
-    private val categoryService: CategoryService,
 ) {
     /**
      * 메인 페이지입니다.

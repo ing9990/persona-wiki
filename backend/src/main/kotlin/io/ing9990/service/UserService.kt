@@ -75,7 +75,7 @@ class UserService(
     }
 
     @Transactional
-    fun updateProfileImage(userId: Long): User = getUserById(userId).apply { removeProfileImage() }
+    fun removeProfileImage(userId: Long): User = getUserById(userId).apply { removeProfileImage() }
 
     @Transactional
     fun updateNickname(
