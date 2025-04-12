@@ -1,7 +1,6 @@
 package io.ing9990.domain.figure.repository.querydsl
 
 import com.querydsl.jpa.impl.JPAQueryFactory
-import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.category.querydsl.QCategory
 import io.ing9990.domain.comment.CommentType
 import io.ing9990.domain.comment.InteractionType
@@ -155,10 +154,9 @@ class FigureRepositoryImpl(
                         .eq(categoryId)
                         .and(figure.slug.eq(slug)),
                 ).fetchOne()
-                ?: throw EntityNotFoundException(
-                    "Figure",
-                    "$categoryId/$slug",
-                    "해당 인물을 찾을 수 없습니다.",
+                ?: throw SlugAndCategoryNotFound(
+                    categoryId,
+                    slug,
                 )
 
         // 2. Sentiment별 득표 수

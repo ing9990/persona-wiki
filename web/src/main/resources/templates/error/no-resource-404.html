@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>404 - 차원의 경계</title>
+  <link rel="stylesheet" href="/css/error/no-resource-404.css">
+  <meta name="color-scheme" content="dark light">
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- GSAP 라이브러리 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body class="overflow-hidden">
+<!-- 커스텀 커서 요소 -->
+<div id="custom-cursor" class="custom-cursor"></div>
+<div id="cursor-trail" class="cursor-trail"></div>
+
+<!-- 메인 캔버스 영역 -->
+<div id="main-stage" class="main-stage">
+  <canvas id="universe-canvas"></canvas>
+
+  <!-- 입자 효과를 위한 레이어 -->
+  <div id="particles-layer" class="particles-layer"></div>
+
+  <!-- 메시지 영역 -->
+  <div id="message-area" class="message-area">
+    <h1 class="main-heading">404</h1>
+    <p class="main-message">이 공간은 현실에 존재하지 않지만, 당신의 상상 속에 존재할 수 있어요.</p>
+    <p class="sub-message">클릭해보세요. 이 세계는 반응합니다.</p>
+  </div>
+
+  <!-- 버튼 존 -->
+  <div id="button-zone" class="button-zone">
+    <button id="home-button" class="interactive-button">홈으로 돌아가기</button>
+    <button id="warp-button" class="interactive-button">랜덤 워프</button>
+    <button id="sound-toggle" class="interactive-button">소리 켜기</button>
+  </div>
+</div>
+
+<!-- 푸터 -->
+<div id="footer" class="footer">
+  <p>"길을 잃는 것은 때로는 새로운 세계를 발견하는 시작점이 됩니다."</p>
+</div>
+
+<!-- 오디오 요소 -->
+<audio id="background-sound" loop>
+  <source src="/audio/ambient-space.mp3" type="audio/mp3">
+</audio>
+<audio id="click-sound">
+  <source src="/audio/click-sound.mp3" type="audio/mp3">
+</audio>
+
+<script src="/js/error/no-resource-404.js"></script>
+</body>
+</html>

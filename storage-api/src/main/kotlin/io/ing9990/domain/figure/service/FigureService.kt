@@ -3,8 +3,6 @@ package io.ing9990.domain.figure.service
 import io.ing9990.domain.EntityNotFoundException
 import io.ing9990.domain.activities.events.handler.ActivityEventPublisher
 import io.ing9990.domain.category.service.CategoryService
-import io.ing9990.domain.comment.repository.CommentRepository
-import io.ing9990.domain.comment.repository.querydsl.dto.CommentResult
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.repository.FigureRepository
 import io.ing9990.domain.figure.service.dto.CreateFiureData
@@ -22,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional(readOnly = true)
 class FigureService(
     private val figureRepository: FigureRepository,
-    private val commentRepository: CommentRepository,
     private val categoryService: CategoryService,
     private val activityEventPublisher: ActivityEventPublisher,
 ) {
@@ -145,16 +142,4 @@ class FigureService(
         activityEventPublisher.publishFigureAdded(savedFigure, userId = data.user.id!!)
         return savedFigure
     }
-
-    @Transactional(readOnly = true)
-    fun getRepliesWithUserInteractions(
-        parentId: Long,
-        userId: Long?,
-    ): List<CommentResult> = commentRepository.findRepliesWithUserInteractions(parentId, userId)
-
-    /**
-     * 모든 인물 목록을 카테고리와 함께 조회합니다.
-     * 이제 카테고리가 함께 로딩되므로 LazyInitializationException이 발생하지 않습니다.
-     */
-    fun findAllWithCategorySITEMAP(): List<Figure> = figureRepository.findAllWithCategoryPopularOrder()
 }

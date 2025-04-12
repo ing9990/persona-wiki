@@ -1,16 +1,12 @@
 package io.ing9990.exceptions
 
-import io.swagger.v3.oas.annotations.media.Schema
 import org.springframework.http.HttpStatus
 import org.springframework.validation.BindingResult
 import org.springframework.validation.ObjectError
 
 class ErrorResponse(
-    @Schema(description = "에러 코드", example = "9999")
     private val errorCode: Int,
-    @Schema(description = "에러 메시지", example = "요청 파라미터 누락")
     private val message: String,
-    @Schema(description = "HTTP 상태", example = "INTERNAL_SERVER_ERROR")
     private val httpStatus: HttpStatus,
     private val errors: List<FieldError> = ArrayList(),
 ) {

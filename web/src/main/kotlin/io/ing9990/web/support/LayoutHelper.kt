@@ -7,6 +7,26 @@ import java.time.temporal.ChronoUnit
 
 @Service
 class LayoutHelper {
+    /**
+     * 404 에러 페이지에 표시할 메시지를 생성합니다.
+     */
+    fun getErrorMessage(
+        categoryId: String?,
+        categoryName: String?,
+        slug: String?,
+    ): String =
+        when {
+            categoryId != null && slug != null -> "$categoryName 카테고리에서 '$slug'라는 인물을 찾을 수 없어요"
+            categoryId != null -> "$categoryName 카테고리에서 인물을 찾을 수 없어요"
+            slug != null -> "'$slug'라는 인물을 찾을 수 없어요"
+            else -> "찾으시는 페이지가 존재하지 않아요"
+        }
+
+    /**
+     * 카테고리 버튼에 표시할 텍스트를 생성합니다.
+     */
+    fun getCategoryButtonText(categoryName: String?): String = if (categoryName.isNullOrBlank()) "카테고리 더보기" else "$categoryName 더보기"
+
     val placeHolderAddress: String = "/img/profile-placeholder.svg"
     val categoryPlaceHolderAddress: String = "/img/category-placeholder.jpg"
 
@@ -65,6 +85,9 @@ class LayoutHelper {
             ?.let { "/users/$it" }
             ?: "#"
 
+    /**
+     * 인물 상세 페이지 URL을 생성합니다.
+     */
     fun toDetail(
         categoryId: String,
         slug: String,

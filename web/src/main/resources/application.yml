@@ -33,3 +33,11 @@ spring:
 
 logging:
   config: classpath:logback-prod.xml
+
+
+--- # test
+spring:
+  config:
+    activate:
+      on-profile: test
+

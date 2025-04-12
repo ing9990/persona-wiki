@@ -1,14 +1,11 @@
 package io.ing9990.exceptions
 
-import io.ing9990.domain.EntityNotFoundException
-import io.ing9990.exceptions.ErrorCode.ENTITY_NOT_FOUND
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.apache.coyote.BadRequestException
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.HttpStatus.BAD_REQUEST
-import org.springframework.http.HttpStatus.NOT_FOUND
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.HttpRequestMethodNotSupportedException
@@ -23,12 +20,6 @@ class GlobalExceptionAdvice {
     private val log = LoggerFactory.getLogger(this.javaClass)
 
     private fun baseHandler(e: BussinessException): ResponseEntity.BodyBuilder = ResponseEntity.status(e.errorCode.httpStatus)
-
-    @ExceptionHandler(EntityNotFoundException::class)
-    fun handleEntityNotFound(e: EntityNotFoundException): ResponseEntity<ErrorResponse> =
-        ResponseEntity
-            .status(NOT_FOUND)
-            .body(ErrorResponse.from(ENTITY_NOT_FOUND))
 
     @ExceptionHandler(UnauthorizedException::class)
     fun handleUnauthorizedException(e: UnauthorizedException): ResponseEntity<ErrorResponse> =
@@ -52,19 +43,6 @@ class GlobalExceptionAdvice {
     )
     fun handleBussinessException(e: BussinessException): ResponseEntity<ErrorResponse> =
         baseHandler(e).body(ErrorResponse.from(e.errorCode))
-
-    @ExceptionHandler(IllegalArgumentException::class)
-    fun handleIllegalArgumentException(e: IllegalArgumentException): ResponseEntity<ErrorResponse> {
-        log.error(e.message, e)
-
-        return ResponseEntity
-            .status(500)
-            .body(
-                ErrorResponse.from(
-                    ErrorCode.ILLEGAL_ARGUMENT,
-                ),
-            )
-    }
 
     @ExceptionHandler(MissingRequestCookieException::class)
     fun handleMissingRequestCookieException(e: MissingRequestCookieException): ResponseEntity<ErrorResponse> {
