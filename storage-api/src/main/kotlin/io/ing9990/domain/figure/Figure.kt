@@ -18,7 +18,6 @@ import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import org.hibernate.annotations.Check
-import java.util.Locale
 
 @Table(
     name = "figure",
@@ -30,7 +29,6 @@ import java.util.Locale
     ],
 )
 @Check(
-    // 이름 제약조건입니다.
     constraints = "figure_name REGEXP '^[가-힣a-zA-Z()_]{2,20}$'",
 )
 @Entity(name = "figure")
@@ -67,7 +65,7 @@ class Figure protected constructor(
             bio: String,
             category: Category,
         ): Figure {
-            val chosung = getChosungFrom(name) // 함수 만들어서 초성 추출
+            val chosung = getChosungFrom(name)
             return Figure(
                 name = name,
                 imageUrl = imageUrl,
@@ -83,7 +81,7 @@ class Figure protected constructor(
                 .filter { it.isLetter() }
                 .map {
                     when (it) {
-                        in '가'..'힣' -> ((it.code - 0xAC00) / 28 / 21 + 0x1100).toChar() // 초성 추출
+                        in '가'..'힣' -> ((it.code - 0xAC00) / 28 / 21 + 0x1100).toChar()
                         in 'A'..'Z', in 'a'..'z' -> it.uppercaseChar()
                         else -> null
                     }
@@ -106,9 +104,4 @@ class Figure protected constructor(
      * 특정 사용자의 투표 정보를 가져옵니다.
      */
     fun getUserVote(userId: Long): Vote? = votes.find { it.user.id == userId }
-
-    /**
-     * URL 경로로 사용할 수 있는 형태의 이름을 반환합니다.
-     */
-    fun getUrlName(): String = name.replace(" ", "-").lowercase(Locale.getDefault())
 }

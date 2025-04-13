@@ -16,7 +16,6 @@ import io.mockk.mockk
 import io.mockk.runs
 import io.mockk.verify
 import org.junit.jupiter.api.extension.ExtendWith
-import java.text.Normalizer
 
 @ExtendWith(MockKExtension::class)
 class FigureServiceTest :
@@ -108,23 +107,6 @@ class FigureServiceTest :
                 Then("slug가 올바르게 구성된다.") {
                     result.slug shouldBe "레오나르도-디카프리오"
                 }
-
-                fun String.normalize(): String = Normalizer.normalize(this, Normalizer.Form.NFC)
-
-//                Then("초성이 올바르게 파싱된다.") {
-//                    // 1. 원래 하려던 방법.
-//                    result.chosung shouldBe "ㄹㅇㄴㄹㄷㄷㅋㅍㄹㅇ"
-//
-//                    // 1번이 실패해서 한글자씩도 비교해봄 (실패)
-//                    result.chosung.map {
-//                        it.toString().last()
-//                    } shouldBe
-//                        "ㄹㅇㄴㄹㄷㄷㅋㅍㄹㅇ".map {
-//                            it.toString().last()
-//                        }
-//                    // 채찍피티한테 수소문해서 normalize() 라는 것을 적용. 실패.
-//                    result.chosung.normalize() shouldBe "ㄹㅇㄴㄹㄷㄷㅋㅍㄹㅇ".normalize()
-//                }
             }
         }
     })

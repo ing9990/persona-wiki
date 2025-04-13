@@ -6,6 +6,7 @@
   <title>인물 목록 - 국민사형투표</title>
   <meta name="description" content="카테고리별 인기 인물들을 둘러보세요.">
 
+  <!-- figure-list-by-category.html의 <style> 태그 내부 수정 -->
   <style>
     .category-section {
       margin-bottom: 3rem;
@@ -20,6 +21,8 @@
 
     .figure-card {
       transition: all 0.3s ease;
+      /* 카드 자체 높이를 auto로 설정하여 내부 컨텐츠에 맞게 조정 */
+      height: auto;
     }
 
     .figure-card:hover {
@@ -28,7 +31,8 @@
     }
 
     .figure-image-container {
-      height: 200px;
+      /* 이미지 컨테이너 높이를 300px로 증가 (기존 200px) */
+      height: 300px;
       overflow: hidden;
       position: relative;
     }
@@ -43,6 +47,17 @@
 
     .figure-card:hover .figure-image {
       transform: scale(1.05);
+    }
+
+    /* 카드 내부 컨텐츠 영역 패딩 증가 */
+    .figure-card .p-5 {
+      padding: 1.5rem;
+    }
+
+    /* 텍스트 영역 높이 증가 */
+    .figure-card .text-gray-600 {
+      min-height: 4rem;
+      margin-bottom: 1.5rem;
     }
 
     @keyframes fadeIn {
@@ -89,11 +104,13 @@
            class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 figure-card">
         <div class="figure-image-container">
           <!-- 인물 이미지 -->
-          <img
-              th:src="${@layoutHelper.getProfileImageByString(figure.image)}"
-              th:alt="${figure.name}" class="figure-image"
-              data-handle-error="true"
-              data-placeholder="/img/profile-placeholder.svg">
+          <a th:href="@{'/' + ${figure.categoryId} + '/@' + ${figure.slug}}">
+            <img
+                th:src="${@layoutHelper.getProfileImageByString(figure.image)}"
+                th:alt="${figure.name}" class="figure-image"
+                data-handle-error="true"
+                data-placeholder="/img/profile-placeholder.svg">
+          </a>
 
           <!-- 이름을 이미지 위에 오버레이로 배치 -->
           <div
