@@ -25,13 +25,40 @@
 
           <!-- 프로필 정보 -->
           <div class="text-center md:text-left">
-            <h1 class="text-3xl font-bold mb-2" th:text="${profile.nickname}">사용자 닉네임</h1>
+            <div class="flex items-center justify-center md:justify-start mb-2">
+              <h1 class="text-3xl font-bold mr-3" th:text="${profile.nickname}">사용자 닉네임</h1>
+              <!-- 명성 레벨 배지 -->
+              <span th:class="${'prestige-badge level-' + profile.prestige / 100}" id="userPrestige"
+                    th:data-prestige="${profile.prestige}">
+                <i class="fas fa-award mr-1"></i>
+                Lv.<span th:text="${profile.prestige / 100}">0</span>
+                <span class="title-text"
+                      th:text="${@prestigeHelper.getLevelTitle(profile.prestige / 100)}">병아리</span>
+              </span>
+            </div>
+
             <p th:if="${profile.bio}" class="text-lg text-indigo-100 mb-3" th:text="${profile.bio}">
               사용자 소개글</p>
             <p class="comment-date-relative text-indigo-200 text-sm flex items-center justify-center md:justify-start">
               <i class="far fa-calendar-alt mr-2"></i>
               가입일: <span th:text="${profile.createdAt}">2023년 01월 01일</span>
             </p>
+          </div>
+        </div>
+
+        <!-- 명성 프로그레스 바 -->
+        <div class="mt-4 prestige-progress-container">
+          <div class="flex justify-between items-center mb-1 text-sm">
+            <span class="text-indigo-100">
+              명성: <span th:text="${profile.prestige}">0</span> 포인트
+            </span>
+            <span class="text-indigo-100">
+              다음 레벨까지: <span th:text="${@prestigeHelper.getPointsForNextLevel(profile.prestige)}">100</span> 포인트
+            </span>
+          </div>
+          <div class="bg-indigo-900 bg-opacity-40 rounded-full h-3 overflow-hidden">
+            <div class="prestige-progress-bar h-3 rounded-full"
+                 th:style="'width: ' + ${T(java.lang.Math).min(100, @prestigeHelper.getProgressPercentage(profile.prestige))} + '%'"></div>
           </div>
         </div>
       </div>
@@ -106,6 +133,46 @@
 
     <!-- 오른쪽: 사이드바 -->
     <div>
+      <!-- 명성 레벨 카드 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center">
+          <i class="fas fa-award text-xl text-indigo-500 mr-3"></i>
+          <h2 class="text-xl font-semibold text-gray-800">명성 레벨</h2>
+        </div>
+
+        <div class="p-6">
+          <div class="prestige-level-card"
+               th:class="${'prestige-level-card level-' + profile.prestige / 100}">
+            <div class="prestige-level-number">
+              <span th:text="${profile.prestige / 100}">0</span>
+            </div>
+            <div class="prestige-level-info">
+              <div class="prestige-level-title">
+                <span th:text="${@prestigeHelper.getLevelTitle(profile.prestige / 100)}">병아리</span>
+              </div>
+              <div class="prestige-level-points">
+                <span th:text="${profile.prestige}">0</span> 포인트
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 text-sm text-gray-500">
+            <div class="flex justify-between">
+              <span>현재 레벨</span>
+              <span>다음 레벨까지</span>
+            </div>
+            <div class="flex justify-between font-medium text-gray-700">
+              <span>
+                레벨 <span th:text="${profile.prestige / 100}">0</span>
+              </span>
+              <span>
+                <span
+                    th:text="${@prestigeHelper.getPointsForNextLevel(profile.prestige)}">100</span> 포인트
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- 활동 통계 카드 -->
       <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
         <div class="px-6 py-4 border-b border-gray-100 flex items-center">
