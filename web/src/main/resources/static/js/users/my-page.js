@@ -319,6 +319,9 @@ document.addEventListener('DOMContentLoaded', function () {
     bioForm.addEventListener('submit', function (e) {
       e.preventDefault();
 
+      // 포커스 제거 (포커스 문제 해결)
+      bioInput.blur();
+
       const bio = bioInput.value.trim();
 
       // 100자 초과 검사

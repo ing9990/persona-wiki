@@ -76,8 +76,8 @@
 
       <!-- 새 인물 추가 버튼 -->
       <div class="mb-6">
-        <a
-            class="add-figure-button open-figure-modal inline-flex items-center px-6 py-3 text-white font-medium rounded-lg shadow-md">
+        <a onclick="openFigureModal()"
+           class="requires-login add-figure-button open-figure-modal inline-flex items-center px-6 py-3 text-white font-medium rounded-lg shadow-md">
           <i class="fas fa-user-plus mr-2"></i>
           <span th:text="'&quot;' + ${query} + '&quot; 인물 추가하기'">인물 추가하기</span>
         </a>

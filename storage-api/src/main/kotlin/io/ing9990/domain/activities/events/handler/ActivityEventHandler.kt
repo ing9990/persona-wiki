@@ -40,8 +40,21 @@ class ActivityEventHandler(
                     description = activityEvent.description,
                     prestigeAmount = activityEvent.activityType.prestigePoint,
                 )
+
+//            activity.activityType
+//                .takeIf { it == LIKED }s
+//                ?.let {
+//                    val likedEvent: CommentLikedEvent = activityEvent as CommentLikedEvent
+//                    // 좋아요 받은 인물
+//                    val likedUser = likedEvent.likedUserId
+//
+//                    // 좋아요 한 인물
+//                    val likeUser = likedEvent.likeUserId
+//                }
+
             user.addPrestige(activity.activityType)
             activityRepository.save(activity)
+
             logger.info("Activity recorded: ${activityEvent.activityType} by user ${user.nickname}")
         } catch (e: Exception) {
             logger.error("Failed to record activity", e)

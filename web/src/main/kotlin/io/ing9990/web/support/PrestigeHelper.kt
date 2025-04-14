@@ -5,48 +5,39 @@ import org.springframework.stereotype.Component
 @Component
 class PrestigeHelper {
     /**
-     * 피보나치 수열에 따른 다음 레벨 요구 명성 포인트 계산
-     * 0레벨: 100
-     * 1레벨: 100
-     * 2레벨: 200
-     * 3레벨: 300
-     * 4레벨: 500
-     * 이후는 피보나치 수열을 따름
+     * JS와 동일하게 누적 포인트 기준으로 다음 레벨까지 필요한 포인트 계산
      */
     fun getPointsForNextLevel(prestige: Int): Int {
-        val currentLevel = prestige / 100
-        val nextLevel = currentLevel + 1
-        val currentLevelPoints = prestige % 100
+        var level = 0
+        var accumulatedPoints = 0
+        var nextRequirement = calculateFibonacciRequirement(level + 1)
 
-        val nextLevelRequirement =
-            when (nextLevel) {
-                1 -> 100
-                2 -> 200
-                3 -> 300
-                4 -> 500
-                else -> calculateFibonacciRequirement(nextLevel)
-            }
+        while (prestige >= accumulatedPoints + nextRequirement) {
+            accumulatedPoints += nextRequirement
+            level++
+            nextRequirement = calculateFibonacciRequirement(level + 1)
+        }
 
-        return nextLevelRequirement - currentLevelPoints
+        val currentLevelPoints = prestige - accumulatedPoints
+        return nextRequirement - currentLevelPoints
     }
 
     /**
      * 현재 레벨에서의 진행도 계산 (0-100%)
      */
     fun getProgressPercentage(prestige: Int): Int {
-        val currentLevel = prestige / 100
-        val currentLevelPoints = prestige % 100
+        var level = 0
+        var accumulatedPoints = 0
+        var nextRequirement = calculateFibonacciRequirement(level + 1)
 
-        val nextLevelRequirement =
-            when (currentLevel + 1) {
-                1 -> 100
-                2 -> 200
-                3 -> 300
-                4 -> 500
-                else -> calculateFibonacciRequirement(currentLevel + 1)
-            }
+        while (prestige >= accumulatedPoints + nextRequirement) {
+            accumulatedPoints += nextRequirement
+            level++
+            nextRequirement = calculateFibonacciRequirement(level + 1)
+        }
 
-        return (currentLevelPoints * 100) / nextLevelRequirement
+        val currentLevelPoints = prestige - accumulatedPoints
+        return (currentLevelPoints * 100) / nextRequirement
     }
 
     /**
@@ -71,24 +62,37 @@ class PrestigeHelper {
     /**
      * 피보나치 수열 기반 레벨 요구 포인트 계산
      */
-    private fun calculateFibonacciRequirement(level: Int): Int {
-        if (level <= 0) return 0
-        if (level == 1) return 100
-        if (level == 2) return 200
-        if (level == 3) return 300
-        if (level == 4) return 500
-
-        // 5레벨 이상은 피보나치로 계산
-        var a = 300 // 3레벨 요구치
-        var b = 500 // 4레벨 요구치
-        var result = 0
-
-        for (i in 5..level) {
-            result = a + b
-            a = b
-            b = result
+    private fun calculateFibonacciRequirement(level: Int): Int =
+        when (level) {
+            0 -> 0
+            1 -> 100
+            2 -> 200
+            3 -> 300
+            4 -> 500
+            else -> {
+                var a = 300
+                var b = 500
+                var result = 0
+                for (i in 5..level) {
+                    result = a + b
+                    a = b
+                    b = result
+                }
+                result
+            }
         }
 
-        return result
+    fun getLevel(prestige: Int): Int {
+        var level = 0
+        var accumulatedPoints = 0
+        var nextRequirement = calculateFibonacciRequirement(level + 1)
+
+        while (prestige >= accumulatedPoints + nextRequirement) {
+            accumulatedPoints += nextRequirement
+            level++
+            nextRequirement = calculateFibonacciRequirement(level + 1)
+        }
+
+        return level
     }
 }

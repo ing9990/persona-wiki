@@ -18,7 +18,7 @@ data class CommentLikedEvent(
     val likedUserId: Long,
 ) : ActivityEvent(
         userId,
-        ActivityType.LIKE,
+        ActivityType.LIKED,
         targetId,
         targetName,
         commentOverview,
@@ -40,9 +40,10 @@ data class CommentLikedEvent(
             val comment = interaction.comment
             val figure = comment.figure
 
+            // 좋아요가 눌러진 댓글 작성자를 위한 이벤트
             return CommentLikedEvent(
                 userId =
-                    interaction.user.id
+                    interaction.comment.user?.id
                         ?: throw IllegalArgumentException("User ID is required"),
                 targetId =
                     comment.id

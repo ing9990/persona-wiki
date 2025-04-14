@@ -65,22 +65,26 @@
 
         <!-- 명성 레벨 컨테이너 -->
         <div class="prestige-level-container mb-6">
-          <div th:class="${'prestige-level-badge level-' + user.prestige / 100}">
-            <span th:text="${user.prestige / 100}">0</span>
+          <div
+              th:class="${'prestige-level-badge level-' + @prestigeHelper.getLevel(user.prestige)}">
+            <span th:text="${@prestigeHelper.getLevel(user.prestige)}">0</span>
           </div>
           <div class="prestige-level-info-text">
             <div class="prestige-level-title">
-              레벨 <span th:text="${user.prestige / 100}">0</span> -
-              <span th:text="${@prestigeHelper.getLevelTitle(user.prestige / 100)}"
-                    class="level-title">병아리</span>
+              레벨 <span th:text="${@prestigeHelper.getLevel(user.prestige)}">0</span> -
+              <span
+                  th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(user.prestige))}"
+                  class="level-title">병아리</span>
               <span id="userPrestige" th:data-prestige="${user.prestige}" class="hidden"></span>
             </div>
             <div class="prestige-level-desc">
-              다음 레벨까지 <span th:text="${@prestigeHelper.getPointsForNextLevel(user.prestige)}"
-                            id="pointsForNextLevel">100</span> 포인트 남았습니다
+              다음 레벨까지
+              <span th:text="${@prestigeHelper.getPointsForNextLevel(user.prestige)}"
+                    id="pointsForNextLevel">100</span> 포인트 남았습니다
             </div>
           </div>
         </div>
+
 
         <div class="flex flex-col md:flex-row items-center">
           <!-- 프로필 이미지 -->
@@ -113,10 +117,11 @@
 
             <!-- 명성 포인트 배지 -->
             <div class="mb-4">
-              <span th:class="${'prestige-badge level-' + user.prestige / 100}">
-                <i class="fas fa-award mr-1"></i>
-                명성: <span th:text="${user.prestige}" class="font-semibold">0</span> 포인트
-              </span>
+              <span th:class="${'prestige-badge level-' + @prestigeHelper.getLevel(user.prestige)}">
+  <i class="fas fa-award mr-1"></i>
+  명성: <span th:text="${user.prestige}" class="font-semibold">0</span> 포인트
+</span>
+
             </div>
 
             <div class="mb-4">
@@ -177,11 +182,14 @@
         </div>
 
         <!-- 명성 프로그레스 바 섹션 -->
-        <div th:class="${'mt-6 prestige-progress-section level-' + user.prestige / 100}">
+        <div
+            th:class="${'mt-6 prestige-progress-section level-' + @prestigeHelper.getLevel(user.prestige)}">
+
           <div class="flex justify-between items-center mb-2">
             <h3 class="text-sm font-semibold text-gray-700">
               활동 명성 - <span
-                th:text="${@prestigeHelper.getLevelTitle(user.prestige / 100)}">병아리</span>
+                th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(user.prestige))}">병아리</span>
+
             </h3>
             <span class="text-xs text-gray-500" th:text="${user.prestige} + ' 포인트'">0 포인트</span>
           </div>
@@ -192,8 +200,10 @@
           <div
               class="prestige-level-info mt-2 text-xs text-gray-500 flex justify-between items-center">
             <span>
-              레벨 <span th:text="${user.prestige / 100}" id="prestigeLevel">0</span>
-              (<span th:text="${@prestigeHelper.getLevelTitle(user.prestige / 100)}">병아리</span>)
+레벨 <span th:text="${@prestigeHelper.getLevel(user.prestige)}" id="prestigeLevel">0</span>
+             (<span
+                th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(user.prestige))}">병아리</span>)
+
             </span>
             <span>
               다음 레벨까지 <span

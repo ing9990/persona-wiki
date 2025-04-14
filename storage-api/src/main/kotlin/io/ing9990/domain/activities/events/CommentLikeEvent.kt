@@ -38,6 +38,7 @@ data class CommentLikeEvent(
             val comment = interaction.comment
             val figure = comment.figure
 
+            // 좋아요를 누른 사람을 위한 이벤트
             return CommentLikeEvent(
                 userId =
                     interaction.user.id
