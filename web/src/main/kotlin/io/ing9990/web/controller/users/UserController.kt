@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.servlet.mvc.support.RedirectAttributes
 
 @Controller
@@ -91,13 +92,13 @@ class UserController(
         return "redirect:/me"
     }
 
-    @PatchMapping("/me/update-bio")
+    @PostMapping("/me/update-bio")
     fun updateBio(
         @AuthorizedUser user: User,
-        @RequestBody request: UpdateBioRequest,
+        @RequestParam("bio") bio: String,
         redirectAttributes: RedirectAttributes,
     ): String {
-        userService.updateBio(user, request.bio)
+        userService.updateBio(user.id!!, bio)
         redirectAttributes.addFlashAttribute("message", "한줄 소개가 업데이트되었습니다.")
         return "redirect:/me"
     }
@@ -117,5 +118,16 @@ class UserController(
         }
 
         return "redirect:/me"
+    }
+
+    // PATCH 메서드도 지원 (API 요청용)
+    @PatchMapping("/me/update-bio")
+    @ResponseBody
+    fun updateBioApi(
+        @AuthorizedUser user: User,
+        @RequestBody request: UpdateBioRequest,
+    ): UpdateBioResponse {
+        userService.updateBio(user.id!!, request.bio)
+        return UpdateBioResponse(success = true, message = "한줄 소개가 업데이트되었습니다.")
     }
 }

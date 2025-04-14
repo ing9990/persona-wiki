@@ -45,6 +45,14 @@
     </div>
   </div>
 
+  <div th:if="${message}"
+       class="mb-6 p-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 rounded-md animate-fade-in">
+    <div class="flex">
+      <i class="fas fa-info-circle text-blue-500 mr-3 text-xl"></i>
+      <span th:text="${message}" class="self-center">정보 메시지</span>
+    </div>
+  </div>
+
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- 왼쪽: 프로필 정보 -->
     <div class="lg:col-span-2 space-y-6">
@@ -54,6 +62,25 @@
           <i class="fas fa-user-circle text-indigo-500 mr-2"></i>
           <span>회원 정보</span>
         </h2>
+
+        <!-- 명성 레벨 컨테이너 -->
+        <div class="prestige-level-container mb-6">
+          <div th:class="${'prestige-level-badge level-' + user.prestige / 100}">
+            <span th:text="${user.prestige / 100}">0</span>
+          </div>
+          <div class="prestige-level-info-text">
+            <div class="prestige-level-title">
+              레벨 <span th:text="${user.prestige / 100}">0</span> -
+              <span th:text="${@prestigeHelper.getLevelTitle(user.prestige / 100)}"
+                    class="level-title">병아리</span>
+              <span id="userPrestige" th:data-prestige="${user.prestige}" class="hidden"></span>
+            </div>
+            <div class="prestige-level-desc">
+              다음 레벨까지 <span th:text="${@prestigeHelper.getPointsForNextLevel(user.prestige)}"
+                            id="pointsForNextLevel">100</span> 포인트 남았습니다
+            </div>
+          </div>
+        </div>
 
         <div class="flex flex-col md:flex-row items-center">
           <!-- 프로필 이미지 -->
@@ -84,6 +111,14 @@
               </p>
             </div>
 
+            <!-- 명성 포인트 배지 -->
+            <div class="mb-4">
+              <span th:class="${'prestige-badge level-' + user.prestige / 100}">
+                <i class="fas fa-award mr-1"></i>
+                명성: <span th:text="${user.prestige}" class="font-semibold">0</span> 포인트
+              </span>
+            </div>
+
             <div class="mb-4">
               <span class="badge">
                 <i class="fas fa-sign-in-alt mr-1"></i>
@@ -91,6 +126,25 @@
               </span>
             </div>
           </div>
+        </div>
+
+        <!-- 한줄 소개 섹션 -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-md font-semibold text-gray-700">
+              <i class="fas fa-quote-left text-indigo-400 mr-2"></i>한줄 소개
+            </h3>
+            <button id="editBioTrigger" class="edit-button">
+              <i class="fas fa-pencil-alt mr-1"></i> 수정
+            </button>
+          </div>
+          <p th:if="${!#strings.isEmpty(user.bio)}" th:text="${user.bio}" id="bioText"
+             class="text-gray-600 italic bio-text">
+            안녕하세요! 저는 국민사형투표 사용자입니다. 다양한 의견을 나누고 소통하고 싶습니다.
+          </p>
+          <p th:if="${#strings.isEmpty(user.bio)}" class="text-gray-400 italic bio-empty-text">
+            한줄 소개를 입력해 주세요.
+          </p>
         </div>
       </div>
 
@@ -119,6 +173,32 @@
                  th:text="${activityOverview.personAddCount}">0
             </div>
             <div class="text-sm text-gray-600">추가한 인물</div>
+          </div>
+        </div>
+
+        <!-- 명성 프로그레스 바 섹션 -->
+        <div th:class="${'mt-6 prestige-progress-section level-' + user.prestige / 100}">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-sm font-semibold text-gray-700">
+              활동 명성 - <span
+                th:text="${@prestigeHelper.getLevelTitle(user.prestige / 100)}">병아리</span>
+            </h3>
+            <span class="text-xs text-gray-500" th:text="${user.prestige} + ' 포인트'">0 포인트</span>
+          </div>
+          <div class="bg-gray-200 rounded-full h-4 overflow-hidden">
+            <div class="prestige-progress-bar h-4 rounded-full"
+                 th:style="'width: ' + ${T(java.lang.Math).min(100, @prestigeHelper.getProgressPercentage(user.prestige))} + '%'"></div>
+          </div>
+          <div
+              class="prestige-level-info mt-2 text-xs text-gray-500 flex justify-between items-center">
+            <span>
+              레벨 <span th:text="${user.prestige / 100}" id="prestigeLevel">0</span>
+              (<span th:text="${@prestigeHelper.getLevelTitle(user.prestige / 100)}">병아리</span>)
+            </span>
+            <span>
+              다음 레벨까지 <span
+                th:text="${@prestigeHelper.getPointsForNextLevel(user.prestige)}">100</span> 포인트
+            </span>
           </div>
         </div>
 
@@ -269,6 +349,44 @@
     </div>
   </div>
 
+  <!-- 한줄 소개 변경 모달 -->
+  <div id="editBioModal" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-gray-800">한줄 소개 변경</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form id="updateBioForm">
+        <div class="mb-4">
+          <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">
+            한줄 소개
+          </label>
+          <textarea id="bio" name="bio" rows="3"
+                    th:text="${user.bio}"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="자신을 소개하는 한 줄을 작성해주세요."></textarea>
+          <p class="mt-1 text-xs text-gray-500">
+            <span id="bioCharCount">0</span>/100자
+          </p>
+        </div>
+
+        <div class="text-right space-x-3">
+          <button type="button"
+                  class="modal-close px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">
+            취소
+          </button>
+          <button type="submit"
+                  class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+            변경하기
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- 회원 탈퇴 확인 모달 -->
   <div id="withdrawModal" class="modal-backdrop">
     <div class="modal-content">
@@ -302,7 +420,6 @@
 <!-- 페이지 자바스크립트 -->
 <th:block layout:fragment="script">
   <script src="/js/users/my-page.js"></script>
-  <script src="/js/utils/relative-time.js"></script>
   <script src="/js/utils/relative-time.js"></script>
 </th:block>
 </body>

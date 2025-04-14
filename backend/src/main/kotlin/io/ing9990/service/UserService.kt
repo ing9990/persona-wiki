@@ -90,12 +90,14 @@ class UserService(
 
     @Transactional
     fun updateBio(
-        user: User,
+        userId: Long,
         bio: String,
-    ): User {
-        user.updateBio(bio)
-        return user
-    }
+    ): User =
+        getUserById(userId)
+            .let {
+                it.updateBio(bio)
+                it
+            }
 
     private fun updateNickNameValidation(
         user: User,

@@ -166,31 +166,630 @@
   font-weight: 500;
 }
 
-/* 통계 카드 스타일 */
-.stat-card {
-  background-color: #F9FAFB;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  text-align: center;
+/* 명성 배지 스타일 - 기본 스타일 */
+.prestige-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.375rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
-  border-left: 4px solid transparent;
+  position: relative;
+  overflow: hidden;
 }
 
-.stat-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+.prestige-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-position: 0% 0%;
+  opacity: 0.2;
+  z-index: 0;
+  border-radius: 9999px;
+  transition: all 0.5s ease;
 }
 
-.stat-card.comment {
-  border-left-color: #6366F1;
+.prestige-badge:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.stat-card.vote {
-  border-left-color: #10B981;
+.prestige-badge:hover::before {
+  background-position: 100% 100%;
 }
 
-.stat-card.person {
-  border-left-color: #3B82F6;
+.prestige-badge i,
+.prestige-badge span {
+  position: relative;
+  z-index: 1;
+}
+
+/* 레벨별 명성 배지 스타일 */
+.prestige-badge.level-0 {
+  background: linear-gradient(135deg, #6B7280, #4B5563);
+  color: #F3F4F6;
+}
+
+.prestige-badge.level-0::after {
+  content: ' (병아리)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.prestige-badge.level-1 {
+  background: linear-gradient(135deg, #4B5563, #1F2937);
+  color: #F9FAFB;
+}
+
+.prestige-badge.level-1::after {
+  content: ' (견습생)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.prestige-badge.level-2 {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  color: white;
+}
+
+.prestige-badge.level-2::after {
+  content: ' (관찰자)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.prestige-badge.level-3 {
+  background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+  color: white;
+}
+
+.prestige-badge.level-3::after {
+  content: ' (평론가)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.prestige-badge.level-4 {
+  background: linear-gradient(135deg, #EC4899, #DB2777);
+  color: white;
+}
+
+.prestige-badge.level-4::after {
+  content: ' (분석가)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.prestige-badge.level-5 {
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: white;
+}
+
+.prestige-badge.level-5::after {
+  content: ' (영향력자)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.prestige-badge.level-6 {
+  background: linear-gradient(135deg, #10B981, #059669);
+  color: white;
+}
+
+.prestige-badge.level-6::after {
+  content: ' (전문가)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.prestige-badge.level-7 {
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+  color: white;
+}
+
+.prestige-badge.level-7::after {
+  content: ' (현자)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.prestige-badge.level-8 {
+  background: linear-gradient(135deg, #6D28D9, #4C1D95);
+  color: white;
+  box-shadow: 0 0 10px rgba(109, 40, 217, 0.5);
+}
+
+.prestige-badge.level-8::after {
+  content: ' (대가)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.prestige-badge.level-9 {
+  background: linear-gradient(135deg, #1D4ED8, #1E40AF);
+  color: white;
+  box-shadow: 0 0 10px rgba(29, 78, 216, 0.5);
+}
+
+.prestige-badge.level-9::after {
+  content: ' (거장)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.prestige-badge.level-10 {
+  background: linear-gradient(135deg, #F59E0B, #B45309);
+  color: white;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+}
+
+.prestige-badge.level-10::after {
+  content: ' (인물의 신)';
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+/* 레벨 3 이상부터 애니메이션 효과 추가 */
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.prestige-badge.level-3,
+.prestige-badge.level-4,
+.prestige-badge.level-5,
+.prestige-badge.level-6,
+.prestige-badge.level-7,
+.prestige-badge.level-8,
+.prestige-badge.level-9,
+.prestige-badge.level-10 {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+/* 레벨 5 이상부터 반짝임 효과 추가 */
+@keyframes shimmer {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+  }
+}
+
+.prestige-badge.level-5,
+.prestige-badge.level-6,
+.prestige-badge.level-7,
+.prestige-badge.level-8,
+.prestige-badge.level-9,
+.prestige-badge.level-10 {
+  animation: gradientShift 3s ease infinite, shimmer 2s ease-in-out infinite;
+}
+
+/* 레벨 명성도 컨테이너 */
+.prestige-level-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  background-color: #F9FAFB;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.prestige-level-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.prestige-level-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  margin-right: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 레벨별 배지 배경 */
+.prestige-level-badge.level-0 {
+  background: linear-gradient(135deg, #6B7280, #4B5563);
+}
+
+.prestige-level-badge.level-0::after {
+  content: '병아리';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-0:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+.prestige-level-badge.level-1 {
+  background: linear-gradient(135deg, #4B5563, #1F2937);
+}
+
+.prestige-level-badge.level-1::after {
+  content: '견습생';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-1:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+.prestige-level-badge.level-2 {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+}
+
+.prestige-level-badge.level-2::after {
+  content: '관찰자';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-2:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+.prestige-level-badge.level-3 {
+  background: linear-gradient(135deg, #8B5CF6, #6D28D9);
+}
+
+.prestige-level-badge.level-3::after {
+  content: '평론가';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-3:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+.prestige-level-badge.level-4 {
+  background: linear-gradient(135deg, #EC4899, #DB2777);
+}
+
+.prestige-level-badge.level-4::after {
+  content: '분석가';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-4:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+.prestige-level-badge.level-5 {
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+}
+
+.prestige-level-badge.level-5::after {
+  content: '영향력자';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-5:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+.prestige-level-badge.level-6 {
+  background: linear-gradient(135deg, #10B981, #059669);
+}
+
+.prestige-level-badge.level-6::after {
+  content: '전문가';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-6:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+.prestige-level-badge.level-7 {
+  background: linear-gradient(135deg, #EF4444, #DC2626);
+}
+
+.prestige-level-badge.level-7::after {
+  content: '현자';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-7:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+.prestige-level-badge.level-8 {
+  background: linear-gradient(135deg, #6D28D9, #4C1D95);
+  box-shadow: 0 0 10px rgba(109, 40, 217, 0.5);
+}
+
+.prestige-level-badge.level-8::after {
+  content: '대가';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-8:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+.prestige-level-badge.level-9 {
+  background: linear-gradient(135deg, #1D4ED8, #1E40AF);
+  box-shadow: 0 0 10px rgba(29, 78, 216, 0.5);
+}
+
+.prestige-level-badge.level-9::after {
+  content: '거장';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-9:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+.prestige-level-badge.level-10 {
+  background: linear-gradient(135deg, #F59E0B, #B45309);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.6);
+}
+
+.prestige-level-badge.level-10::after {
+  content: '인물의 신';
+  position: absolute;
+  bottom: -1.5rem;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 0.625rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.prestige-level-badge.level-10:hover::after {
+  bottom: -0.5rem;
+  opacity: 0.8;
+}
+
+/* 레벨 3 이상 애니메이션 */
+.prestige-level-badge.level-3,
+.prestige-level-badge.level-4,
+.prestige-level-badge.level-5,
+.prestige-level-badge.level-6,
+.prestige-level-badge.level-7,
+.prestige-level-badge.level-8,
+.prestige-level-badge.level-9,
+.prestige-level-badge.level-10 {
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+.prestige-level-badge.level-5,
+.prestige-level-badge.level-6,
+.prestige-level-badge.level-7,
+.prestige-level-badge.level-8,
+.prestige-level-badge.level-9,
+.prestige-level-badge.level-10 {
+  animation: gradientShift 3s ease infinite, shimmer 2s ease-in-out infinite;
+}
+
+.prestige-level-info-text {
+  flex-grow: 1;
+}
+
+.prestige-level-title {
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 0.25rem;
+}
+
+.level-title {
+  color: #6366F1;
+  font-weight: 600;
+}
+
+.prestige-level-desc {
+  font-size: 0.875rem;
+  color: #6B7280;
+}
+
+/* 프로그레스 바 스타일 */
+.prestige-progress-section {
+  padding: 1rem;
+  background-color: #F9FAFB;
+  border-radius: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.prestige-progress-bar {
+  background: linear-gradient(to right, #6366F1, #8B5CF6);
+  transition: width 0.5s ease-out;
+}
+
+/* 레벨에 따른 프로그레스 바 스타일 변경 */
+.level-0 .prestige-progress-bar {
+  background: linear-gradient(to right, #6B7280, #4B5563);
+}
+
+.level-1 .prestige-progress-bar {
+  background: linear-gradient(to right, #4B5563, #1F2937);
+}
+
+.level-2 .prestige-progress-bar {
+  background: linear-gradient(to right, #2563EB, #1D4ED8);
+}
+
+.level-3 .prestige-progress-bar {
+  background: linear-gradient(to right, #8B5CF6, #6D28D9);
+}
+
+.level-4 .prestige-progress-bar {
+  background: linear-gradient(to right, #EC4899, #DB2777);
+}
+
+.level-5 .prestige-progress-bar {
+  background: linear-gradient(to right, #F59E0B, #D97706);
+}
+
+.level-6 .prestige-progress-bar {
+  background: linear-gradient(to right, #10B981, #059669);
+}
+
+.level-7 .prestige-progress-bar {
+  background: linear-gradient(to right, #EF4444, #DC2626);
+}
+
+.level-8 .prestige-progress-bar {
+  background: linear-gradient(to right, #6D28D9, #4C1D95);
+}
+
+.level-9 .prestige-progress-bar {
+  background: linear-gradient(to right, #1D4ED8, #1E40AF);
+}
+
+.level-10 .prestige-progress-bar {
+  background: linear-gradient(to right, #F59E0B, #B45309);
+}
+
+/* 레벨 3 이상의 프로그레스 바 애니메이션 */
+@keyframes progressGradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.level-3 .prestige-progress-bar,
+.level-4 .prestige-progress-bar,
+.level-5 .prestige-progress-bar,
+.level-6 .prestige-progress-bar,
+.level-7 .prestige-progress-bar,
+.level-8 .prestige-progress-bar,
+.level-9 .prestige-progress-bar,
+.level-10 .prestige-progress-bar {
+  background-size: 200% 200%;
+  animation: progressGradientShift 3s ease infinite;
+}
+
+.prestige-level-info {
+  display: flex;
+  justify-content: space-between;
+  color: #6B7280;
+}
+
+/* 한줄 소개 스타일 */
+.bio-text {
+  line-height: 1.5;
+  transition: all 0.3s ease;
+  min-height: 1.5rem;
+}
+
+.bio-empty-text {
+  font-style: italic;
+  color: #9CA3AF;
 }
 
 /* 활동 아이템 스타일 */
@@ -293,6 +892,22 @@
   .profile-image-container {
     width: 120px;
     height: 120px;
+  }
+
+  .prestige-level-info {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .prestige-level-container {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .prestige-level-badge {
+    margin-right: 0;
+    margin-bottom: 0.75rem;
   }
 }
 
