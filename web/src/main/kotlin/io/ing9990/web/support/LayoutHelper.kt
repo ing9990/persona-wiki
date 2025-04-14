@@ -63,15 +63,21 @@ class LayoutHelper {
     fun toRelative(dateTime: LocalDateTime): String {
         val now = LocalDateTime.now()
         val seconds = ChronoUnit.SECONDS.between(dateTime, now)
-        return when {
-            seconds < 30 -> "방금"
-            seconds < 60 -> "${seconds}초 전"
-            seconds < 3600 -> "${seconds / 60}분 전"
-            seconds < 86400 -> "${seconds / 3600}시간 전"
-            seconds < 604800 -> "${seconds / 86400}일 전"
-            seconds < 2592000 -> "${seconds / 604800}주일 전"
-            else -> "${seconds / 2592000}달 전"
-        }
+        val result =
+            when {
+                seconds < 30 -> "방금"
+                seconds < 60 -> "${seconds}초 전"
+                seconds < 3600 -> "${seconds / 60}분 전"
+                seconds < 86400 -> "${seconds / 3600}시간 전"
+                seconds < 604800 -> "${seconds / 86400}일 전"
+                seconds < 2592000 -> "${seconds / 604800}주 전" // "주일 전" -> "주 전"
+                seconds < 31536000 -> "${seconds / 2592000}달 전"
+                else -> "${seconds / 31536000}년 전" // 년 단위 계산 추가
+            }
+
+        var var27 = true
+
+        return result
     }
 
     /**

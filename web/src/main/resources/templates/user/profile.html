@@ -31,18 +31,19 @@
               <span
                   th:class="${'prestige-badge level-' + @prestigeHelper.getLevel(profile.prestige)}"
                   th:data-prestige="${profile.prestige}">
-  <i class="fas fa-award mr-1"></i>
-  Lv.<span th:text="${@prestigeHelper.getLevel(profile.prestige)}">0</span>
-  <span class="title-text"
-        th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(profile.prestige))}">병아리</span>
-</span>
+                <i class="fas fa-award mr-1"></i>
+                Lv.<span th:text="${@prestigeHelper.getLevel(profile.prestige)}">0</span>
+                <span class="title-text"
+                      th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(profile.prestige))}">병아리</span>
+              </span>
             </div>
 
             <p th:if="${profile.bio}" class="text-lg text-indigo-100 mb-3" th:text="${profile.bio}">
               사용자 소개글</p>
-            <p class="comment-date-relative text-indigo-200 text-sm flex items-center justify-center md:justify-start">
+            <p class="text-indigo-200 text-sm flex items-center justify-center md:justify-start">
               <i class="far fa-calendar-alt mr-2"></i>
-              가입일: <span th:text="${profile.createdAt}">2023년 01월 01일</span>
+              가입일: <span
+                th:text="${@layoutHelper.toRelative(profile.createdAt)}">2023년 01월 01일</span>
             </p>
           </div>
         </div>
@@ -164,99 +165,99 @@
               <span>다음 레벨까지</span>
             </div>
             <div class="flex justify-between font-medium text-gray-700">
-  <span>
-    레벨 <span th:text="${@prestigeHelper.getLevel(profile.prestige)}">0</span>
-  </span>
               <span>
-    <span th:text="${@prestigeHelper.getPointsForNextLevel(profile.prestige)}">100</span> 포인트
-  </span>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- 활동 통계 카드 -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
-          <div class="px-6 py-4 border-b border-gray-100 flex items-center">
-            <i class="fas fa-chart-pie text-xl text-indigo-500 mr-3"></i>
-            <h2 class="text-xl font-semibold text-gray-800">활동 통계</h2>
-          </div>
-
-          <div class="p-6">
-            <div class="grid grid-cols-1 gap-4">
-              <!-- 댓글 통계 -->
-              <div
-                  class="stat-card bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 shadow-sm">
-                <div class="flex items-center">
-                  <div class="stat-icon-container bg-blue-500 text-white">
-                    <i class="fas fa-comment-alt"></i>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-2xl font-bold text-blue-700"
-                         th:text="${activityOverview.commentCount}">0
-                    </div>
-                    <div class="text-sm text-blue-600">댓글 작성</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 투표 통계 -->
-              <div
-                  class="stat-card bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 shadow-sm">
-                <div class="flex items-center">
-                  <div class="stat-icon-container bg-purple-500 text-white">
-                    <i class="fas fa-vote-yea"></i>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-2xl font-bold text-purple-700"
-                         th:text="${activityOverview.voteCount}">0
-                    </div>
-                    <div class="text-sm text-purple-600">투표 참여</div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- 인물 추가 통계 -->
-              <div
-                  class="stat-card bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 shadow-sm">
-                <div class="flex items-center">
-                  <div class="stat-icon-container bg-green-500 text-white">
-                    <i class="fas fa-user-plus"></i>
-                  </div>
-                  <div class="ml-4">
-                    <div class="text-2xl font-bold text-green-700"
-                         th:text="${activityOverview.personAddCount}">0
-                    </div>
-                    <div class="text-sm text-green-600">인물 추가</div>
-                  </div>
-                </div>
-              </div>
+                레벨 <span th:text="${@prestigeHelper.getLevel(profile.prestige)}">0</span>
+              </span>
+              <span>
+                <span
+                    th:text="${@prestigeHelper.getPointsForNextLevel(profile.prestige)}">100</span> 포인트
+              </span>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- 추천 인물 카드 -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-          <div class="px-6 py-4 border-b border-gray-100 flex items-center">
-            <i class="fas fa-users text-xl text-indigo-500 mr-3"></i>
-            <h2 class="text-xl font-semibold text-gray-800">추천 인물</h2>
-          </div>
+      <!-- 활동 통계 카드 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center">
+          <i class="fas fa-chart-pie text-xl text-indigo-500 mr-3"></i>
+          <h2 class="text-xl font-semibold text-gray-800">활동 통계</h2>
+        </div>
 
-          <div class="p-6">
-            <a href="/figures"
-               class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition w-full text-center">
-              <i class="fas fa-users mr-2"></i> 인물 둘러보기
-            </a>
+        <div class="p-6">
+          <div class="grid grid-cols-1 gap-4">
+            <!-- 댓글 통계 -->
+            <div
+                class="stat-card bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 shadow-sm">
+              <div class="flex items-center">
+                <div class="stat-icon-container bg-blue-500 text-white">
+                  <i class="fas fa-comment-alt"></i>
+                </div>
+                <div class="ml-4">
+                  <div class="text-2xl font-bold text-blue-700"
+                       th:text="${activityOverview.commentCount}">0
+                  </div>
+                  <div class="text-sm text-blue-600">댓글 작성</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 투표 통계 -->
+            <div
+                class="stat-card bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 shadow-sm">
+              <div class="flex items-center">
+                <div class="stat-icon-container bg-purple-500 text-white">
+                  <i class="fas fa-vote-yea"></i>
+                </div>
+                <div class="ml-4">
+                  <div class="text-2xl font-bold text-purple-700"
+                       th:text="${activityOverview.voteCount}">0
+                  </div>
+                  <div class="text-sm text-purple-600">투표 참여</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 인물 추가 통계 -->
+            <div
+                class="stat-card bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 shadow-sm">
+              <div class="flex items-center">
+                <div class="stat-icon-container bg-green-500 text-white">
+                  <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="ml-4">
+                  <div class="text-2xl font-bold text-green-700"
+                       th:text="${activityOverview.personAddCount}">0
+                  </div>
+                  <div class="text-sm text-green-600">인물 추가</div>
+                </div>
+              </div>
+            </div>
           </div>
+        </div>
+      </div>
+
+      <!-- 추천 인물 카드 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center">
+          <i class="fas fa-users text-xl text-indigo-500 mr-3"></i>
+          <h2 class="text-xl font-semibold text-gray-800">추천 인물</h2>
+        </div>
+
+        <div class="p-6">
+          <a href="/figures"
+             class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition w-full text-center">
+            <i class="fas fa-users mr-2"></i> 인물 둘러보기
+          </a>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- 페이지 자바스크립트 -->
-  <th:block layout:fragment="script">
-    <script src="/js/utils/relative-time.js"></script>
-    <script src="/js/users/profile.js"></script>
-  </th:block>
+<!-- 페이지 자바스크립트 -->
+<th:block layout:fragment="script">
+  <script src="/js/users/profile.js"></script>
+</th:block>
 </body>
 </html>
