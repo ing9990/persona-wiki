@@ -71,4 +71,8 @@ class User(
     fun removeProfileImage() {
         this.image = ""
     }
+
+    fun updateBio(updatedBio: String) {
+        this.bio = updatedBio
+    }
 }

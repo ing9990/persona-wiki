@@ -88,6 +88,15 @@ class UserService(
         return user
     }
 
+    @Transactional
+    fun updateBio(
+        user: User,
+        bio: String,
+    ): User {
+        user.updateBio(bio)
+        return user
+    }
+
     private fun updateNickNameValidation(
         user: User,
         nickname: String,
