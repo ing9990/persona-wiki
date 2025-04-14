@@ -1,3 +1,5 @@
+package io.ing9990.domain.activities.events
+
 import io.ing9990.domain.activities.ActivityEvent
 import io.ing9990.domain.activities.ActivityType
 import io.ing9990.domain.comment.CommentInteraction

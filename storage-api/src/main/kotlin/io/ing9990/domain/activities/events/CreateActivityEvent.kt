@@ -1,6 +1,5 @@
 package io.ing9990.domain.activities.events
 
-import CommentDislikeEvent
 import io.ing9990.domain.activities.ActivityEvent
 import io.ing9990.domain.comment.Comment
 import io.ing9990.domain.comment.CommentInteraction
@@ -39,6 +38,11 @@ class CreateActivityEvent(
             interaction: CommentInteraction,
             source: Any,
         ): CreateActivityEvent = CreateActivityEvent(source, CommentLikeEvent.from(interaction))
+
+        fun createCommentLikedEvent(
+            interaction: CommentInteraction,
+            source: Any,
+        ): CreateActivityEvent = CreateActivityEvent(source, CommentLikedEvent.from(interaction))
 
         fun createCommentDislikeEvent(
             interaction: CommentInteraction,

@@ -1,25 +1,27 @@
 package io.ing9990.domain.activities.events
 
 import io.ing9990.domain.activities.ActivityEvent
-import io.ing9990.domain.activities.ActivityType.DISLIKE
+import io.ing9990.domain.activities.ActivityType
 import io.ing9990.domain.comment.CommentInteraction
-import io.ing9990.domain.comment.InteractionType
 import java.time.LocalDateTime
 
-data class CommentDislikeEvent(
+// 댓글 작성자 처리
+data class CommentLikedEvent(
+    // 댓글 작성자
     override val userId: Long,
     override val targetId: Long,
     override val targetName: String,
-    val figureId: Long,
-    val interactionType: InteractionType,
-    val commentOverview: String,
     override val timestamp: LocalDateTime = LocalDateTime.now(),
+    override val description: String,
+    val commentOverview: String,
+    val likeUserId: Long,
+    val likedUserId: Long,
 ) : ActivityEvent(
         userId,
-        DISLIKE,
+        ActivityType.LIKE,
         targetId,
         targetName,
-        shorten(commentOverview),
+        commentOverview,
         timestamp,
     ) {
     companion object {
@@ -34,11 +36,11 @@ data class CommentDislikeEvent(
                     ""
                 }
 
-        fun from(interaction: CommentInteraction): CommentDislikeEvent {
+        fun from(interaction: CommentInteraction): CommentLikedEvent {
             val comment = interaction.comment
             val figure = comment.figure
 
-            return CommentDislikeEvent(
+            return CommentLikedEvent(
                 userId =
                     interaction.user.id
                         ?: throw IllegalArgumentException("User ID is required"),
@@ -46,11 +48,10 @@ data class CommentDislikeEvent(
                     comment.id
                         ?: throw IllegalArgumentException("Comment ID is required"),
                 targetName = figure.name,
-                figureId =
-                    figure.id
-                        ?: throw IllegalArgumentException("Figure ID is required"),
-                interactionType = interaction.interactionType,
-                commentOverview = shorten(comment.content, 20),
+                commentOverview = shorten(comment.content),
+                likeUserId = interaction.user.id!!,
+                likedUserId = interaction.comment.user?.id!!,
+                description = "다음 사용자가 다음 댓글에 좋아요를 눌렀습니다. ${comment.content}",
             )
         }
     }

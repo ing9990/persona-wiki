@@ -3,13 +3,15 @@ package io.ing9990.domain.activities.events.handler
 import io.ing9990.domain.activities.Activity
 import io.ing9990.domain.activities.events.CreateActivityEvent
 import io.ing9990.domain.activities.repositories.ActivityRepository
+import io.ing9990.domain.user.User
 import io.ing9990.domain.user.repositories.UserRepository
 import org.slf4j.LoggerFactory
-import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
-import org.springframework.transaction.annotation.Propagation
+import org.springframework.transaction.annotation.Propagation.REQUIRES_NEW
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.event.TransactionPhase.AFTER_COMMIT
+import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
 class ActivityEventHandler(
@@ -19,19 +21,16 @@ class ActivityEventHandler(
     private val logger = LoggerFactory.getLogger(ActivityEventHandler::class.java)
 
     @Async
-    @EventListener
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional(propagation = REQUIRES_NEW)
+    @TransactionalEventListener(phase = AFTER_COMMIT)
     fun handleCreateActivityEvent(event: CreateActivityEvent) {
         try {
             val activityEvent = event.activityEvent
-
-            // 사용자 조회
-            val user =
+            val user: User =
                 userRepository.findById(activityEvent.userId).orElseThrow {
                     IllegalArgumentException("User with ID ${activityEvent.userId} not found")
                 }
 
-            // 활동 객체 생성
             val activity =
                 Activity(
                     user = user,
@@ -39,11 +38,10 @@ class ActivityEventHandler(
                     targetId = activityEvent.targetId,
                     targetName = activityEvent.targetName,
                     description = activityEvent.description,
+                    prestigeAmount = activityEvent.activityType.prestigePoint,
                 )
-
-            // 활동 저장
+            user.addPrestige(activity.activityType)
             activityRepository.save(activity)
-
             logger.info("Activity recorded: ${activityEvent.activityType} by user ${user.nickname}")
         } catch (e: Exception) {
             logger.error("Failed to record activity", e)

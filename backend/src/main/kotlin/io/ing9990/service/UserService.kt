@@ -44,7 +44,7 @@ class UserService(
         return existingUser?.apply {
             this.lastLoginAt = LocalDateTime.now()
         } ?: userRepository.save(
-            User(
+            User.create(
                 providerId = socialId,
                 provider = providerType,
                 image = profile.findImageUrl(),
