@@ -16,7 +16,7 @@ data class CurrentUserDto(
 
     fun notLoggedIn(): Boolean = status != LOGGED_IN
 
-    fun image(): String = currentUser?.image ?: DEFAULT_IMAGE
+    fun image(): String = currentUser?.image ?: ""
 
     fun getUserIdOrDefault(): Long = currentUser?.id ?: DEFAULT
 

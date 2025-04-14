@@ -30,6 +30,8 @@ class Activity(
     val targetId: Long,
     @Column(nullable = false)
     val targetName: String,
+    @Column(nullable = false)
+    val prestigeAmount: Int,
     @Column(length = 500)
     val description: String? = null,
 ) : BaseEntity()

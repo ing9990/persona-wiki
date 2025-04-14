@@ -21,7 +21,7 @@ class VoteService(
     /**
      * 투표
      */
-    @Transactional
+    @Transactional // 트랜잭션 1 시작
     fun voteFigure(voteData: VoteData) {
         val figure: Figure =
             figureService.searchByCategoryIdAndName(
@@ -38,10 +38,9 @@ class VoteService(
                 sentiment = voteData.sentiment,
             )
         val voteSaved = voteRepository.save(voteCreated)
-        activityEventPublisher.publishVoteCreated(voteSaved)
-
         figure.addVote(voteSaved)
-        figureRepository.save(figure)
+
+        activityEventPublisher.publishVoteCreated(voteSaved)
     }
 
     private fun validateVotable(

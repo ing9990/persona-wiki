@@ -1,5 +1,6 @@
 package io.ing9990.domain.user
 
+import io.ing9990.domain.activities.ActivityType
 import io.ing9990.model.BaseEntity
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -35,14 +36,43 @@ class User(
     var nickname: String,
     @Column(name = "profile_image", nullable = true)
     var image: String = "",
+    @Column(name = "prestige")
+    var prestige: Int = 0,
     @Column(name = "last_login_at", nullable = false)
     var lastLoginAt: LocalDateTime = LocalDateTime.now(),
 ) : BaseEntity() {
     companion object {
+        fun create(
+            providerId: String,
+            provider: OAuthProviderType,
+            image: String,
+            nickname: String,
+            lastLoginAt: LocalDateTime?,
+        ): User =
+            User(
+                providerId = providerId,
+                provider = provider,
+                image = image,
+                nickname = nickname,
+                lastLoginAt = LocalDateTime.now(),
+            )
+
         val regex = "^[a-zA-Z0-9가-힣]+$".toRegex()
+    }
+
+    fun addPrestige(type: ActivityType) {
+        prestige += type.prestigePoint
+    }
+
+    fun deductPrestige(type: ActivityType) {
+        prestige.minus(type.prestigePoint)
     }
 
     fun removeProfileImage() {
         this.image = ""
+    }
+
+    fun updateBio(updatedBio: String) {
+        this.bio = updatedBio
     }
 }

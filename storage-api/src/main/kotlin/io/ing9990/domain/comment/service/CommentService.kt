@@ -120,6 +120,7 @@ class CommentService(
     ) {
         if (interactionType == InteractionType.LIKE) {
             activityEventPublisher.publishCommentLike(interaction)
+            activityEventPublisher.publishCommentLiked(interaction)
         } else {
             activityEventPublisher.publishCommentDislike(interaction)
         }

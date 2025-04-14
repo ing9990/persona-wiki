@@ -44,7 +44,7 @@ class UserService(
         return existingUser?.apply {
             this.lastLoginAt = LocalDateTime.now()
         } ?: userRepository.save(
-            User(
+            User.create(
                 providerId = socialId,
                 provider = providerType,
                 image = profile.findImageUrl(),
@@ -87,6 +87,17 @@ class UserService(
         user.nickname = nickname
         return user
     }
+
+    @Transactional
+    fun updateBio(
+        userId: Long,
+        bio: String,
+    ): User =
+        getUserById(userId)
+            .let {
+                it.updateBio(bio)
+                it
+            }
 
     private fun updateNickNameValidation(
         user: User,

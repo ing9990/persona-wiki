@@ -4,13 +4,10 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import io.ing9990.domain.figure.service.dto.CreateFiureData
 import io.ing9990.domain.user.User
 import jakarta.validation.constraints.NotBlank
-import jakarta.validation.constraints.Pattern
+import jakarta.validation.constraints.Size
 
 data class CreateFigureRequest(
-    @field:Pattern(
-        regexp = "^[가-힣a-zA-Z()_ ]{1,20}$",
-        message = "이름은 한글, 영어, (), _만 사용할 수 있으며, 1~20자 이내여야 합니다.",
-    )
+    @Size(min = 2, max = 20)
     @field:NotBlank(message = "인물 이름은 필수입니다.")
     @JsonProperty("figureName")
     val figureName: String,

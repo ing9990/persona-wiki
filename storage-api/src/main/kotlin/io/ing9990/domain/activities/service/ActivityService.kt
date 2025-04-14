@@ -49,6 +49,8 @@ class ActivityService(
             ActivityType.PERSON_ADD -> "인물 추가"
             ActivityType.PERSON_EDIT -> "인물 수정"
             ActivityType.LIKE -> "댓글 좋아요"
+            ActivityType.LIKED -> "댓글 좋아요 받음"
             ActivityType.DISLIKE -> "댓글 싫어요"
+            ActivityType.DISLIKED -> "댓글 싫어요 받음"
         }
 }

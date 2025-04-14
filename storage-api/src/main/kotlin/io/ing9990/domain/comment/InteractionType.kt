@@ -16,7 +16,7 @@ InteractionType {
 
     fun InteractionType.toActivityType(): ActivityType =
         when (this) {
-            InteractionType.LIKE -> ActivityType.LIKE
-            InteractionType.DISLIKE -> ActivityType.DISLIKE
+            LIKE -> ActivityType.LIKE
+            DISLIKE -> ActivityType.DISLIKE
         }
 }
