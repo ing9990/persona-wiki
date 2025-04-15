@@ -4,7 +4,6 @@ import io.ing9990.domain.activities.events.handler.ActivityEventPublisher
 import io.ing9990.domain.figure.Figure
 import io.ing9990.domain.figure.repository.FigureRepository
 import io.ing9990.domain.figure.service.FigureService
-import io.ing9990.domain.user.User
 import io.ing9990.domain.vote.Vote
 import io.ing9990.domain.vote.repository.VoteRepository
 import io.ing9990.domain.vote.service.dto.VoteData
@@ -29,27 +28,18 @@ class VoteService(
                 voteData.slug,
             )
 
-        validateVotable(figure, voteData.user)
-
         val voteCreated =
             Vote(
                 user = voteData.user,
                 figure = figure,
                 sentiment = voteData.sentiment,
             )
+
         val voteSaved = voteRepository.save(voteCreated)
+
         figure.addVote(voteSaved)
 
         activityEventPublisher.publishVoteCreated(voteSaved)
-    }
-
-    private fun validateVotable(
-        figure: Figure,
-        user: User,
-    ) {
-        require(!hasUserVoted(figure.id!!, user.id)) {
-            "이미 베팅한 인물입니다. figure=$figure, user=$user"
-        }
     }
 
     /**

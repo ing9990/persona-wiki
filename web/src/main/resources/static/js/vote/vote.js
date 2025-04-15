@@ -84,17 +84,23 @@ document.addEventListener('DOMContentLoaded', function () {
         currentDate.getMinutes())}`;
 
     const resultHTML = `
-            <p class="text-gray-700 mb-2">이 인물에 대해 다음과 같이 평가하셨습니다:</p>
-            <div>
-                <span class="vote-sentiment-badge ${sentimentClass}">
-                    <i class="fas ${icon} mr-1"></i> ${sentimentDisplay}
-                </span>
-            </div>
-            <p class="text-sm text-gray-500 mt-3">
-                <i class="fas fa-clock mr-1"></i>
-                평가일: <span>${formattedDate}</span>
+        <p class="text-gray-700 mb-2">이 인물에 대해 다음과 같이 평가하셨습니다:</p>
+        <div>
+            <span class="vote-sentiment-badge ${sentimentClass}">
+                <i class="fas ${icon} mr-1"></i> ${sentimentDisplay}
+            </span>
+        </div>
+        <p class="text-sm text-gray-500 mt-3">
+            <i class="fas fa-clock mr-1"></i>
+            평가일: <span>${formattedDate}</span>
+        </p>
+        <div class="vote-info mt-4 p-3 bg-blue-50 rounded-lg">
+            <p class="text-sm text-blue-700">
+                <i class="fas fa-info-circle mr-1"></i>
+                투표는 매일 0시에 초기화되어 다시 참여할 수 있습니다. 이전 투표 결과는 전체 통계에 계속 반영됩니다.
             </p>
-        `;
+        </div>
+    `;
 
     voteContainer.innerHTML = resultHTML;
     voteContainer.classList.add('vote-categoryResult');

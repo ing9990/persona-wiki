@@ -15,6 +15,7 @@ import io.ing9990.domain.vote.Sentiment
 import io.ing9990.domain.vote.querydsl.QVote
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Repository
+import java.time.LocalDate
 import kotlin.math.ceil
 
 /**
@@ -182,6 +183,7 @@ class FigureRepositoryImpl(
                     .where(
                         vote.figure.eq(figureResult),
                         vote.user.id.eq(userId),
+                        vote.voteDate.eq(LocalDate.now()),
                     ).fetchOne()
             } else {
                 null

@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
+import java.time.LocalDate
 
 @Entity
 @Table(
@@ -22,7 +23,7 @@ import jakarta.persistence.UniqueConstraint
     uniqueConstraints = [
         UniqueConstraint(
             name = "uk_vote_user_figure",
-            columnNames = ["user_id", "figure_id"],
+            columnNames = ["user_id", "figure_id", "vote_date"],
         ),
     ],
 )
@@ -40,4 +41,6 @@ class Vote(
     @Enumerated(EnumType.STRING)
     @Column(name = "sentiment", nullable = false)
     var sentiment: Sentiment,
+    @Column(name = "vote_date", nullable = false)
+    val voteDate: LocalDate = LocalDate.now(),
 ) : BaseEntity()
