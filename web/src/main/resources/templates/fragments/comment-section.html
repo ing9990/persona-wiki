@@ -69,7 +69,6 @@
       cursor: not-allowed;
     }
   </style>
-
   <!-- 댓글 작성 영역 -->
   <div class="mb-8">
     <div class="flex items-start">
@@ -108,7 +107,8 @@
   <!-- 댓글 목록 -->
   <div class="comments-container">
     <div id="comment-list" class="flex flex-col gap-4"
-         th:attr="data-figure-id=${detailsResult.getId()}"></div>
+         th:attr="data-figure-id=${detailsResult.getId()}">
+    </div>
   </div>
 
   <p class="js-empty-comment-message text-sm text-gray-400 py-4 text-center hidden">

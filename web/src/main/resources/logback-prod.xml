@@ -1,80 +1,84 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-  <!-- 환경변수 설정을 위한 프로퍼티 파일 로드 -->
-  <springProperty scope="context" name="SLACK_WEBHOOK_URL" source="logging.slack.webhook-url"/>
-  <springProperty scope="context" name="APPLICATION_NAME" source="spring.application.name"
-    defaultValue="persona-wiki"/>
-  <springProperty scope="context" name="ACTIVE_PROFILE" source="spring.profiles.active"
-    defaultValue="unknown"/>
-
-  <!-- 콘솔 로그 설정 -->
+  <!-- 콘솔 로깅 -->
   <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+    <encoder>
       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-      <charset>utf8</charset>
     </encoder>
   </appender>
 
-  <!-- 파일 로그 설정 -->
+  <!-- 파일 로깅 -->
   <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-    <file>logs/${APPLICATION_NAME}.log</file>
-    <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
-      <fileNamePattern>logs/${APPLICATION_NAME}-%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
-      <maxFileSize>100MB</maxFileSize>
+    <file>${LOG_PATH:-./logs}/${LOG_FILE:-application}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_PATH:-./logs}/${LOG_FILE:-application}-%d{yyyy-MM-dd}.log
+      </fileNamePattern>
       <maxHistory>30</maxHistory>
-      <!-- 전체 로그 용량 제한을 두고 싶다면 추가 (예: 3GB)
-      <totalSizeCap>3GB</totalSizeCap>
-      -->
     </rollingPolicy>
     <encoder>
       <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-      <charset>utf8</charset>
     </encoder>
   </appender>
 
-  <!-- Slack 알림 Appender -->
-  <appender name="SLACK" class="com.github.maricn.logback.SlackAppender">
-    <webhookUri>${SLACK_WEBHOOK_URL}</webhookUri>
+  <!-- 슬랙 API 로깅 -->
+  <appender name="SLACK" class="io.ing9990.monitor.aop.log.EnhancedSlackApiAppender">
+    <webhookUrl>https://hooks.slack.com/services/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
+    </webhookUrl>
+    <channel>#api-monitoring</channel>
+    <username>국민사형투표</username>
+    <iconEmoji>:chart_with_upwards_trend:</iconEmoji>
     <layout class="ch.qos.logback.classic.PatternLayout">
-      <pattern>*[${APPLICATION_NAME} - ${ACTIVE_PROFILE}]* 500 Internal Server Error%n
-        %d{yyyy-MM-dd HH:mm:ss.SSS}%n
-        *Error Message:* %msg%n
-        *Logger:* %logger{36}%n
-        *Thread:* %thread
-      </pattern>
+      <pattern>%msg%n</pattern>
     </layout>
-    <username>Error Alert Bot</username>
-    <iconEmoji>:collision:</iconEmoji>
-    <colorCoding>true</colorCoding>
   </appender>
 
-  <!-- 500 에러에 대한 Async Slack Appender -->
-  <appender name="ASYNC_SLACK" class="ch.qos.logback.classic.AsyncAppender">
+  <!-- 에러 로깅 전용 슬랙 Appender -->
+  <appender name="SLACK_ERROR" class="io.ing9990.monitor.aop.log.EnhancedSlackApiAppender">
+    <webhookUrl>https://hooks.slack.com/services/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
+    </webhookUrl>
+    <channel>#api-errors</channel>
+    <username>국민사형투표 - 오류알림</username>
+    <iconEmoji>:rotating_light:</iconEmoji>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%msg%n</pattern>
+    </layout>
+  </appender>
+
+  <!-- 테스트용 슬랙 Appender -->
+  <appender name="SLACK_TEST" class="io.ing9990.monitor.aop.log.EnhancedSlackApiAppender">
+    <webhookUrl>https://hooks.slack.com/services/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
+    </webhookUrl>
+    <channel>#api-test</channel>
+    <username>국민사형투표 - 테스트</username>
+    <iconEmoji>:test_tube:</iconEmoji>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%msg%n</pattern>
+    </layout>
+  </appender>
+
+  <!-- API 모니터링 로거 설정 -->
+  <logger name="api.monitor" level="INFO" additivity="false">
     <appender-ref ref="SLACK"/>
-    <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-      <level>ERROR</level>
-    </filter>
-  </appender>
-
-  <!-- 로그 레벨 설정 -->
-  <logger name="io.ing9990" level="DEBUG"/>
-  <logger name="org.springframework" level="INFO"/>
-  <logger name="org.hibernate" level="INFO"/>
-  <logger name="org.springframework.web" level="INFO"/>
-
-  <!-- 500 에러 전용 로거 (특별 관리) -->
-  <logger name="500_ERROR_LOGGER" level="ERROR">
     <appender-ref ref="CONSOLE"/>
     <appender-ref ref="FILE"/>
-    <appender-ref ref="ASYNC_SLACK"/>
   </logger>
 
-  <!-- prod 환경에서도 INFO 레벨 로그 사용 (개발 환경과 유사하게) -->
-  <springProfile name="prod">
-    <root level="INFO">
-      <appender-ref ref="CONSOLE"/>
-      <appender-ref ref="FILE"/>
-      <appender-ref ref="ASYNC_SLACK"/> <!-- ERROR 로그만 Slack으로 전송됨 (필터 적용) -->
-    </root>
-  </springProfile>
+  <!-- 500 에러 전용 로거 설정 -->
+  <logger name="500_ERROR_LOGGER" level="ERROR" additivity="false">
+    <appender-ref ref="SLACK_ERROR"/>
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- 테스트 로거 설정 -->
+  <logger name="slack.test" level="INFO" additivity="false">
+    <appender-ref ref="SLACK_TEST"/>
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+
+  <!-- 루트 로거 설정 -->
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </root>
 </configuration>
