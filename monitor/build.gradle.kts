@@ -1,7 +1,10 @@
 dependencies {
+    // AOP 어노테이션 가져와야돼서 web도 추가함.
     implementation("org.springframework.boot:spring-boot-starter-web")
     // Spring AOP
     implementation("org.springframework.boot:spring-boot-starter-aop")
+    // health check actuator
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
 
     // Slack API Client
     implementation("com.slack.api:slack-api-client:1.29.2")
