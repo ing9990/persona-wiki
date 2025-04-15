@@ -19,4 +19,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     implementation("org.springframework.boot:spring-boot-devtools")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect")
+
+    // JSON 처리
+//    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }

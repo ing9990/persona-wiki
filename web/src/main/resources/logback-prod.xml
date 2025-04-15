@@ -21,7 +21,7 @@
   </appender>
 
   <!-- 슬랙 API 로깅 -->
-  <appender name="SLACK" class="io.ing9990.monitor.aop.log.EnhancedSlackApiAppender">
+  <appender name="SLACK" class="io.ing9990.monitor.aop.log.SafeEnhancedSlackApiAppender">
     <webhookUrl>https://hooks.slack.com/services/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
     </webhookUrl>
     <channel>#api-monitoring</channel>
@@ -33,7 +33,7 @@
   </appender>
 
   <!-- 에러 로깅 전용 슬랙 Appender -->
-  <appender name="SLACK_ERROR" class="io.ing9990.monitor.aop.log.EnhancedSlackApiAppender">
+  <appender name="SLACK_ERROR" class="io.ing9990.monitor.aop.log.SafeEnhancedSlackApiAppender">
     <webhookUrl>https://hooks.slack.com/services/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
     </webhookUrl>
     <channel>#api-errors</channel>
@@ -45,7 +45,7 @@
   </appender>
 
   <!-- 테스트용 슬랙 Appender -->
-  <appender name="SLACK_TEST" class="io.ing9990.monitor.aop.log.EnhancedSlackApiAppender">
+  <appender name="SLACK_TEST" class="io.ing9990.monitor.aop.log.SafeEnhancedSlackApiAppender">
     <webhookUrl>https://hooks.slack.com/services/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
     </webhookUrl>
     <channel>#api-test</channel>
