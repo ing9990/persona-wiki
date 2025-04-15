@@ -85,8 +85,14 @@
 
     /* 모달 애니메이션 */
     @keyframes modalFadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
     }
 
     #bio-modal .bg-gray-800 {
@@ -112,7 +118,8 @@
                data-placeholder="/img/profile-placeholder.svg">
           <div>
             <div class="flex items-center mb-2">
-              <h1 class="text-4xl font-bold mr-3" th:text="${detailsResult.getDisplayName()}">인물 이름</h1>
+              <h1 class="text-4xl font-bold mr-3" th:text="${detailsResult.getDisplayName()}">인물
+                이름</h1>
               <span th:text="${detailsResult.getCategoryDisplayName()}"
                     class="badge-category text-white text-sm px-3 py-1 rounded-full">카테고리</span>
             </div>
@@ -134,16 +141,19 @@
     <!-- 왼쪽: 인물 정보 및 댓글 (2칸 차지) -->
     <div class="lg:col-span-2">
       <!-- 인물 평가 투표 섹션 -->
-      <div th:replace="~{fragments/vote-section :: voteSection(${detailsResult}, ${current})}"></div>
+      <div
+          th:replace="~{fragments/vote-section :: voteSection(${detailsResult}, ${current})}"></div>
 
       <!-- 댓글 섹션 부분 -->
-      <div th:replace="~{fragments/comment-section :: commentSection(${detailsResult}, ${current})}"></div>
+      <div
+          th:replace="~{fragments/comment-section :: commentSection(${detailsResult}, ${current})}"></div>
     </div>
 
     <!-- 오른쪽: 평판, 카테고리, 공유하기 (1칸 차지) -->
     <div class="lg:col-span-1">
       <!-- 페이지 우측 평판 통계 부분 -->
-      <div th:replace="~{fragments/reputation-sidebar :: reputationSidebar(${detailsResult})}"></div>
+      <div
+          th:replace="~{fragments/reputation-sidebar :: reputationSidebar(${detailsResult})}"></div>
 
       <!-- 페이지 우측 카테고리 섹션 -->
       <div th:replace="~{fragments/category-section :: categorySection(${detailsResult})}"></div>
@@ -155,17 +165,21 @@
 
   <!-- Bio 모달 -->
   <div id="bio-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-    <div class="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm" id="bio-modal-backdrop"></div>
-    <div class="relative bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4 transform transition-all">
+    <div class="absolute inset-0 bg-black bg-opacity-70 backdrop-blur-sm"
+         id="bio-modal-backdrop"></div>
+    <div
+        class="relative bg-gray-800 rounded-lg shadow-xl max-w-lg w-full mx-4 transform transition-all">
       <div class="p-6">
         <div class="flex justify-between items-center mb-4">
-          <h3 class="text-xl font-semibold text-white" th:text="${detailsResult.getDisplayName()} + ' 소개'">인물 소개</h3>
+          <h3 class="text-xl font-semibold text-white"
+              th:text="${detailsResult.getDisplayName()} + ' 소개'">인물 소개</h3>
           <button id="bio-modal-close" class="text-gray-400 hover:text-white">
             <i class="fas fa-times"></i>
           </button>
         </div>
         <div class="prose prose-invert max-w-none">
-          <p class="text-gray-200 whitespace-pre-line" th:text="${detailsResult.getBio()}">전체 인물 소개</p>
+          <p class="text-gray-200 whitespace-pre-line" th:text="${detailsResult.getBio()}">전체 인물
+            소개</p>
         </div>
       </div>
     </div>
@@ -234,7 +248,7 @@
 
       // 모달 열기
       if (bioToggle) {
-        bioToggle.addEventListener('click', function() {
+        bioToggle.addEventListener('click', function () {
           bioModal.classList.remove('hidden');
           setTimeout(() => {
             bioModal.classList.add('show');
@@ -244,7 +258,7 @@
       }
 
       // 모달 닫기 함수
-      const closeBioModal = function() {
+      const closeBioModal = function () {
         bioModal.classList.remove('show');
         setTimeout(() => {
           bioModal.classList.add('hidden');
@@ -263,7 +277,7 @@
       }
 
       // ESC 키 누를 때 모달 닫기
-      document.addEventListener('keydown', function(e) {
+      document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && !bioModal.classList.contains('hidden')) {
           closeBioModal();
         }
