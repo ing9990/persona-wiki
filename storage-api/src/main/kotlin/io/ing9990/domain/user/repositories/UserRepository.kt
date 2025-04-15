@@ -2,16 +2,14 @@ package io.ing9990.domain.user.repositories
 
 import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.User
-import io.ing9990.domain.user.repositories.querydsl.UserCustomRepository
+import org.springframework.data.domain.PageRequest
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface UserRepository :
-    JpaRepository<User, Long>,
-    UserCustomRepository {
+interface UserRepository : JpaRepository<User, Long> {
     /**
      * 프로바이더 ID와 프로바이더 타입으로 사용자를 찾습니다.
      * @param providerId 소셜 로그인 제공자 ID
@@ -54,4 +52,19 @@ interface UserRepository :
         @Param("user") user: User,
         @Param("nickname") nickname: String,
     ): Boolean
+
+    @Query(
+        """
+        SELECT COUNT(*) + 1 FROM User u 
+        WHERE u.prestige > (SELECT u2.prestige FROM User u2 WHERE u2.id = :userId)
+    """,
+    )
+    fun getUserRank(userId: Long): Int
+
+    /**
+     * 명성 점수 기준 랭킹을 가져옵니다.
+     * 페이지와 크기를 지정할 수 있습니다.
+     */
+    @Query("SELECT u FROM User u ORDER BY u.prestige DESC")
+    fun findAllOrderByPrestigeDesc(pageable: PageRequest): List<User>
 }

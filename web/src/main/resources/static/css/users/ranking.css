@@ -1,0 +1,193 @@
+/* 랭킹 페이지 스타일 */
+
+/* 애니메이션 키프레임 */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(217, 119, 6, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
+  }
+}
+
+@keyframes shine {
+  0% {
+    background-position: -100px;
+  }
+  40%, 100% {
+    background-position: 300px;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* 랭킹 헤더 애니메이션 */
+.ranking-header {
+  animation: fadeInUp 1s ease;
+}
+
+/* TOP 3 카드 애니메이션 및 스타일 */
+.top-ranks-container {
+  overflow: hidden;
+  animation: fadeInUp 1s ease 0.2s both;
+}
+
+/* 1등(Gold) 스타일 */
+.rank-card.gold {
+  animation: fadeInUp 1s ease 0.4s both;
+}
+
+.rank-card.gold .glow-effect {
+  animation: pulse 2s infinite;
+  box-shadow: 0 0 15px rgba(217, 119, 6, 0.6);
+}
+
+/* 2등(Silver) 스타일 */
+.rank-card.silver {
+  animation: fadeInUp 1s ease 0.6s both;
+}
+
+/* 3등(Bronze) 스타일 */
+.rank-card.bronze {
+  animation: fadeInUp 1s ease 0.8s both;
+}
+
+/* 나의 랭킹 컨테이너 */
+.my-rank-container {
+  animation: fadeInUp 1s ease 1s both;
+  position: relative;
+}
+
+.my-rank-container::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  content: '';
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shine 3s infinite;
+}
+
+/* 테이블 행 호버 효과 */
+table tbody tr:hover {
+  transition: all 0.3s ease;
+}
+
+/* 현재 사용자 행 하이라이트 */
+table tbody tr.bg-indigo-50 {
+  position: relative;
+}
+
+table tbody tr.bg-indigo-50::after {
+  content: '현재 회원';
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.75rem;
+  color: #6366F1;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background-color: rgba(99, 102, 241, 0.1);
+}
+
+/* 랭킹 아이콘 효과 */
+.fa-crown {
+  animation: float 3s ease-in-out infinite;
+}
+
+.fa-medal {
+  animation: float 2.5s ease-in-out infinite;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  /* 모바일에서는 카드를 쌓아서 표시 */
+  .rank-card.gold {
+    order: 1 !important;
+  }
+
+  .rank-card.silver {
+    order: 2 !important;
+  }
+
+  .rank-card.bronze {
+    order: 3 !important;
+  }
+
+  /* 모바일에서 테이블 최적화 */
+  table th:nth-child(3),
+  table td:nth-child(3),
+  table th:nth-child(5),
+  table td:nth-child(5) {
+    display: none;
+  }
+
+  /* 모바일에서 현재 회원 표시 제거 */
+  table tbody tr.bg-indigo-50::after {
+    content: none;
+  }
+
+  /* 모바일에서 현재 회원 행 강조 */
+  table tbody tr.bg-indigo-50 {
+    border-left: 3px solid #6366F1;
+  }
+}
+
+/* 스크롤 애니메이션 클래스 */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 페이지네이션 관련 클래스 */
+.pagination-link {
+  transition: all 0.3s ease;
+}
+
+.pagination-link:hover {
+  transform: translateY(-2px);
+}
+
+/* 프로필 이미지 호버 효과 */
+.profile-image-hover {
+  transition: all 0.3s ease;
+}
+
+.profile-image-hover:hover {
+  transform: scale(1.1);
+}
