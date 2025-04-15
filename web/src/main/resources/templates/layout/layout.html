@@ -430,6 +430,12 @@
           <span>인물</span>
         </a>
 
+        <!-- 랭킹 메뉴 추가 -->
+        <a href="/ranking" class="text-white hover:text-indigo-100 transition" aria-label="랭킹">
+          <i class="fas fa-trophy mr-1" aria-hidden="true"></i>
+          <span>랭킹</span>
+        </a>
+
         <!-- PC: 로그인 상태 -->
         <th:block th:if="${current.loggedIn()}">
           <a onclick="openFigureModal()"
@@ -508,6 +514,14 @@
               <i class="fas fa-users text-indigo-600 mr-3 text-lg"></i>
               <span class="text-gray-800 font-medium">인물 목록</span>
             </a>
+
+            <!-- 랭킹 메뉴 추가 (모바일) -->
+            <a href="/ranking"
+               class="flex items-center py-3 px-4 bg-gray-100 rounded-lg hover:bg-indigo-50 transition">
+              <i class="fas fa-trophy text-indigo-600 mr-3 text-lg"></i>
+              <span class="text-gray-800 font-medium">랭킹</span>
+            </a>
+
             <a onclick="openFigureModal()"
                class="requires-login open-figure-modal flex items-center py-3 px-4 bg-gray-100 rounded-lg hover:bg-indigo-50 transition">
               <i class="fas fa-plus-circle text-green-600 mr-3 text-lg"></i>

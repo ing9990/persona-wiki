@@ -18,6 +18,14 @@ data class CurrentUserDto(
 
     fun image(): String = currentUser?.image ?: ""
 
+    fun prestige(): Int = currentUser?.prestige ?: 0
+
+    fun bio(): String = currentUser?.bio ?: ""
+
+    fun id(): Long = currentUser?.id ?: 0L
+
+    fun name(): String = currentUser?.nickname ?: ""
+
     fun getUserIdOrDefault(): Long = currentUser?.id ?: DEFAULT
 
     fun toProfile(): String = "/users/${currentUser?.nickname}"

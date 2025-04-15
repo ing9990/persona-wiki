@@ -28,7 +28,6 @@ var commentHandler = (function () {
       return;
     }
 
-
     // DOM 요소 캐시
     elements.form = document.getElementById('comment-form');
     elements.textarea = document.getElementById('comment-textarea');
@@ -135,7 +134,6 @@ var commentHandler = (function () {
       return;
     }
 
-
     const content = elements.textarea.value.trim();
     if (!content) {
       window.toastManager.error('댓글 내용을 입력해주세요.');
@@ -216,8 +214,14 @@ var commentHandler = (function () {
     // 템플릿 복제
     const commentNode = elements.template.content.cloneNode(true);
 
-    // 프로필 이미지 설정
-    const profileImg = commentNode.querySelector('.profile-profile');
+    // 프로필 링크 설정
+    const profileLink = commentNode.querySelector('a');
+    if (profileLink && commentData.userNickname) {
+      profileLink.href = `/users/${commentData.userNickname}`;
+    }
+
+    // 프로필 이미지 설정 - 올바른 선택자 사용
+    const profileImg = commentNode.querySelector('img');
     if (profileImg) {
       profileImg.src = commentData.userProfileImage
           || '/img/profile-placeholder.svg';
@@ -226,13 +230,16 @@ var commentHandler = (function () {
           '/img/profile-placeholder.svg');
     }
 
-    // 닉네임 및 날짜 설정
-    const nicknameEl = commentNode.querySelector('.profile-nickname');
+    // 닉네임 설정 - 올바른 선택자 사용
+    const nicknameEl = commentNode.querySelector(
+        '.font-medium.text-gray-900.mr-2');
     if (nicknameEl) {
       nicknameEl.textContent = commentData.userNickname || '익명';
     }
 
-    const dateEl = commentNode.querySelector('.comment-date');
+    // 날짜 설정
+    const dateEl = commentNode.querySelector(
+        '.text-sm.text-gray-500.comment-date-relative');
     if (dateEl) {
       // 상대적 시간 설정
       if (typeof RelativeTimeUtils !== 'undefined') {

@@ -110,8 +110,8 @@
                   <i class="fas fa-pencil-alt mr-1"></i> 수정
                 </button>
               </div>
-              <p class="comment-date-relative text-gray-600 mt-1 ">가입일: <span
-                  th:text="${user.createdAt}">2023년 01월 01일</span>
+              <p class="text-gray-600 mt-1 ">가입일: <span
+                  th:text="${@layoutHelper.toRelative(user.createdAt)}">2023년 01월 01일</span>
               </p>
             </div>
 

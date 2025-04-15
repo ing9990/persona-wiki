@@ -1,18 +1,20 @@
-<!-- 댓글 템플릿 -->
+<!-- 수정된 코드 (해결 방법) -->
 <template id="comment-template">
   <div class="comment-item border-b border-gray-200 py-4">
     <div class="flex">
       <div class="flex-shrink-0 mr-3">
-        <img class="user-profile h-10 w-10 rounded-full object-cover"
-             src="" alt="프로필 이미지"
-             data-handle-error="true"
-             data-placeholder="/img/profile-placeholder.svg">
+        <a>
+          <img class="h-10 w-10 rounded-full object-cover"
+               src="" alt="프로필 이미지"
+               data-handle-error="true"
+               data-placeholder="/img/profile-placeholder.svg">
+        </a>
       </div>
 
       <div class="flex-grow">
         <div class="flex items-center mb-1">
-          <span class="user-nickname font-medium text-gray-900 mr-2"></span>
-          <span class="comment-date comment-date-relative text-sm text-gray-500"></span>
+          <span class="font-medium text-gray-900 mr-2"></span>
+          <span class="text-sm text-gray-500 comment-date-relative"></span>
         </div>
         <div class="comment-content text-gray-700 mb-2"></div>
 
