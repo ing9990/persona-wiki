@@ -2,21 +2,282 @@
  * 사용자 랭킹 페이지 자바스크립트
  */
 document.addEventListener('DOMContentLoaded', function () {
-  // 스크롤 애니메이션
-  initScrollAnimations();
-
-  // 프로필 이미지 호버 효과
-  initProfileImageHover();
+  // TOP 3 카드 애니메이션
+  initTopRanksAnimation();
 
   // 현재 사용자 행으로 스크롤
   scrollToCurrentUser();
 
+  // 프로필 이미지 효과
+  initProfileEffects();
+
   // 반응형 테이블 최적화
   optimizeTableForMobile();
+
+  // 스크롤 애니메이션
+  initScrollAnimations();
 
   // 페이지네이션 관련 이벤트
   initPaginationEvents();
 });
+
+/**
+ * TOP 3 카드 애니메이션 초기화
+ */
+function initTopRanksAnimation() {
+  // 카드 선택
+  const cards = document.querySelectorAll('.rank-card');
+
+  // 초기 상태 설정 (모두 숨김)
+  cards.forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = card.classList.contains('gold')
+        ? 'translateY(30px) scale(1.1)'
+        : 'translateY(30px) scale(0.95)';
+  });
+
+  // 순차적으로 표시
+  setTimeout(() => {
+    // 1등 카드 표시 (가운데)
+    const goldCard = document.querySelector('.rank-card.gold');
+    if (goldCard) {
+      goldCard.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+      goldCard.style.opacity = '1';
+      goldCard.style.transform = 'translateY(0) scale(1.1)';
+
+      // 왕관 효과
+      const crown = goldCard.querySelector('.crown-badge');
+      if (crown) {
+        setTimeout(() => {
+          crown.style.transition = 'transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
+          crown.style.transform = 'translateX(-50%) scale(1.2)';
+
+          setTimeout(() => {
+            crown.style.transform = 'translateX(-50%) scale(1)';
+          }, 300);
+        }, 500);
+      }
+
+      // 프로필 효과
+      const profileContainer = goldCard.querySelector(
+          '.gold-profile-container');
+      if (profileContainer) {
+        setTimeout(() => {
+          profileContainer.classList.add('pulse-effect');
+        }, 800);
+      }
+
+      // 점수 효과
+      const scoreValue = goldCard.querySelector('.gold-score');
+      if (scoreValue) {
+        setTimeout(() => {
+          scoreValue.style.transition = 'all 0.5s ease';
+          scoreValue.style.textShadow = '0 0 5px rgba(255, 215, 0, 0.7)';
+          scoreValue.style.color = '#B8860B';
+        }, 1000);
+      }
+    }
+
+    // 2등 카드 표시 (왼쪽)
+    setTimeout(() => {
+      const silverCard = document.querySelector('.rank-card.silver');
+      if (silverCard) {
+        silverCard.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        silverCard.style.opacity = '1';
+        silverCard.style.transform = 'translateY(0) scale(0.95)';
+
+        // 배지 효과
+        const silverBadge = silverCard.querySelector('.silver-badge');
+        if (silverBadge) {
+          setTimeout(() => {
+            silverBadge.style.transition = 'transform 0.4s ease';
+            silverBadge.style.transform = 'translateX(-50%) scale(1.1)';
+            setTimeout(() => {
+              silverBadge.style.transform = 'translateX(-50%) scale(1)';
+            }, 300);
+          }, 300);
+        }
+      }
+    }, 400);
+
+    // 3등 카드 표시 (오른쪽)
+    setTimeout(() => {
+      const bronzeCard = document.querySelector('.rank-card.bronze');
+      if (bronzeCard) {
+        bronzeCard.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        bronzeCard.style.opacity = '1';
+        bronzeCard.style.transform = 'translateY(0) scale(0.95)';
+
+        // 배지 효과
+        const bronzeBadge = bronzeCard.querySelector('.bronze-badge');
+        if (bronzeBadge) {
+          setTimeout(() => {
+            bronzeBadge.style.transition = 'transform 0.4s ease';
+            bronzeBadge.style.transform = 'translateX(-50%) scale(1.1)';
+            setTimeout(() => {
+              bronzeBadge.style.transform = 'translateX(-50%) scale(1)';
+            }, 300);
+          }, 300);
+        }
+      }
+    }, 800);
+  }, 300);
+}
+
+/**
+ * 현재 사용자 행으로 스크롤
+ */
+function scrollToCurrentUser() {
+  const currentUserRow = document.querySelector('tr.current-user');
+
+  if (currentUserRow) {
+    // TOP 3 애니메이션 후에 스크롤 (2초 후)
+    setTimeout(() => {
+      const offset = currentUserRow.offsetTop - window.innerHeight / 2;
+
+      // 부드러운 스크롤 적용
+      window.scrollTo({
+        top: offset,
+        behavior: 'smooth'
+      });
+
+      // 행 강조 효과
+      currentUserRow.style.transition = 'background-color 0.7s ease';
+      currentUserRow.style.backgroundColor = 'rgba(99, 102, 241, 0.2)';
+
+      setTimeout(() => {
+        currentUserRow.style.backgroundColor = '';
+      }, 2000);
+    }, 2000);
+  }
+}
+
+/**
+ * 프로필 이미지 효과 초기화
+ */
+function initProfileEffects() {
+  // 테이블 프로필 이미지 호버 효과
+  const tableImages = document.querySelectorAll('.table-profile-image');
+  tableImages.forEach(img => {
+    img.addEventListener('mouseenter', function () {
+      this.style.transform = 'scale(1.1)';
+    });
+
+    img.addEventListener('mouseleave', function () {
+      this.style.transform = 'scale(1)';
+    });
+
+    // 이미지 로드 오류 시 기본 이미지 설정
+    img.addEventListener('error', function () {
+      this.src = '/img/profile-placeholder.svg';
+    });
+  });
+
+  // TOP 3 프로필 이미지 로드 효과
+  const topImages = document.querySelectorAll('.profile-image-container img');
+  topImages.forEach(img => {
+    img.style.opacity = '0';
+    img.style.transition = 'opacity 0.5s ease';
+
+    img.onload = function () {
+      this.style.opacity = '1';
+    };
+
+    // 이미지가 이미 캐시되어 있는 경우 처리
+    if (img.complete) {
+      img.style.opacity = '1';
+    }
+
+    // 이미지 로드 오류 시 기본 이미지 설정
+    img.addEventListener('error', function () {
+      this.src = '/img/profile-placeholder.svg';
+      this.style.opacity = '1';
+    });
+  });
+}
+
+/**
+ * 반응형 테이블 최적화
+ */
+function optimizeTableForMobile() {
+  function adjustColumns() {
+    const isMobile = window.innerWidth < 768;
+    const levelColumn = document.querySelectorAll(
+        'th:nth-child(3), td:nth-child(3)');
+    const bioColumn = document.querySelectorAll(
+        'th:nth-child(5), td:nth-child(5)');
+
+    levelColumn.forEach(col => {
+      col.style.display = isMobile ? 'none' : '';
+    });
+
+    bioColumn.forEach(col => {
+      col.style.display = isMobile ? 'none' : '';
+    });
+
+    // 모바일에서 사용자 칼럼 너비 조정
+    const userColumns = document.querySelectorAll(
+        'th:nth-child(2), td:nth-child(2)');
+    userColumns.forEach(col => {
+      if (isMobile) {
+        col.style.width = '60%';
+      } else {
+        col.style.width = '';
+      }
+    });
+
+    // 모바일에서 점수 칼럼 너비 조정
+    const scoreColumns = document.querySelectorAll(
+        'th:nth-child(4), td:nth-child(4)');
+    scoreColumns.forEach(col => {
+      if (isMobile) {
+        col.style.width = '30%';
+      } else {
+        col.style.width = '';
+      }
+    });
+
+    // 모바일에서 TOP 3 카드 조정
+    if (isMobile) {
+      const goldCard = document.querySelector('.rank-card.gold');
+      if (goldCard && goldCard.style.transform) {
+        goldCard.style.transform = 'translateY(0) scale(1)';
+      }
+
+      const silverCard = document.querySelector('.rank-card.silver');
+      if (silverCard && silverCard.style.transform) {
+        silverCard.style.transform = 'translateY(0) scale(1)';
+      }
+
+      const bronzeCard = document.querySelector('.rank-card.bronze');
+      if (bronzeCard && bronzeCard.style.transform) {
+        bronzeCard.style.transform = 'translateY(0) scale(1)';
+      }
+    } else {
+      // 데스크톱에서 원래 크기로 복원
+      const goldCard = document.querySelector('.rank-card.gold');
+      if (goldCard && goldCard.style.opacity === '1') {
+        goldCard.style.transform = 'translateY(0) scale(1.1)';
+      }
+
+      const silverCard = document.querySelector('.rank-card.silver');
+      if (silverCard && silverCard.style.opacity === '1') {
+        silverCard.style.transform = 'translateY(0) scale(0.95)';
+      }
+
+      const bronzeCard = document.querySelector('.rank-card.bronze');
+      if (bronzeCard && bronzeCard.style.opacity === '1') {
+        bronzeCard.style.transform = 'translateY(0) scale(0.95)';
+      }
+    }
+  }
+
+  // 초기 실행
+  adjustColumns();
+
+  // 화면 크기 변경 시 실행
+  window.addEventListener('resize', adjustColumns);
+}
 
 /**
  * 스크롤 애니메이션 초기화
@@ -66,105 +327,14 @@ function initScrollAnimations() {
   }
 
   // 테이블 행에 스크롤 애니메이션 적용
-  const tableRows = document.querySelectorAll('tbody tr');
+  const tableRows = document.querySelectorAll('.ranking-table tbody tr');
   tableRows.forEach((row, index) => {
     row.classList.add('animate-on-scroll');
-    row.style.transitionDelay = `
-$
-{
-  0.1 + (index * 0.05)
-}
-s`;
+    row.style.transitionDelay = `${0.1 + (index * 0.05)}s`;
   });
 
   // 초기 애니메이션 트리거
   triggerScrollAnimations();
-}
-
-/**
- * 프로필 이미지 호버 효과 초기화
- */
-function initProfileImageHover() {
-  const profileImages = document.querySelectorAll('table img');
-
-  profileImages.forEach(img => {
-    img.classList.add('profile-image-hover');
-    img.parentElement.classList.add('overflow-hidden');
-
-    // 이미지 로드 오류 시 기본 이미지 설정
-    img.addEventListener('error', function () {
-      this.src = '/img/profile-placeholder.svg';
-    });
-  });
-
-  // Top 3 프로필 이미지에 특별 효과
-  const topProfileImages = document.querySelectorAll('.rank-card img');
-  topProfileImages.forEach(img => {
-    img.addEventListener('mouseenter', function () {
-      this.parentElement.style.transform = 'scale(1.1)';
-      this.parentElement.style.transition = 'transform 0.3s ease';
-    });
-
-    img.addEventListener('mouseleave', function () {
-      this.parentElement.style.transform = 'scale(1)';
-    });
-  });
-}
-
-/**
- * 현재 사용자 행으로 스크롤
- */
-function scrollToCurrentUser() {
-  const currentUserRow = document.querySelector('tbody tr.bg-indigo-50');
-
-  if (currentUserRow) {
-    // 0.5초 후 스크롤 (페이지 로드 후)
-    setTimeout(() => {
-      const offset = currentUserRow.offsetTop - window.innerHeight / 2;
-
-      // 부드러운 스크롤 적용
-      window.scrollTo({
-        top: offset,
-        behavior: 'smooth'
-      });
-
-      // 잠깐 동안 행 강조
-      currentUserRow.classList.add('transition-all', 'duration-500');
-      currentUserRow.style.backgroundColor = 'rgba(99, 102, 241, 0.2)';
-
-      setTimeout(() => {
-        currentUserRow.style.backgroundColor = '';
-      }, 1500);
-    }, 500);
-  }
-}
-
-/**
- * 반응형 테이블 최적화
- */
-function optimizeTableForMobile() {
-  // 화면 크기에 따라 테이블 칼럼 표시/숨김
-  function adjustTable() {
-    const isMobile = window.innerWidth < 768;
-    const levelColumns = document.querySelectorAll(
-        'th:nth-child(3), td:nth-child(3)');
-    const bioColumns = document.querySelectorAll(
-        'th:nth-child(5), td:nth-child(5)');
-
-    levelColumns.forEach(col => {
-      col.style.display = isMobile ? 'none' : '';
-    });
-
-    bioColumns.forEach(col => {
-      col.style.display = isMobile ? 'none' : '';
-    });
-  }
-
-  // 초기 실행
-  adjustTable();
-
-  // 화면 크기 변경 시 실행
-  window.addEventListener('resize', adjustTable);
 }
 
 /**
@@ -176,25 +346,25 @@ function initPaginationEvents() {
   paginationLinks.forEach(link => {
     // 호버 효과
     link.addEventListener('mouseenter', function () {
-      if (!this.classList.contains('pointer-events-none')) {
-        this.classList.add('transform', 'scale-105');
+      if (!this.classList.contains('disabled')) {
+        this.style.transform = 'translateY(-2px)';
       }
     });
 
     link.addEventListener('mouseleave', function () {
-      this.classList.remove('transform', 'scale-105');
+      this.style.transform = '';
     });
 
     // 클릭 효과
     link.addEventListener('click', function (e) {
-      if (this.classList.contains('pointer-events-none')) {
+      if (this.classList.contains('disabled')) {
         e.preventDefault();
         return false;
       }
 
-      this.classList.add('transform', 'scale-95');
+      this.style.transform = 'scale(0.95)';
       setTimeout(() => {
-        this.classList.remove('transform', 'scale-95');
+        this.style.transform = '';
       }, 100);
     });
   });
@@ -278,7 +448,9 @@ function calculateLevel(prestige) {
   };
 }
 
-// 레벨에 따른 별명 반환
+/**
+ * 레벨에 따른 별명 반환
+ */
 function getLevelTitle(level) {
   const levelTitles = [
     "병아리",     // 0레벨

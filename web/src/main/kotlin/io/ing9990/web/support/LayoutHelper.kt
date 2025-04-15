@@ -7,6 +7,8 @@ import java.time.temporal.ChronoUnit
 
 @Service
 class LayoutHelper {
+    fun toProfileLink(name: String) = "/users/$name"
+
     /**
      * 404 에러 페이지에 표시할 메시지를 생성합니다.
      */
