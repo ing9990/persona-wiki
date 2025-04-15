@@ -26,18 +26,9 @@ class AccessLogFilter : OncePerRequestFilter() {
     ) {
         val requestId = UUID.randomUUID().toString()
         val startTime = Instant.now()
-        val timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME)
-        val clientIp = getClientIp(request)
         val method = request.method
         val uri = request.requestURI
         val queryString = request.queryString ?: ""
-        val userAgent = request.getHeader("User-Agent") ?: "Unknown"
-
-        // 요청 시작 로깅
-        logger.info(
-            "ACCESS START | ID: $requestId | Time: $timestamp | IP: $clientIp | $method $uri${if (queryString.isNotEmpty()) "?$queryString" else ""} | UA: $userAgent",
-        )
-
         try {
             // 요청 ID를 응답 헤더에 추가 (디버깅 용이성을 위해)
             response.addHeader("X-Request-ID", requestId)

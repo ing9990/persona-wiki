@@ -374,19 +374,4 @@ class ControllerLoggingAspect(
                     "계산 불가"
                 }
         }
-
-    /**
-     * 중요한 엔드포인트인지 확인하는 함수 (항상 모니터링할 대상)
-     */
-    private fun isImportantEndpoint(uri: String): Boolean {
-        val importantEndpoints =
-            listOf(
-                "/api/v1/auth", // 인증 관련
-                "/api/v1/users", // 사용자 관련
-                "/api/v1/payment", // 결제 관련
-                "/**",
-            )
-
-        return importantEndpoints.any { uri.startsWith(it) }
-    }
 }

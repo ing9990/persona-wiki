@@ -16,7 +16,7 @@ class CategoryCustomRepositoryImpl(
      * Vote가 많은 인물을 카테고리 별로 조회합니다.
      */
     override fun getPopularFiguresByCategoryTop(
-        topCount: Long,
+        topCategoriesCount: Long,
         figuresCount: Long,
     ): PopularFiguresByCategoriesResult {
         val figure = QFigure.figure
@@ -26,7 +26,7 @@ class CategoryCustomRepositoryImpl(
             query
                 .selectFrom(category)
                 .orderBy(category.figures.size().desc())
-                .limit(topCount)
+                .limit(topCategoriesCount)
                 .fetch()
 
         val result =

@@ -26,8 +26,8 @@ class EnhancedSlackApiAppender : UnsynchronizedAppenderBase<ILoggingEvent>() {
     var iconEmoji: String = ":bar_chart:"
 
     // 로그 필터링 관련 설정
-    private val API_MONITORING_MARKER = MarkerFactory.getMarker("API_MONITORING")
-    private val ERROR_500_MARKER = MarkerFactory.getMarker("ERROR_500")
+    private val monitoring = MarkerFactory.getMarker("API_MONITORING")
+    private val error500 = MarkerFactory.getMarker("ERROR_500")
 
     // HTTP 클라이언트
     private val restTemplate = RestTemplate()
