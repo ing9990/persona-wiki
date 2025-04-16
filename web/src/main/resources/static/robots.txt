@@ -6,10 +6,8 @@ Allow: /categories
 Allow: /search
 Allow: /terms
 Allow: /privacy
-
-# 사용자 개인 정보 페이지는 크롤링에서 제외
-Disallow: /me
-Disallow: /activity
+Allow: /me
+Allow: /activity
 
 # 사이트맵 위치 지정
 Sitemap: https://국민사형투표.com/sitemap.xml

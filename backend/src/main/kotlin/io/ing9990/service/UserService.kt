@@ -15,6 +15,9 @@ class UserService(
     private val userRepository: UserRepository,
 ) {
     @Transactional(readOnly = true)
+    fun findAllUsers(): List<User> = userRepository.findAll()
+
+    @Transactional(readOnly = true)
     fun findUserById(id: Long): User? = userRepository.findUserById(id)
 
     @Transactional(readOnly = true)

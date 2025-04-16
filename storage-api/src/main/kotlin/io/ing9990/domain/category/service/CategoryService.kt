@@ -5,6 +5,7 @@ import io.ing9990.domain.category.Category
 import io.ing9990.domain.category.repository.CategoryRepository
 import io.ing9990.domain.category.service.dto.CategoryIds
 import io.ing9990.domain.category.service.dto.CategoryResult
+import io.ing9990.domain.category.service.dto.CreateCategoryData
 import io.ing9990.domain.figure.service.dto.PopularFiguresByCategoriesResult
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -65,23 +66,20 @@ class CategoryService(
      * 새 카테고리 생성
      */
     @Transactional
-    fun createCategory(
-        id: String,
-        displayName: String,
-        description: String,
-        imageUrl: String,
-    ): Category {
-        validateCreateCategory(id, displayName)
+    fun createCategory(data: CreateCategoryData): CategoryResult {
+        validateCreateCategory(data.id, data.displayName)
 
         val category =
             Category(
-                id = id,
-                displayName = displayName,
-                description = description,
-                imageUrl = imageUrl,
+                id = data.id,
+                displayName = data.displayName,
+                description = data.description,
+                imageUrl = data.imageUrl,
             )
 
-        return categoryRepository.save(category)
+        val savedCategory = categoryRepository.save(category)
+
+        return CategoryResult.from(savedCategory)
     }
 
     /**
