@@ -4,11 +4,14 @@ import io.ing9990.domain.activities.events.handler.ActivityEventPublisher
 import io.ing9990.domain.category.Category
 import io.ing9990.domain.category.service.CategoryService
 import io.ing9990.domain.figure.repository.FigureRepository
+import io.ing9990.domain.figure.service.CreateFigureException
 import io.ing9990.domain.figure.service.FigureService
 import io.ing9990.domain.figure.service.dto.CreateFiureData
 import io.ing9990.domain.fixtures.UserFixtures
+import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
+import io.mockk.clearMocks
 import io.mockk.every
 import io.mockk.junit5.MockKExtension
 import io.mockk.just
@@ -106,6 +109,34 @@ class FigureServiceTest :
 
                 Then("slug가 올바르게 구성된다.") {
                     result.slug shouldBe "레오나르도-디카프리오"
+                }
+            }
+
+            When("중복된 인물 데이터가 주어지면") {
+                clearMocks(categoryService, figureRepository, activityEventPublisher)
+
+                every { categoryService.findCategoryById(categoryId) } returns testCategory
+                every {
+                    figureRepository.existsByCategoryIdAndName(categoryId, figureName)
+                } returns true
+
+                Then("CreateFigureException을 던진다.") {
+                    shouldThrow<CreateFigureException> {
+                        figureService.createFigure(data)
+                    }
+
+                    verify(exactly = 1) {
+                        categoryService.findCategoryById(categoryId)
+                        figureRepository.existsByCategoryIdAndName(
+                            categoryId,
+                            figureName,
+                        )
+                    }
+
+                    verify(exactly = 0) {
+                        figureRepository.save(any())
+                        activityEventPublisher.publishFigureAdded(any(), any())
+                    }
                 }
             }
         }
