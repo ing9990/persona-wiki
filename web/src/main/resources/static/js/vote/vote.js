@@ -12,6 +12,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const figureName = button.getAttribute('data-figure-name');
     const sentiment = button.getAttribute('data-sentiment');
 
+    // 3D Flip 애니메이션 적용
+    window.voteAnimations.flipButton(button);
+
+    // 풀스크린 애니메이션 표시
+    window.voteAnimations.showFullscreenAnimation(sentiment);
+
     // CSRF 토큰 가져오기 (Spring Security를 사용하는 경우)
     const csrfToken = document.querySelector(
         'meta[name="_csrf"]')?.getAttribute('content');
@@ -29,29 +35,32 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const slug = window.makeSlug(figureName)
 
-    // API 호출
-    fetch(`/api/v1/categories/${categoryId}/@${slug}/vote`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(csrfToken && csrfHeader && {[csrfHeader]: csrfToken})
-      },
-      body: JSON.stringify(voteData)
-    })
-    .then(response => {
-      hideLoading(button);
-      if (response.ok || response.status === 204) {
-        handleVoteSuccess(sentiment);
-        updateReputationSidebar(sentiment);
-      } else {
-        showError('투표 중 오류가 발생했습니다.');
-      }
-    })
-    .catch(error => {
-      hideLoading(button);
-      showError(error.message);
-      enableVoteButtons();
-    });
+    // 1.5초 지연 후 API 호출 (애니메이션이 재생될 시간)
+    setTimeout(() => {
+      // API 호출
+      fetch(`/api/v1/categories/${categoryId}/@${slug}/vote`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(csrfToken && csrfHeader && {[csrfHeader]: csrfToken})
+        },
+        body: JSON.stringify(voteData)
+      })
+      .then(response => {
+        hideLoading(button);
+        if (response.ok || response.status === 204) {
+          handleVoteSuccess(sentiment);
+          updateReputationSidebar(sentiment);
+        } else {
+          showError('투표 중 오류가 발생했습니다.');
+        }
+      })
+      .catch(error => {
+        hideLoading(button);
+        showError(error.message);
+        enableVoteButtons();
+      });
+    }, 1500); // 1.5초 지연
   }
 
   // 투표 성공 처리
@@ -105,6 +114,11 @@ document.addEventListener('DOMContentLoaded', function () {
     voteContainer.innerHTML = resultHTML;
     voteContainer.classList.add('vote-categoryResult');
 
+    // 사용자 투표 강조
+    setTimeout(() => {
+      window.voteAnimations.highlightUserVote(sentiment);
+    }, 300);
+
     // 성공 메시지 표시
     showSuccess();
   }
@@ -157,7 +171,6 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function updateReputationSidebar(voteType) {
-
     // 1. 총 투표 수 업데이트
     const totalVotesEl = document.querySelector('[data-total-votes]');
     if (totalVotesEl) {
@@ -189,5 +202,4 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
   }
-
 });
