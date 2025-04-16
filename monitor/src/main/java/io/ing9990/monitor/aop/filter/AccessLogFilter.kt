@@ -104,6 +104,7 @@ class AccessLogFilter : OncePerRequestFilter() {
         val path = request.requestURI
 
         return path.startsWith("/favicon.ico") ||
+            path.startsWith("/favicon_v2.ico") ||
             path.startsWith("/static/") ||
             path.startsWith("/resources/") ||
             path.startsWith(
