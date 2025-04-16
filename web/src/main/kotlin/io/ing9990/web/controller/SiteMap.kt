@@ -58,8 +58,8 @@ class SiteMap(
         categories.forEach { category ->
             appendUrl(
                 stringBuilder,
-                "$baseUrl/categories/${category.id}",
-                currentDate,
+                escapeXml("$baseUrl/categories/${category.id}"),
+                escapeXml(currentDate),
                 "weekly",
                 "0.7",
             )
@@ -67,16 +67,48 @@ class SiteMap(
             // 해당 카테고리의 인물 상세 페이지
             val figures = figureService.findByCategoryId(category.id)
             figures.forEach { figure ->
-                // slug를 사용한 URL 형식으로 변경
                 appendUrl(
                     stringBuilder,
-                    "$baseUrl/${category.id}/@${figure.slug}",
+                    escapeXml("$baseUrl/${category.id}/@${figure.slug}"),
                     formatDate(LocalDateTime.now()),
                     "weekly",
                     "0.8",
-                    figure.image,
+                    escapeXml(figure.image),
                 )
             }
+        }
+
+        // 사용자 프로필 페이지 추가
+        // 사용자 정보는 DB에서 가져오는 방식으로 구현
+        val users = userService.findAllUsers()
+        users.forEach { user ->
+            // 사용자 프로필 페이지
+            appendUrl(
+                stringBuilder,
+                escapeXml("$baseUrl/profile/${user.nickname}"),
+                formatDate(LocalDateTime.now()),
+                "weekly",
+                "0.7",
+                escapeXml(user.image),
+            )
+
+            // 사용자 활동 페이지
+            appendUrl(
+                stringBuilder,
+                escapeXml("$baseUrl/profile/${user.nickname}/activity"),
+                formatDate(LocalDateTime.now()),
+                "weekly",
+                "0.6",
+            )
+
+            // 사용자가 작성한 콘텐츠 페이지 (예: 리뷰, 코멘트 등)
+            appendUrl(
+                stringBuilder,
+                escapeXml("$baseUrl/profile/${user.nickname}/contents"),
+                formatDate(LocalDateTime.now()),
+                "weekly",
+                "0.6",
+            )
         }
 
         stringBuilder.append("</urlset>")
@@ -101,8 +133,9 @@ class SiteMap(
 
         // 이미지가 있는 경우 이미지 정보 추가
         if (!imageUrl.isNullOrEmpty()) {
+            val escapeImage = escapeXml(imageUrl)
             sb.append("    <image:image>\n")
-            sb.append("      <image:loc>$imageUrl</image:loc>\n")
+            sb.append("      <image:loc>$escapeImage</image:loc>\n")
             sb.append("    </image:image>\n")
         }
 
@@ -125,5 +158,15 @@ class SiteMap(
         url.append(contextPath)
 
         return url.toString()
+    }
+
+    private fun escapeXml(text: String?): String {
+        if (text == null) return ""
+        return text
+            .replace("&", "&amp;")
+            .replace("<", "&lt;")
+            .replace(">", "&gt;")
+            .replace("\"", "&quot;")
+            .replace("'", "&apos;")
     }
 }
