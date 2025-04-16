@@ -18,8 +18,6 @@ data class CommentResult(
     val interactionType: InteractionType?,
     val isLikedByUser: Boolean = false,
 ) {
-    fun hasReplies(): Boolean = replyCount > 0
-
     companion object {
         fun from(
             comment: Comment,

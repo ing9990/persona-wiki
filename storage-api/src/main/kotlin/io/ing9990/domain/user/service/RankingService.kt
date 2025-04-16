@@ -1,6 +1,5 @@
 package io.ing9990.domain.user.service
 
-import io.ing9990.domain.user.OAuthProviderType
 import io.ing9990.domain.user.User
 import io.ing9990.domain.user.repositories.querydsl.RankingRepository
 import io.ing9990.domain.user.service.dto.RankingPageResult
@@ -39,31 +38,10 @@ class RankingService(
     }
 
     /**
-     * 전체 사용자 수를 조회합니다.
-     */
-    @Transactional(readOnly = true)
-    fun getUserCount(): Long = rankingRepository.countAllUsers()
-
-    /**
      * 특정 사용자의 랭킹 순위를 조회합니다.
      */
     @Transactional(readOnly = true)
     fun getUserRank(userId: Long): Int = rankingRepository.getUserRank(userId)
-
-    /**
-     * 사용자 ID로 사용자를 찾습니다.
-     */
-    @Transactional(readOnly = true)
-    fun findUserById(id: Long): User? = rankingRepository.findById(id).orElse(null)
-
-    /**
-     * 소셜 로그인 ID와 제공자로 사용자를 찾습니다.
-     */
-    @Transactional(readOnly = true)
-    fun findByProviderIdAndProvider(
-        providerId: String,
-        provider: OAuthProviderType,
-    ): User? = null // userRepository 필드에서 메서드 호출로 변경해야 함
 
     /**
      * 사용자 정보를 저장합니다.
