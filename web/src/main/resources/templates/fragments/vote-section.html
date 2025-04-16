@@ -9,17 +9,18 @@
       <div th:if="${detailsResult.hasSentiment()}" class="vote-result">
         <p class="text-gray-700 mb-2">이 인물에 대해 다음과 같이 평가하셨습니다:</p>
         <div th:with="vote=${detailsResult.userVote}">
-     <span th:if="${detailsResult.isPositive()}"
-           class="vote-sentiment-badge sentiment-positive">
-       <i class="fas fa-crown mr-1"></i> 숭배
-     </span>
-          <span th:if="${detailsResult.isNeutral()}" class="vote-sentiment-badge sentiment-neutral">
-       <i class="fas fa-balance-scale mr-1"></i> 중립
-     </span>
+          <span th:if="${detailsResult.isPositive()}"
+                class="vote-sentiment-badge sentiment-positive user-vote-highlight">
+            <i class="fas fa-crown mr-1"></i> 숭배
+          </span>
+          <span th:if="${detailsResult.isNeutral()}"
+                class="vote-sentiment-badge sentiment-neutral user-vote-highlight">
+            <i class="fas fa-balance-scale mr-1"></i> 중립
+          </span>
           <span th:if="${detailsResult.isNegative()}"
-                class="vote-sentiment-badge sentiment-negative">
-       <i class="fas fa-skull mr-1"></i> 사형
-     </span>
+                class="vote-sentiment-badge sentiment-negative user-vote-highlight">
+            <i class="fas fa-skull mr-1"></i> 사형
+          </span>
         </div>
         <p class="text-sm text-gray-500 mt-3">
           <i class="fas fa-clock mr-1"></i>
@@ -81,6 +82,9 @@
       </div>
     </div>
   </section>
-  <!-- Vote.js 스크립트 포함 -->
+  <!-- CSS 및 JavaScript 파일 포함 -->
+  <link rel="stylesheet" href="/css/vote/vote-animations.css">
+  <script src="/js/vote/vote-animations.js"></script>
   <script src="/js/vote/vote.js"></script>
+  <script src="/js/vote/images.js"></script>
 </div>

@@ -2,27 +2,35 @@
 <div th:fragment="categorySection(detailsResult)"
      class="bg-white rounded-lg shadow-md overflow-hidden stat-card fade-in mt-5">
 
-  <div class="category-card">
-    <img th:src="${@layoutHelper.getCategoryImageByString(detailsResult.getCategoryImage())}"
-         th:alt="${detailsResult.getName()}"
-         class="category-image">
-    <div class="category-content">
-      <h3 class="text-xl font-bold mb-1"
-          th:text="${detailsResult.getCategoryDisplayName()}">
-        카테고리명</h3>
+  <div class="category-card-header">
+    <div class="category-image-container">
+      <img th:src="${@layoutHelper.getCategoryImageByString(detailsResult.getCategoryImage())}"
+           th:alt="${detailsResult.getName()}"
+           class="category-card-image">
+      <div class="category-overlay"></div>
     </div>
   </div>
 
-  <div class="p-4">
-    <p class="text-gray-600 text-sm mb-4"
-       th:text="${detailsResult.getCategoryDescription()}">
-      카테고리 설명</p>
-    <div class="mt-2">
+  <div class="category-card-body">
+    <div class="category-icon-badge">
+      <i class="fas fa-bookmark"></i>
+    </div>
+    <h3 class="category-title" th:text="${detailsResult.getCategoryDisplayName()}">
+      카테고리명
+    </h3>
+    <p class="category-description" th:text="${detailsResult.getCategoryDescription()}">
+      카테고리 설명
+    </p>
+    <div class="category-link-container">
       <a th:href="@{'/categories/' + ${detailsResult.getCategoryId()}}"
-         class="text-indigo-600 hover:text-indigo-800 text-sm flex items-center">
+         class="category-link">
         <span>이 카테고리의 다른 인물 보기</span>
-        <i class="fas fa-chevron-right ml-1 text-xs"></i>
+        <i class="fas fa-arrow-right"></i>
       </a>
     </div>
   </div>
+
+  <!-- CSS 및 JS 파일 포함 -->
+  <link rel="stylesheet" href="/css/figure/detail/category-section.css">
+  <script src="/js/figure/category-hover.js"></script>
 </div>

@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <radialGradient id="ray-gradient" cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+      <stop offset="0%" stop-color="gold" stop-opacity="0.8"/>
+      <stop offset="70%" stop-color="gold" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <g>
+    <!-- 중앙 원 -->
+    <circle cx="100" cy="100" r="20" fill="gold"/>
+
+    <!-- 광선 효과 -->
+    <circle cx="100" cy="100" r="100" fill="url(#ray-gradient)">
+      <animate attributeName="opacity" values="0.8;0.3;0.8" dur="3s" repeatCount="indefinite"/>
+    </circle>
+
+    <!-- 광선 라인 -->
+    <g>
+      <line x1="100" y1="20" x2="100" y2="0" stroke="gold" stroke-width="2">
+        <animate attributeName="y2" values="10;0;10" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="100" y1="180" x2="100" y2="200" stroke="gold" stroke-width="2">
+        <animate attributeName="y2" values="190;200;190" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="20" y1="100" x2="0" y2="100" stroke="gold" stroke-width="2">
+        <animate attributeName="x2" values="10;0;10" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="180" y1="100" x2="200" y2="100" stroke="gold" stroke-width="2">
+        <animate attributeName="x2" values="190;200;190" dur="2s" repeatCount="indefinite"/>
+      </line>
+
+      <!-- 대각선 광선 -->
+      <line x1="135" y1="35" x2="155" y2="15" stroke="gold" stroke-width="2">
+        <animate attributeName="x2" values="145;155;145" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="y2" values="25;15;25" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="35" y1="35" x2="15" y2="15" stroke="gold" stroke-width="2">
+        <animate attributeName="x2" values="25;15;25" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="y2" values="25;15;25" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="135" y1="165" x2="155" y2="185" stroke="gold" stroke-width="2">
+        <animate attributeName="x2" values="145;155;145" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="y2" values="175;185;175" dur="2s" repeatCount="indefinite"/>
+      </line>
+      <line x1="35" y1="165" x2="15" y2="185" stroke="gold" stroke-width="2">
+        <animate attributeName="x2" values="25;15;25" dur="2s" repeatCount="indefinite"/>
+        <animate attributeName="y2" values="175;185;175" dur="2s" repeatCount="indefinite"/>
+      </line>
+    </g>
+  </g>
+</svg>
