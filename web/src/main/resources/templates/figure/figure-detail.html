@@ -105,37 +105,45 @@
 <div layout:fragment="content">
   <div id="comment-section" th:attr="data-figure-id=${detailsResult.id}"></div>
 
-  <!-- 인물 프로필 헤더 -->
+  <!-- 수정된 인물 프로필 헤더 -->
   <section class="profile-header mb-8 shadow-lg" th:attr="data-figure-id=${detailsResult.getId()}">
-    <img th:src="${detailsResult.getCategoryImage()}" th:alt="${detailsResult.getDisplayName()}"
-         class="profile-header-image">
+    <div class="profile-header-image-container">
+      <img th:src="${detailsResult.getCategoryImage()}" th:alt="${detailsResult.getDisplayName()}"
+           class="profile-header-image">
+    </div>
     <div class="profile-header-content">
-      <div class="flex items-end justify-between w-full">
-        <div class="flex items-end">
+      <div class="profile-info-container">
+        <!-- 이미지를 우측 상단으로 배치 -->
+        <div class="profile-image-container">
           <img th:src="${detailsResult.getImageUrl()}" th:alt="${detailsResult.getDisplayName()}"
-               class="w-24 h-24 rounded-full profile-image object-cover mr-6"
+               class="profile-image cursor-pointer" id="profile-image-toggle"
                data-handle-error="true"
                data-placeholder="/img/profile-placeholder.svg">
-          <div>
-            <div class="flex items-center mb-2">
-              <h1 class="text-4xl font-bold mr-3" th:text="${detailsResult.getDisplayName()}">인물
-                이름</h1>
-              <span th:text="${detailsResult.getCategoryDisplayName()}"
-                    class="badge-category text-white text-sm px-3 py-1 rounded-full">카테고리</span>
-            </div>
-            <p class="text-gray-200 text-lg flex items-center">
-              <i class="fas fa-quote-left text-sm opacity-50 mr-1"></i>
-              <span th:text="${#strings.abbreviate(detailsResult.getBio(), 50)}">인물 소개 요약</span>
-              <i class="fas fa-quote-right text-sm opacity-50 ml-1"></i>
-              <button id="bio-toggle" class="ml-2 text-gray-300 hover:text-white transition-colors">
-                <i class="fas fa-expand-alt text-sm"></i>
-              </button>
+        </div>
+
+        <div class="profile-text-container">
+          <!-- 이름과 카테고리를 명확하게 배치 -->
+          <div class="name-category-container">
+            <h1 class="profile-name" th:text="${detailsResult.getDisplayName()}">인물 이름</h1>
+            <span class="profile-category badge-category" th:text="${detailsResult.getCategoryDisplayName()}">카테고리</span>
+          </div>
+
+          <!-- Bio 요약 -->
+          <div class="bio-container">
+            <p class="bio-preview">
+              <i class="fas fa-quote-left text-sm opacity-70 mr-1"></i>
+              <span class="bio-text" th:text="${#strings.abbreviate(detailsResult.getBio(), 50)}">인물 소개 요약</span>
+              <i class="fas fa-quote-right text-sm opacity-70 ml-1"></i>
             </p>
+            <button id="bio-toggle" class="bio-toggle-btn">
+              <span>더보기</span> <i class="fas fa-expand-alt text-sm ml-1"></i>
+            </button>
           </div>
         </div>
       </div>
     </div>
   </section>
+
 
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
     <!-- 왼쪽: 인물 정보 및 댓글 (2칸 차지) -->
@@ -219,6 +227,9 @@
   <script src="/js/utils/toast-manager.js"></script>
   <script src="/js/utils/scroll-to-top.js"></script>
 
+<!--  인물 관련 스크립트-->
+  <script src="/js/figure/figure-detail-header-image.js"></script>
+
   <!-- 외부 라이브러리 -->
   <script src="https://unpkg.com/infinite-scroll@4/dist/infinite-scroll.pkgd.min.js"></script>
 
@@ -226,11 +237,11 @@
   <script src="/js/apis/comment-api.js"></script>
 
   <!-- 댓글 관련 스크립트 -->
-  <script src="/js/comment-fragments-handler.js"></script>
+  <script src="/js/comment/comment-fragments-handler.js"></script>
   <script src="/js/comment/comment-interactions-handler.js"></script>
   <script src="/js/comment/view-replies-handler.js"></script>
   <script src="/js/comment/add-reply-form-handler.js"></script>
-  <script src="/js/create-comment-handler.js"></script>
+  <script src="/js/comment/create-comment-handler.js"></script>
 
   <!-- 페이지 특화 스크립트 -->
   <script>
