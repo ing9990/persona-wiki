@@ -47,7 +47,7 @@ class Comment(
     val depth: Int = 0,
     // 답글인 경우 댓글의 ID
     @Column(name = "root_id")
-    val rootId: Long? = null,
+    var rootId: Long? = id,
     // 답글 Lazyload 용으로 답글 갯수 컬럼
     @Column(name = "replies_count", nullable = false, columnDefinition = "INT DEFAULT 0")
     var repliesCount: Int = 0,
@@ -68,6 +68,10 @@ class Comment(
     @OneToMany(mappedBy = "comment", cascade = [ALL], orphanRemoval = true)
     val interactions: MutableList<CommentInteraction> = mutableListOf(),
 ) : BaseEntity() {
+    fun rootItself() {
+        rootId = this.id
+    }
+
     /**
      * 이 댓글이 답글인지 확인합니다.
      * @return 답글이면 true, 원 댓글이면 false

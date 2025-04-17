@@ -13,7 +13,17 @@ data class FigureAddedEvent(
     val categoryName: String,
     override val description: String? = null,
     override val timestamp: LocalDateTime = LocalDateTime.now(),
-) : ActivityEvent(userId, ActivityType.PERSON_ADD, targetId, targetName, description, timestamp) {
+    override val activityType: ActivityType,
+    override val categoryId: String,
+) : ActivityEvent(
+        userId,
+        ActivityType.PERSON_ADD,
+        targetId,
+        targetName,
+        description,
+        timestamp,
+        categoryId = categoryId,
+    ) {
     companion object {
         fun from(
             figure: Figure,
@@ -30,6 +40,8 @@ data class FigureAddedEvent(
                 targetName = figure.name,
                 categoryName = figure.category.displayName,
                 description = truncatedBio,
+                activityType = ActivityType.PERSON_ADD,
+                categoryId = figure.category.id,
             )
         }
     }

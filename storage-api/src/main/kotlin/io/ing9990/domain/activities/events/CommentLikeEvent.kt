@@ -10,6 +10,9 @@ data class CommentLikeEvent(
     override val userId: Long,
     override val targetId: Long,
     override val targetName: String,
+    override val activityType: ActivityType,
+    override val categoryId: String,
+    override val commentId: Long?,
     val figureId: Long,
     val interactionType: InteractionType,
     override val timestamp: LocalDateTime = LocalDateTime.now(),
@@ -21,6 +24,7 @@ data class CommentLikeEvent(
         targetName,
         commentOverview,
         timestamp,
+        categoryId = categoryId,
     ) {
     companion object {
         fun shorten(
@@ -52,6 +56,9 @@ data class CommentLikeEvent(
                         ?: throw IllegalArgumentException("Figure ID is required"),
                 interactionType = interaction.interactionType,
                 commentOverview = shorten(comment.content),
+                commentId = comment.rootId!!,
+                activityType = ActivityType.LIKE,
+                categoryId = comment.figure.category.id,
             )
         }
     }

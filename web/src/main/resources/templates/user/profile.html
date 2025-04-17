@@ -121,8 +121,18 @@
                                    (${activity.activityType.name() == 'LIKE'} ? '좋아요' :
                                    (${activity.activityType.name() == 'DISLIKE'} ? '싫어요' : '활동'))))))">활동 타입</span>
                   <span class="mx-2">-</span>
-                  <a th:href="${activity.toSearchUri()}" class="activity-target"
-                     th:text="${activity.targetName}">대상명</a>
+
+                  <!-- 댓글 관련 활동인 경우 해당 댓글로 직접 이동하는 링크 수정 -->
+                  <a th:if="${activity.isCommentActivity()}"
+                     th:href="@{'/' + ${activity.categoryId} + '/@' + ${@layoutHelper.toSlug(activity.figureName)} + '#comment-' + ${activity.commentId}}"
+                     class="activity-target"
+                     th:text="${activity.figureName}">대상명</a>
+
+                  <!-- 그 외 활동은 기존대로 인물 상세 페이지 링크 유지 -->
+                  <a th:unless="${activity.isCommentActivity()}"
+                     th:href="${@layoutHelper.toDetail(activity.getCategoryId(), activity.getFigureName())}"
+                     class="activity-target"
+                     th:text="${activity.figureName}">대상명</a>
                 </div>
                 <p th:if="${activity.description}" class="activity-description"
                    th:text="${activity.description}">활동 설명...</p>
@@ -258,6 +268,22 @@
 <!-- 페이지 자바스크립트 -->
 <th:block layout:fragment="script">
   <script src="/js/users/profile.js"></script>
+  <script>
+    // 댓글 하이라이트 및 스크롤 스크립트
+    document.addEventListener('DOMContentLoaded', function () {
+      // URL 해시 확인
+      const hash = window.location.hash;
+
+      if (hash && hash.startsWith('#comment-')) {
+        // 댓글 ID 추출
+        const commentId = hash.substring(9); // '#comment-'를 제외한 부분
+
+        // profile 페이지에서는 댓글로 바로 이동하지 않고, 인물 페이지로 이동하므로
+        // 직접적인 처리는 필요하지 않습니다. 이 스크립트는 인물 페이지로 이동 후 실행됩니다.
+        console.log('댓글로 이동하는 링크가 감지되었습니다:', commentId);
+      }
+    });
+  </script>
 </th:block>
 </body>
 </html>

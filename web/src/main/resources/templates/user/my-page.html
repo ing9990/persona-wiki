@@ -85,7 +85,6 @@
           </div>
         </div>
 
-
         <div class="flex flex-col md:flex-row items-center">
           <!-- 프로필 이미지 -->
           <div class="profile-image-container mb-6 md:mb-0">
@@ -118,10 +117,9 @@
             <!-- 명성 포인트 배지 -->
             <div class="mb-4">
               <span th:class="${'prestige-badge level-' + @prestigeHelper.getLevel(user.prestige)}">
-  <i class="fas fa-award mr-1"></i>
-  명성: <span th:text="${user.prestige}" class="font-semibold">0</span> 포인트
-</span>
-
+                <i class="fas fa-award mr-1"></i>
+                명성: <span th:text="${user.prestige}" class="font-semibold">0</span> 포인트
+              </span>
             </div>
 
             <div class="mb-4">
@@ -189,7 +187,6 @@
             <h3 class="text-sm font-semibold text-gray-700">
               활동 명성 - <span
                 th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(user.prestige))}">병아리</span>
-
             </h3>
             <span class="text-xs text-gray-500" th:text="${user.prestige} + ' 포인트'">0 포인트</span>
           </div>
@@ -200,10 +197,10 @@
           <div
               class="prestige-level-info mt-2 text-xs text-gray-500 flex justify-between items-center">
             <span>
-레벨 <span th:text="${@prestigeHelper.getLevel(user.prestige)}" id="prestigeLevel">0</span>
-             (<span
+              레벨 <span th:text="${@prestigeHelper.getLevel(user.prestige)}"
+                       id="prestigeLevel">0</span>
+              (<span
                 th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(user.prestige))}">병아리</span>)
-
             </span>
             <span>
               다음 레벨까지 <span
@@ -237,6 +234,7 @@
 
         <!-- 활동이 있는 경우 -->
         <div th:unless="${#lists.isEmpty(recentActivities)}" class="space-y-3">
+          <!-- my-page.html의 최근 활동 섹션 수정 -->
           <div th:each="activity : ${recentActivities}" class="activity-item">
             <div class="flex items-start">
               <div th:switch="${activity.activityType.name()}" class="activity-icon">
@@ -259,8 +257,18 @@
                     <span th:case="'LIKE'"> 😆 좋아요를 표시했습니다: </span>
                     <span th:case="'DISLIKE'"> 😡싫어요를 표시했습니다: </span>
                   </span>
-                  <a th:href="@{'/search?query=' + ${activity.targetName}}" class="activity-target"
-                     th:text="${activity.targetName}">대상 이름</a>
+
+                  <!-- 댓글 활동인 경우 해당 댓글로 직접 이동하는 링크 수정 -->
+                  <a th:if="${activity.isCommentActivity()}"
+                     th:href="@{'/' + ${activity.categoryId} + '/@' + ${@layoutHelper.toSlug(activity.figureName)} + '#comment-' + ${activity.commentId}}"
+                     class="activity-target"
+                     th:text="${activity.figureName}">대상 이름</a>
+
+                  <!-- 그 외 활동은 기존대로 검색 링크 유지 -->
+                  <a th:unless="${activity.isCommentActivity()}"
+                     th:href="@{'/search?query=' + ${activity.figureName}}"
+                     class="activity-target"
+                     th:text="${activity.figureName}">대상 이름</a>
                 </div>
                 <div class="comment-date-relative text-xs text-gray-500 activity-date"
                      th:text="${activity.createdAt}">
@@ -273,12 +281,12 @@
               </div>
             </div>
           </div>
-        </div>
 
-        <div class="mt-4 text-center">
-          <a href="/activity" class="text-indigo-600 hover:text-indigo-800 transition">
-            모든 활동 보기 <i class="fas fa-arrow-right ml-1"></i>
-          </a>
+          <div class="mt-4 text-center">
+            <a href="/activity" class="text-indigo-600 hover:text-indigo-800 transition">
+              모든 활동 보기 <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+          </div>
         </div>
       </div>
 
@@ -425,12 +433,54 @@
       </form>
     </div>
   </div>
-</div>
 
-<!-- 페이지 자바스크립트 -->
-<th:block layout:fragment="script">
-  <script src="/js/users/my-page.js"></script>
-  <script src="/js/utils/relative-time.js"></script>
-</th:block>
+  <!-- 페이지 자바스크립트 -->
+  <th:block layout:fragment="script">
+    <script src="/js/users/my-page.js"></script>
+    <script src="/js/utils/relative-time.js"></script>
+    <script>
+      // 댓글 하이라이트 및 스크롤 스크립트
+      document.addEventListener('DOMContentLoaded', function () {
+        // URL 해시 확인
+        const hash = window.location.hash;
+
+        if (hash && hash.startsWith('#comment-')) {
+          // 댓글 ID 추출
+          const commentId = hash.substring(9); // '#comment-'를 제외한 부분
+
+          // 해당 댓글 요소 찾기
+          const commentElement = document.getElementById('comment-' + commentId);
+
+          if (commentElement) {
+            // 페이지 로드 후 스크롤 및 하이라이트 적용 (약간의 지연 추가)
+            setTimeout(() => {
+              // 댓글로 스크롤
+              commentElement.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+              // 하이라이트 효과 추가
+              commentElement.style.transition = 'background-color 0.5s ease';
+              commentElement.style.backgroundColor = 'rgba(250, 240, 137, 0.5)';
+
+              // 일정 시간 후 하이라이트 제거
+              setTimeout(() => {
+                commentElement.style.backgroundColor = '';
+              }, 3000);
+
+              // 답글인 경우 부모 댓글의 답글 컨테이너 펼치기
+              const replyContainer = commentElement.closest('.reply-container');
+              if (replyContainer && replyContainer.classList.contains('hidden')) {
+                const viewRepliesBtn = replyContainer.closest('.comment-item').querySelector(
+                    '.view-replies-btn');
+                if (viewRepliesBtn) {
+                  viewRepliesBtn.click();
+                }
+              }
+            }, 500);
+          }
+        }
+      });
+    </script>
+  </th:block>
+</div>
 </body>
 </html>

@@ -107,6 +107,51 @@
     .icon-button:hover {
       transform: translateY(-2px);
     }
+
+    /* 댓글 뱃지 스타일 추가 */
+    .comments-badge {
+      display: flex;
+      align-items: center;
+      background-color: #EEF2FF;
+      color: #4F46E5;
+      padding: 0.5rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .comments-badge:hover {
+      background-color: #E0E7FF;
+      transform: translateY(-2px);
+    }
+
+    .comments-badge i {
+      margin-right: 0.4rem;
+      font-size: 0.875rem;
+    }
+
+    /* 반응형에서 댓글 뱃지 스타일 조정 */
+    @media (max-width: 640px) {
+      .comments-badge {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.875rem;
+      }
+    }
+
+    /* 카드 하단 정보 영역에 댓글 관련 애니메이션 추가 */
+    @keyframes pulse-light {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    .comments-badge.new-comments {
+      animation: pulse-light 2s infinite;
+    }
   </style>
 </head>
 
@@ -183,7 +228,7 @@
             인물 소개 텍스트...
           </p>
 
-          <!-- 하단 정보 영역 - 통계와 버튼을 가로로 일렬 배치 -->
+          <!-- 하단 정보 영역 - 통계와 댓글 수를 가로로 일렬 배치 -->
           <div class="mt-auto flex items-center justify-between">
             <!-- 평판 지표 -->
             <div class="flex items-center">
@@ -200,10 +245,13 @@
                 <span th:text="${figure.negatives}">0</span>
               </div>
             </div>
-            <!-- 상세 페이지 링크 -->
-            <a th:href="${@layoutHelper.toDetail(figure.categoryId, figure.slug)}"
-               class="inline-block bg-indigo-600 text-white px-3 py-1.5 rounded-md hover:bg-indigo-700 transition text-sm">
-              자세히 보기
+
+            <!-- 댓글 수 표시 (자세히 보기 대체) -->
+            <a th:href="${@layoutHelper.toDetail(figure.categoryId, figure.slug) + '#comments'}"
+               th:class="${figure.commentsCount > 0 ? 'comments-badge' : 'comments-badge'}"
+               th:attr="data-comment-count=${figure.commentsCount}">
+              <i class="fas fa-comment-alt"></i>
+              <span th:text="${figure.commentsCount}">0</span>
             </a>
           </div>
         </div>
@@ -265,6 +313,27 @@
     // 기본 페이지 초기화 코드
     document.addEventListener('DOMContentLoaded', function () {
       // 이미지 오류 처리 등의 초기화 코드만 유지
+
+      // 댓글 수에 따른 스타일 적용
+      document.querySelectorAll('.comments-badge').forEach(badge => {
+        const commentCount = parseInt(badge.getAttribute('data-comment-count') || '0');
+
+        // 댓글이 많을수록 더 강조되는 스타일 적용
+        if (commentCount > 10) {
+          badge.classList.add('bg-indigo-100');
+          badge.classList.add('text-indigo-700');
+          badge.classList.add('font-bold');
+        } else if (commentCount > 5) {
+          badge.classList.add('bg-indigo-50');
+        } else if (commentCount === 0) {
+          badge.classList.add('opacity-70');
+        }
+
+        // 최근에 새 댓글이 추가된 항목 강조 (서버에서 이 정보를 제공해야 함)
+        if (badge.classList.contains('new-comments')) {
+          // 새 댓글이 있는 경우 애니메이션 적용됨 (CSS에 정의됨)
+        }
+      });
     });
   </script>
 </th:block>

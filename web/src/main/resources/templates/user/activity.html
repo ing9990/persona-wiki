@@ -72,8 +72,11 @@
               <i th:case="'VOTE'" class="fas fa-vote-yea text-green-500"></i>
               <i th:case="'PERSON_ADD'" class="fas fa-user-plus text-blue-500"></i>
               <i th:case="'PERSON_EDIT'" class="fas fa-user-edit text-yellow-500"></i>
+              <i th:case="'REPLY'" class="fas fa-reply text-purple-500"></i>
               <i th:case="'LIKE'" class="fas fa-thumbs-up text-pink-500"></i>
               <i th:case="'DISLIKE'" class="fas fa-thumbs-down text-gray-500"></i>
+              <i th:case="'LIKED'" class="fas fa-thumbs-up text-pink-500"></i>
+              <i th:case="'DISLIKED'" class="fas fa-thumbs-down text-gray-500"></i>
             </div>
             <div class="activity-type">
               <span th:switch="${activity.activityType.name()}">
@@ -82,15 +85,27 @@
                 <span th:case="'PERSON_ADD'">인물 추가</span>
                 <span th:case="'PERSON_EDIT'">인물 정보 수정</span>
                 <span th:case="'REPLY'">답글 작성</span>
-                <span th:case="'LIKE'">답글 작성</span>
-                <span th:case="'DISLIKE'">답글 작성</span>
+                <span th:case="'LIKE'">좋아요 표시</span>
+                <span th:case="'DISLIKE'">싫어요 표시</span>
+                <span th:case="'LIKED'">좋아요 받음</span>
+                <span th:case="'DISLIKED'">싫어요 받음</span>
               </span>
             </div>
           </div>
 
           <div class="activity-target">
-            <a th:href="${activity.toSearchUri()}" class="activity-link"
-               th:text="${activity.targetName}">
+            <!-- 댓글 관련 활동인 경우 해당 댓글로 직접 이동하는 링크 -->
+            <a th:if="${activity.isCommentActivity()}"
+               th:href="@{'/' + ${activity.categoryId} + '/@' + ${@layoutHelper.toSlug(activity.figureName)} +'#comment-' + ${activity.getCommentId()}}"
+               class="activity-link"
+               th:text="${activity.figureName}">
+              대상 이름
+            </a>
+            <!-- 그 외 활동은 기존대로 검색 링크 유지 -->
+            <a th:unless="${activity.isCommentActivity()}"
+               th:href="${@layoutHelper.toDetail(activity.getCategoryId(), activity.getFigureName())}"
+               class="activity-link"
+               th:text="${activity.figureName}">
               대상 이름
             </a>
           </div>
@@ -117,4 +132,48 @@
 <th:block layout:fragment="script">
   <script src="/js/utils/relative-time.js"></script>
   <script src="/js/users/activity.js"></script>
+  <script>
+    // 댓글 하이라이트 및 스크롤 스크립트
+    document.addEventListener('DOMContentLoaded', function () {
+      // URL 해시 확인
+      const hash = window.location.hash;
+
+      if (hash && hash.startsWith('#comment-')) {
+        // 댓글 ID 추출
+        const commentId = hash.substring(9); // '#comment-'를 제외한 부분
+
+        // 해당 댓글 요소 찾기
+        const commentElement = document.getElementById('comment-' + commentId);
+
+        if (commentElement) {
+          // 페이지 로드 후 스크롤 및 하이라이트 적용 (약간의 지연 추가)
+          setTimeout(() => {
+            // 댓글로 스크롤
+            commentElement.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+            // 하이라이트 효과 추가
+            commentElement.style.transition = 'background-color 0.5s ease';
+            commentElement.style.backgroundColor = 'rgba(250, 240, 137, 0.5)';
+
+            // 일정 시간 후 하이라이트 제거
+            setTimeout(() => {
+              commentElement.style.backgroundColor = '';
+            }, 3000);
+
+            // 답글인 경우 부모 댓글의 답글 컨테이너 펼치기
+            const replyContainer = commentElement.closest('.reply-container');
+            if (replyContainer && replyContainer.classList.contains('hidden')) {
+              const viewRepliesBtn = replyContainer.closest('.comment-item').querySelector(
+                  '.view-replies-btn');
+              if (viewRepliesBtn) {
+                viewRepliesBtn.click();
+              }
+            }
+          }, 500);
+        }
+      }
+    });
+  </script>
 </th:block>
+</body>
+</html>

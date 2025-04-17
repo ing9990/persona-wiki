@@ -12,12 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const figureName = button.getAttribute('data-figure-name');
     const sentiment = button.getAttribute('data-sentiment');
 
-    // 3D Flip 애니메이션 적용
-    window.voteAnimations.flipButton(button);
-
-    // 풀스크린 애니메이션 표시
-    window.voteAnimations.showFullscreenAnimation(sentiment);
-
     // CSRF 토큰 가져오기 (Spring Security를 사용하는 경우)
     const csrfToken = document.querySelector(
         'meta[name="_csrf"]')?.getAttribute('content');
@@ -113,11 +107,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     voteContainer.innerHTML = resultHTML;
     voteContainer.classList.add('vote-categoryResult');
-
-    // 사용자 투표 강조
-    setTimeout(() => {
-      window.voteAnimations.highlightUserVote(sentiment);
-    }, 300);
 
     // 성공 메시지 표시
     showSuccess();

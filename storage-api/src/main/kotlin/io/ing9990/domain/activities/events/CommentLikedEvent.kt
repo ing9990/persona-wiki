@@ -13,6 +13,9 @@ data class CommentLikedEvent(
     override val targetName: String,
     override val timestamp: LocalDateTime = LocalDateTime.now(),
     override val description: String,
+    override val activityType: ActivityType,
+    override val categoryId: String,
+    override val commentId: Long?,
     val commentOverview: String,
     val likeUserId: Long,
     val likedUserId: Long,
@@ -23,6 +26,7 @@ data class CommentLikedEvent(
         targetName,
         commentOverview,
         timestamp,
+        categoryId = categoryId,
     ) {
     companion object {
         fun shorten(
@@ -53,6 +57,9 @@ data class CommentLikedEvent(
                 likeUserId = interaction.user.id!!,
                 likedUserId = interaction.comment.user?.id!!,
                 description = "다음 사용자가 다음 댓글에 좋아요를 눌렀습니다. ${comment.content}",
+                commentId = comment.rootId!!,
+                activityType = ActivityType.LIKED,
+                categoryId = comment.figure.category.id,
             )
         }
     }

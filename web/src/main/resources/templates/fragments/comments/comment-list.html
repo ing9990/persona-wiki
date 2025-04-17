@@ -1,5 +1,6 @@
 <div th:fragment="commentList" th:attr="data-last=${comments.last}">
-  <div th:each="comment : ${comments.content}" class="comment-item border-b border-gray-200 py-4">
+  <div th:each="comment : ${comments.content}" class="comment-item border-b border-gray-200 py-4"
+       th:id="${'comment-' + comment.id}">
     <div class="flex">
       <div class="flex-shrink-0 mr-3">
         <a th:href="${comment.toWriterProfile()}">
@@ -60,7 +61,8 @@
       </div>
     </div>
   </div>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+  <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
           crossorigin="anonymous"></script>
   <!-- 가로 김 -->
   <ins class="adsbygoogle"

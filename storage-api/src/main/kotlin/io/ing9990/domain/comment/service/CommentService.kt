@@ -45,6 +45,7 @@ class CommentService(
             )
 
         val savedComment: Comment = commentRepository.save(comment)
+        savedComment.rootItself()
         activityEventPublisher
             .publishCommentCreated(savedComment)
 

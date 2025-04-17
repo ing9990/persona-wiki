@@ -39,6 +39,8 @@ class ActivityEventHandler(
                     targetName = activityEvent.targetName,
                     description = activityEvent.description,
                     prestigeAmount = activityEvent.activityType.prestigePoint,
+                    categoryId = activityEvent.categoryId,
+                    commentId = activityEvent.commentId,
                 )
 
 //            activity.activityType

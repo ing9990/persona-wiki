@@ -10,13 +10,15 @@
   <meta name="description" th:content="${#strings.abbreviate(detailsResult.bio,15)}">
 
   <!-- CSS 파일 -->
-  <link rel="stylesheet" href="/css/comment-reply.css">
-  <link rel="stylesheet" href="/css/comment-style.css">
-  <link rel="stylesheet" href="/css/fingure-detail.css">
   <link rel="stylesheet" href="/css/scroll-to-top.css">
-  <link rel="stylesheet" href="/css/vote.css">
-  <link rel="stylesheet" href="/css/comment-form.css">
-  <link rel="stylesheet" href="/css/add-reply-form.css">
+  <link rel="stylesheet" href="/css/figure/fingure-detail.css">
+
+  <link rel="stylesheet" href="/css/comment/comment-reply.css">
+  <link rel="stylesheet" href="/css/comment/comment-style.css">
+  <link rel="stylesheet" href="/css/comment/comment-form.css">
+  <link rel="stylesheet" href="/css/comment/add-reply-form.css">
+
+  <link rel="stylesheet" href="/css/vote/vote.css">
 
   <!-- 인라인 스타일 -->
   <style>
@@ -125,7 +127,8 @@
           <!-- 이름과 카테고리를 명확하게 배치 -->
           <div class="name-category-container">
             <h1 class="profile-name" th:text="${detailsResult.getDisplayName()}">인물 이름</h1>
-            <span class="profile-category badge-category" th:text="${detailsResult.getCategoryDisplayName()}">카테고리</span>
+            <span class="profile-category badge-category"
+                  th:text="${detailsResult.getCategoryDisplayName()}">카테고리</span>
           </div>
 
           <!-- Bio 요약 -->
@@ -227,7 +230,7 @@
   <script src="/js/utils/toast-manager.js"></script>
   <script src="/js/utils/scroll-to-top.js"></script>
 
-<!--  인물 관련 스크립트-->
+  <!--  인물 관련 스크립트-->
   <script src="/js/figure/figure-detail-header-image.js"></script>
 
   <!-- 외부 라이브러리 -->
@@ -242,6 +245,7 @@
   <script src="/js/comment/view-replies-handler.js"></script>
   <script src="/js/comment/add-reply-form-handler.js"></script>
   <script src="/js/comment/create-comment-handler.js"></script>
+  <script src="/js/comment/comment-shortcut.js"></script>
 
   <!-- 페이지 특화 스크립트 -->
   <script>
