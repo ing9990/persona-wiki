@@ -33,6 +33,11 @@ const ViewRepliesHandler = (function () {
    * @param {Event} e - 클릭 이벤트
    */
   async function handleViewRepliesButtonClick(e) {
+    // 자동 펼침 중일 때는 무시 (comment-fragments-handler.js에서 처리)
+    if (window.autoExpandReplies === true) {
+      return;
+    }
+
     const viewRepliesBtn = e.target.closest(SELECTORS.VIEW_REPLIES_BTN);
     const commentId = viewRepliesBtn.dataset.id;
     const figureId = document.querySelector('#comment-list').dataset.figureId;

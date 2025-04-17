@@ -9,4 +9,6 @@ abstract class ActivityEvent(
     open val targetName: String,
     open val description: String? = null,
     open val timestamp: LocalDateTime = LocalDateTime.now(),
+    open val categoryId: String,
+    open val commentId: Long? = null,
 )

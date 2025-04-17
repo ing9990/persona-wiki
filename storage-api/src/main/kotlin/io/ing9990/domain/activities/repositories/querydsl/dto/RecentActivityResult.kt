@@ -2,6 +2,11 @@ package io.ing9990.domain.activities.repositories.querydsl.dto
 
 import io.ing9990.domain.activities.Activity
 import io.ing9990.domain.activities.ActivityType
+import io.ing9990.domain.activities.ActivityType.COMMENT
+import io.ing9990.domain.activities.ActivityType.DISLIKED
+import io.ing9990.domain.activities.ActivityType.LIKE
+import io.ing9990.domain.activities.ActivityType.LIKED
+import io.ing9990.domain.activities.ActivityType.REPLY
 import java.time.LocalDateTime
 
 data class RecentActivityResult(
@@ -9,9 +14,11 @@ data class RecentActivityResult(
     val userId: Long?,
     val activityType: ActivityType,
     val targetId: Long,
-    val targetName: String,
+    val categoryId: String,
+    val figureName: String,
     val description: String?,
     val createdAt: LocalDateTime,
+    val commentId: Long?,
 ) {
     companion object {
         fun from(activity: Activity): RecentActivityResult =
@@ -20,11 +27,21 @@ data class RecentActivityResult(
                 userId = activity.user.id,
                 activityType = activity.activityType,
                 targetId = activity.targetId,
-                targetName = activity.targetName,
+                figureName = activity.targetName,
                 description = activity.description,
                 createdAt = activity.createdAt,
+                categoryId = activity.categoryId,
+                commentId = activity.commentId,
             )
     }
 
-    fun toSearchUri() = "/search?query=$targetName"
+    fun isCommentActivity() =
+        listOf(
+            LIKED,
+            DISLIKED,
+            COMMENT,
+            REPLY,
+            LIKE,
+            DISLIKED,
+        ).contains(activityType)
 }

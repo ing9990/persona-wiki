@@ -1,6 +1,7 @@
 package io.ing9990.domain.activities.events
 
 import io.ing9990.domain.activities.ActivityEvent
+import io.ing9990.domain.activities.ActivityType
 import io.ing9990.domain.activities.ActivityType.DISLIKE
 import io.ing9990.domain.comment.CommentInteraction
 import io.ing9990.domain.comment.InteractionType
@@ -10,6 +11,10 @@ data class CommentDislikeEvent(
     override val userId: Long,
     override val targetId: Long,
     override val targetName: String,
+    override val description: String? = null,
+    override val categoryId: String,
+    override val activityType: ActivityType,
+    override val commentId: Long?,
     val figureId: Long,
     val interactionType: InteractionType,
     val commentOverview: String,
@@ -21,6 +26,7 @@ data class CommentDislikeEvent(
         targetName,
         shorten(commentOverview),
         timestamp,
+        categoryId,
     ) {
     companion object {
         fun shorten(
@@ -51,6 +57,9 @@ data class CommentDislikeEvent(
                         ?: throw IllegalArgumentException("Figure ID is required"),
                 interactionType = interaction.interactionType,
                 commentOverview = shorten(comment.content, 20),
+                commentId = comment.rootId!!,
+                activityType = DISLIKE,
+                categoryId = comment.figure.category.id,
             )
         }
     }

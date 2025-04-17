@@ -14,7 +14,8 @@ class SlackLoggerConfig {
 @Component
 @ConfigurationProperties(prefix = "slack.webhook")
 class SlackLoggerProperties {
-    var url: String = "https://hooks.slack.com/services/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"
+    var url: String =
+        "https://hooks.slack.com/services/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"
     var channel: String = "#api-monitoring"
     var username: String = "국민사형투표"
 }

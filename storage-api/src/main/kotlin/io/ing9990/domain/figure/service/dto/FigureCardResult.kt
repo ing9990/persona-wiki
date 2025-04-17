@@ -13,7 +13,7 @@ class FigureCardResult(
     val positives: Long,
     val negatives: Long,
     val neutrals: Long,
-    val commentsCount: Int
+    val commentsCount: Int,
 ) {
     companion object {
         fun from(figure: Figure): FigureCardResult =
@@ -30,7 +30,7 @@ class FigureCardResult(
                         .count { it.sentiment == Sentiment.NEGATIVE }
                         .toLong(),
                 neutrals = figure.votes.count { it.sentiment == Sentiment.NEUTRAL }.toLong(),
-                commentsCount = figure.comments.size
+                commentsCount = figure.comments.size,
             )
     }
 

@@ -9,9 +9,19 @@ data class VoteCreatedEvent(
     override val userId: Long,
     override val targetId: Long,
     override val targetName: String,
+    override val activityType: ActivityType,
+    override val categoryId: String,
     val sentiment: String,
     override val timestamp: LocalDateTime = LocalDateTime.now(),
-) : ActivityEvent(userId, ActivityType.VOTE, targetId, targetName, null, timestamp) {
+) : ActivityEvent(
+        userId,
+        ActivityType.VOTE,
+        targetId,
+        targetName,
+        null,
+        timestamp,
+        categoryId = categoryId,
+    ) {
     companion object {
         fun from(vote: Vote): VoteCreatedEvent =
             VoteCreatedEvent(
@@ -21,6 +31,8 @@ data class VoteCreatedEvent(
                         ?: throw IllegalArgumentException("Figure ID is required"),
                 targetName = vote.figure.name,
                 sentiment = vote.sentiment.name,
+                activityType = ActivityType.VOTE,
+                categoryId = vote.figure.category.id,
             )
     }
 }

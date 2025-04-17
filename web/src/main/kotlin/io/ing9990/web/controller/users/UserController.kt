@@ -6,6 +6,7 @@ import io.ing9990.domain.activities.repositories.querydsl.dto.RecentActivityResu
 import io.ing9990.domain.activities.service.ActivityService
 import io.ing9990.domain.user.User
 import io.ing9990.service.UserService
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.web.PageableDefault
 import org.springframework.stereotype.Controller
@@ -63,7 +64,7 @@ class UserController(
         model.addAttribute("user", user)
 
         // 타입별 필터링 지원
-        val activities =
+        val activities: Page<RecentActivityResult> =
             if (type != null) {
                 activityService.getActivitiesByTypeAndUserId(user.id!!, type, pageable)
             } else {

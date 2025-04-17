@@ -1,5 +1,6 @@
 package io.ing9990.web.support
 
+import io.ing9990.common.To
 import io.ing9990.domain.user.User
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
@@ -7,6 +8,8 @@ import java.time.temporal.ChronoUnit
 
 @Service
 class LayoutHelper {
+    fun toSlug(name: String) = To.slug(name)
+
     fun toProfileLink(name: String) = "/users/$name"
 
     /**
@@ -27,7 +30,12 @@ class LayoutHelper {
     /**
      * 카테고리 버튼에 표시할 텍스트를 생성합니다.
      */
-    fun getCategoryButtonText(categoryName: String?): String = if (categoryName.isNullOrBlank()) "카테고리 더보기" else "$categoryName 더보기"
+    fun getCategoryButtonText(categoryName: String?): String =
+        if (categoryName.isNullOrBlank()) {
+            "카테고리 더보기"
+        } else {
+            "$categoryName 더보기"
+        }
 
     val placeHolderAddress: String = "/img/profile-placeholder.svg"
     val categoryPlaceHolderAddress: String = "/img/category-placeholder.jpg"
@@ -37,11 +45,7 @@ class LayoutHelper {
      * - 유저 객체가 없거나 프로필 이미지가 null/빈문자열이면 placeholder 경로를 반환
      * - 그렇지 않으면 해당 프로필 이미지 경로를 반환
      */
-    fun getProfileImage(userObj: Any?): String =
-        (userObj as? User)
-            ?.image
-            ?.takeIf { it.isNotBlank() }
-            ?: placeHolderAddress
+    fun getProfileImage(userObj: Any?): String = (userObj as? User)?.image?.takeIf { it.isNotBlank() } ?: placeHolderAddress
 
     /**
      * 이미지 주소가 NULL 이라면 기본 이미지를 반환합니다.
@@ -84,17 +88,13 @@ class LayoutHelper {
      * - 유저 객체가 없으면 # 반환
      * - 그렇지 않으면 /users/{nickname} 경로 반환
      */
-    fun getUserProfileLink(userObj: Any?): String =
-        (userObj as? User)
-            ?.nickname
-            ?.let { "/users/$it" }
-            ?: "#"
+    fun getUserProfileLink(userObj: Any?): String = (userObj as? User)?.nickname?.let { "/users/$it" } ?: "#"
 
     /**
      * 인물 상세 페이지 URL을 생성합니다.
      */
     fun toDetail(
         categoryId: String,
-        slug: String,
-    ): String = "/$categoryId/@$slug"
+        figureName: String,
+    ): String = "/$categoryId/@${To.slug(figureName)}"
 }

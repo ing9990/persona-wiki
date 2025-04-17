@@ -21,24 +21,19 @@ class ActivityCustomRepositoryImpl(
     override fun findRecentActivitiesByUserId(
         userId: Long,
         limit: Int,
-    ): List<RecentActivityResult> =
-        queryFactory
-            .select(
-                Projections.constructor(
-                    RecentActivityResult::class.java,
-                    activity.id,
-                    activity.user.id,
-                    activity.activityType,
-                    activity.targetId,
-                    activity.targetName,
-                    activity.description,
-                    activity.createdAt,
-                ),
-            ).from(activity)
-            .where(activity.user.id.eq(userId))
-            .orderBy(activity.createdAt.desc())
-            .limit(limit.toLong())
-            .fetch()
+    ): List<RecentActivityResult> {
+        val activity = QActivity.activity
+
+        val result =
+            queryFactory
+                .selectFrom(activity)
+                .where(activity.user.id.eq(userId))
+                .orderBy(activity.createdAt.desc())
+                .limit(limit.toLong())
+                .fetch()
+
+        return result.map { RecentActivityResult.from(it) }
+    }
 
     override fun getActivityOverviewByUserId(userId: Long): ActivityOverviewResult {
         val commentCount = countByUserIdAndActivityType(userId, ActivityType.COMMENT)
@@ -65,29 +60,23 @@ class ActivityCustomRepositoryImpl(
         userId: Long,
         pageable: Pageable,
     ): Page<RecentActivityResult> {
+        val activity = QActivity.activity
+
+        // 페이징이 적용된 쿼리 실행
         val query =
             queryFactory
-                .select(
-                    Projections.constructor(
-                        RecentActivityResult::class.java,
-                        activity.id,
-                        activity.user.id,
-                        activity.activityType,
-                        activity.targetId,
-                        activity.targetName,
-                        activity.description,
-                        activity.createdAt,
-                    ),
-                ).from(activity)
+                .selectFrom(activity)
                 .where(activity.user.id.eq(userId))
                 .orderBy(activity.createdAt.desc())
-
-        val activities =
-            query
                 .offset(pageable.offset)
                 .limit(pageable.pageSize.toLong())
-                .fetch()
 
+        val activities = query.fetch()
+
+        // RecentActivityResult로 변환
+        val result = activities.map { RecentActivityResult.from(it) }
+
+        // 전체 카운트 쿼리 실행
         val total =
             queryFactory
                 .select(activity.count())
@@ -95,7 +84,7 @@ class ActivityCustomRepositoryImpl(
                 .where(activity.user.id.eq(userId))
                 .fetchOne() ?: 0L
 
-        return PageImpl(activities, pageable, total)
+        return PageImpl(result, pageable, total)
     }
 
     override fun findActivitiesByTypeAndUserId(

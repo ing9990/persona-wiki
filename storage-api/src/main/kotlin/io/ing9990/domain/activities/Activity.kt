@@ -1,5 +1,11 @@
 package io.ing9990.domain.activities
 
+import io.ing9990.domain.activities.ActivityType.COMMENT
+import io.ing9990.domain.activities.ActivityType.DISLIKE
+import io.ing9990.domain.activities.ActivityType.DISLIKED
+import io.ing9990.domain.activities.ActivityType.LIKE
+import io.ing9990.domain.activities.ActivityType.LIKED
+import io.ing9990.domain.activities.ActivityType.REPLY
 import io.ing9990.domain.user.User
 import io.ing9990.model.BaseEntity
 import jakarta.persistence.Column
@@ -34,4 +40,18 @@ class Activity(
     val prestigeAmount: Int,
     @Column(length = 500)
     val description: String? = null,
-) : BaseEntity()
+    @Column(name = "category_id", nullable = false)
+    val categoryId: String,
+    @Column(name = "comment_id", nullable = true)
+    val commentId: Long? = null,
+) : BaseEntity() {
+    fun isCommentActivity(): Boolean =
+        listOf(
+            COMMENT,
+            REPLY,
+            LIKE,
+            DISLIKE,
+            DISLIKED,
+            LIKED,
+        ).contains(activityType)
+}

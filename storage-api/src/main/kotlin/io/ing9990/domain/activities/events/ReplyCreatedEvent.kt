@@ -2,6 +2,7 @@ package io.ing9990.domain.activities.events
 
 import io.ing9990.domain.activities.ActivityEvent
 import io.ing9990.domain.activities.ActivityType
+import io.ing9990.domain.activities.ActivityType.REPLY
 import io.ing9990.domain.comment.Comment
 import java.time.LocalDateTime
 
@@ -9,10 +10,21 @@ data class ReplyCreatedEvent(
     override val userId: Long,
     override val targetId: Long,
     override val targetName: String,
+    override val activityType: ActivityType,
+    override val categoryId: String,
     val figureId: Long,
+    override val commentId: Long?,
     override val description: String? = null,
     override val timestamp: LocalDateTime = LocalDateTime.now(),
-) : ActivityEvent(userId, ActivityType.REPLY, targetId, targetName, description, timestamp) {
+) : ActivityEvent(
+        userId,
+        REPLY,
+        targetId,
+        targetName,
+        description,
+        timestamp,
+        categoryId = categoryId,
+    ) {
     companion object {
         fun from(reply: Comment): ReplyCreatedEvent {
             if (!reply.isReply()) {
@@ -40,6 +52,9 @@ data class ReplyCreatedEvent(
                     reply.figure.id
                         ?: throw IllegalArgumentException("Figure ID is required"),
                 description = truncatedContent,
+                commentId = reply.rootId!!,
+                activityType = REPLY,
+                categoryId = reply.figure.category.id,
             )
         }
     }
