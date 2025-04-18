@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title th:text="${title}">댓글 답글 알림</title>
+</head>
+<body
+    style="margin: 0; padding: 0; font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', '맑은 고딕', Dotum, '돋움', Helvetica, sans-serif; line-height: 1.6; color: #1f2937; background-color: #f5f5f5; -webkit-font-smoothing: antialiased;">
+<!-- 이메일 컨테이너 -->
+<table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f5f5f5">
+  <tr>
+    <td align="center" style="padding: 20px 0;">
+      <!-- 이메일 내용 -->
+      <table width="600" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff"
+             style="border-radius: 8px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); max-width: 600px; width: 100%;">
+        <!-- 헤더 -->
+        <tr>
+          <td align="center" bgcolor="#3b82f6" style="padding: 24px; border-radius: 8px 8px 0 0;">
+            <h1 style="font-size: 24px; font-weight: 700; color: white; margin: 0 0 8px 0;"
+                th:text="${appName}">국민사형투표</h1>
+            <p style="color: rgba(255, 255, 255, 0.9); font-size: 16px; margin: 0;"
+               th:text="${title}">댓글 답글 알림</p>
+          </td>
+        </tr>
+
+        <!-- 본문 -->
+        <tr>
+          <td style="padding: 32px 24px;">
+            <!-- 인사말 -->
+            <p style="font-size: 20px; font-weight: 500; margin: 0 0 16px 0;">안녕하세요, <span
+                th:text="${username}">사용자</span>님!</p>
+
+            <!-- 메시지 -->
+            <p style="margin: 0 0 24px 0; font-size: 16px; color: #1f2937;">
+              <span th:text="${username}">사용자</span>님이 작성하신 댓글에 새로운 답글이 등록되었습니다.
+            </p>
+
+            <!-- 댓글 카드 -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                   style="margin-bottom: 24px; border: 1px solid #e5e7eb; border-radius: 8px; background-color: #f9fafb;">
+              <tr>
+                <td style="padding: 16px;">
+                  <!-- 댓글 메타 -->
+                  <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                         style="margin-bottom: 8px;">
+                    <tr>
+                      <td style="font-size: 14px; color: #6b7280;">내 댓글</td>
+                      <td align="right" style="font-weight: 500; color: #3b82f6; font-size: 14px;"
+                          th:text="${figureName}">인물 이름
+                      </td>
+                    </tr>
+                  </table>
+
+                  <!-- 댓글 내용 -->
+                  <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 1.6;"
+                     th:text="${commentContent}">
+                    원래 댓글 내용이 여기에 표시됩니다.
+                  </p>
+
+                  <!-- 답글 카드 -->
+                  <table width="100%" cellpadding="0" cellspacing="0" border="0"
+                         style="border-left: 3px solid #f97316; background-color: white; border-radius: 0 8px 8px 0;">
+                    <tr>
+                      <td style="padding: 12px 16px;">
+                        <!-- 답글 작성자 -->
+                        <p style="font-weight: 500; margin: 0 0 4px 0; font-size: 14px;">
+                          <span th:text="${replyAuthor}">답글 작성자</span>님의 답글:
+                        </p>
+
+                        <!-- 답글 내용 -->
+                        <p style="font-size: 15px; margin: 0;" th:text="${replyContent}">
+                          답글 내용이 여기에 표시됩니다.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+
+            <!-- CTA 버튼 -->
+            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 32px 0;">
+              <tr>
+                <td align="center">
+                  <a th:href="${figureUrl}"
+                     style="display: inline-block; background-color: #3b82f6; color: white; text-decoration: none; font-weight: 500; padding: 12px 24px; border-radius: 6px;">댓글
+                    확인하기</a>
+                </td>
+              </tr>
+            </table>
+
+            <!-- 추가 메시지 -->
+            <p style="margin: 0; font-size: 16px; color: #1f2937;">
+              답글에 대한 의견이 있으시면 웹사이트에서 대화를 계속해보세요.
+            </p>
+          </td>
+        </tr>
+
+        <!-- 푸터 -->
+        <tr>
+          <td align="center" bgcolor="#f9fafb"
+              style="padding: 24px; border-top: 1px solid #e5e7eb; border-radius: 0 0 8px 8px;">
+            <!-- 푸터 링크 -->
+            <p style="margin: 0 0 16px 0;">
+              <a th:href="${baseUrl}"
+                 style="color: #3b82f6; text-decoration: none; margin: 0 8px; font-size: 14px;">홈페이지</a>
+              <a th:href="${baseUrl + '/me'}"
+                 style="color: #3b82f6; text-decoration: none; margin: 0 8px; font-size: 14px;">프로필</a>
+              <a th:href="${baseUrl + '/terms'}"
+                 style="color: #3b82f6; text-decoration: none; margin: 0 8px; font-size: 14px;">이용약관</a>
+              <a th:href="${baseUrl + '/privacy'}"
+                 style="color: #3b82f6; text-decoration: none; margin: 0 8px; font-size: 14px;">개인정보처리방침</a>
+            </p>
+
+            <!-- 푸터 텍스트 -->
+            <p style="color: #6b7280; font-size: 12px; margin: 0 0 8px 0;">
+              이 이메일은 <span th:text="${appName}">국민사형투표</span> 서비스의 알림 이메일입니다.<br>
+              더 이상 이런 알림을 받고 싶지 않으시면 프로필 설정에서 알림을 비활성화할 수 있습니다.
+            </p>
+
+            <p style="color: #6b7280; font-size: 12px; margin: 0;">
+              &copy; <span th:text="${year}">2025</span> <span th:text="${appName}">국민사형투표</span>.
+              모든 권리 보유.
+            </p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+</body>
+</html>
