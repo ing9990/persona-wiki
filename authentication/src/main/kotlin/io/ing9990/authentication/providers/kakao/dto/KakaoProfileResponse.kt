@@ -14,6 +14,16 @@ data class Profile(
 data class KakaoAccount(
     @JsonProperty("profile")
     val profile: Profile,
+    @JsonProperty("email")
+    val email: String? = null,
+    @JsonProperty("has_email")
+    val hasEmail: Boolean? = null,
+    @JsonProperty("email_needs_agreement")
+    val emailNeedsAgreement: Boolean? = null,
+    @JsonProperty("is_email_valid")
+    val isEmailValid: Boolean? = null,
+    @JsonProperty("is_email_verified")
+    val isEmailVerified: Boolean? = null,
 )
 
 data class KakaoProfileResponse(
@@ -39,4 +49,13 @@ data class KakaoProfileResponse(
     override fun findUsername(): String = account?.profile?.nickname ?: ""
 
     override fun findImageUrl(): String = account?.profile?.imageUrl ?: ""
+
+    // 새로 추가된 이메일 조회 메소드
+    override fun findEmail(): String = account?.email ?: ""
+
+    // 이메일 검증 여부 확인
+    fun isEmailVerified(): Boolean = account?.isEmailVerified ?: false
+
+    // 이메일 동의 필요 여부 확인
+    fun isEmailAgreementRequired(): Boolean = account?.emailNeedsAgreement ?: true
 }

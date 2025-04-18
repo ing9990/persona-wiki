@@ -11,7 +11,7 @@ kakao:
     client-id: "c085be75e3063d0cd6c5bfbac24038f4"
     redirect-uri: "http://localhost:8080/auth/kakao/callback"
   user:
-    profile-uri: "https://kapi.kakao.com/v2/user/me?secure_resource=false&property_keys=%5B%22kakao_account.profile.profile_image%22%2C%22kakao_account.profile.nickname%22%5D"
+    profile-uri: "https://kapi.kakao.com/v2/user/me?secure_resource=false&property_keys=%5B%22kakao_account.profile.profile_image%22%2C%22kakao_account.profile.nickname%22%2C%22kakao_account.email%22%5D"
 # local-naver
 naver:
   auth:
@@ -43,7 +43,7 @@ kakao:
     client-id: "c085be75e3063d0cd6c5bfbac24038f4"
     redirect-uri: "https://국민사형투표.com/auth/kakao/callback"
   user:
-    profile-uri: "https://kapi.kakao.com/v2/user/me"
+    profile-uri: "https://kapi.kakao.com/v2/user/me?secure_resource=false&property_keys=%5B%22kakao_account.profile.profile_image%22%2C%22kakao_account.profile.nickname%22%2C%22kakao_account.email%22%5D"
 
 naver:
   auth:

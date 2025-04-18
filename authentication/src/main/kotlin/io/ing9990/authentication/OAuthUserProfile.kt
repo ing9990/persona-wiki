@@ -6,4 +6,6 @@ interface OAuthUserProfile {
     fun findUsername(): String
 
     fun findImageUrl(): String
+
+    fun findEmail(): String?
 }

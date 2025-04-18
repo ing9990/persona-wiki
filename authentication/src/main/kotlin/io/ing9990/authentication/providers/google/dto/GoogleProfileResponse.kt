@@ -13,6 +13,8 @@ data class GoogleUserDetail(
     val name: String,
     @JsonProperty("email")
     val email: String,
+    @JsonProperty("email_verified")
+    val emailVerified: Boolean? = null,
 )
 
 data class GoogleProfileResponse(
@@ -35,4 +37,13 @@ data class GoogleProfileResponse(
     override fun findUsername(): String = googleUserDetail.name
 
     override fun findImageUrl(): String = googleUserDetail.imageUrl
+
+    // 이메일 조회 메소드 추가
+    override fun findEmail(): String = googleUserDetail.email
+
+    // 이메일 검증 여부 확인
+    fun isEmailVerified(): Boolean = googleUserDetail.emailVerified ?: false
+
+    // 이메일 존재 여부 확인
+    fun hasEmail(): Boolean = googleUserDetail.email.isNullOrEmpty().not()
 }
