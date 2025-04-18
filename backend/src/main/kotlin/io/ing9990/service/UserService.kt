@@ -46,13 +46,14 @@ class UserService(
 
         return existingUser?.apply {
             this.lastLoginAt = LocalDateTime.now()
+            this.email = profile.findEmail()
         } ?: userRepository.save(
             User.create(
                 providerId = socialId,
                 provider = providerType,
                 image = profile.findImageUrl(),
                 nickname = generateNickname(profile, providerType),
-                lastLoginAt = LocalDateTime.now(),
+                email = profile.findEmail(),
             ),
         )
     }

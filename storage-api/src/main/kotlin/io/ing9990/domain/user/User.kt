@@ -45,6 +45,8 @@ class User(
     var image: String = "",
     @Column(name = "prestige")
     var prestige: Int = 0,
+    @Column(name = "email", nullable = true, unique = true, length = 100)
+    var email: String? = null,
     @Column(name = "last_login_at", nullable = false)
     var lastLoginAt: LocalDateTime = LocalDateTime.now(),
 ) : BaseEntity() {
@@ -54,7 +56,7 @@ class User(
             provider: OAuthProviderType,
             image: String,
             nickname: String,
-            lastLoginAt: LocalDateTime?,
+            email: String?,
         ): User =
             User(
                 providerId = providerId,
@@ -62,6 +64,7 @@ class User(
                 image = image,
                 nickname = nickname,
                 lastLoginAt = LocalDateTime.now(),
+                email = email,
             )
 
         val regex = "^[a-zA-Z0-9가-힣]+$".toRegex()
@@ -70,6 +73,8 @@ class User(
     fun addPrestige(type: ActivityType) {
         prestige += type.prestigePoint
     }
+
+    fun hasEmail(): Boolean = email?.isNotBlank() ?: false
 
     fun deductPrestige(type: ActivityType) {
         prestige.minus(type.prestigePoint)
