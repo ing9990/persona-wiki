@@ -24,7 +24,7 @@ data class ReplyNotificationDto(
             require(!recipientEmail.isNullOrBlank()) { "이메일 주소가 없는 사용자이기 때문에 이메일을 발송할 수 없습니다." }
 
             return ReplyNotificationDto(
-                recipientEmail = recipientEmail!!,
+                recipientEmail = recipientEmail,
                 recipientUsername = recipientUsername,
                 figureId = figureId,
                 figureName = figureName,
