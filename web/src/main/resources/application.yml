@@ -7,6 +7,7 @@ spring:
       - "jpa.yml"
       - "authentication.yml"
       - "google-api.yml"
+      - "email-notification.yml"
 
   thymeleaf:
     cache: false
