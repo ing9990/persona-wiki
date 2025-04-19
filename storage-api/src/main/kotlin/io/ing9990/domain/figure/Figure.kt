@@ -17,7 +17,6 @@ import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
-import org.hibernate.annotations.Check
 
 @Table(
     name = "figure",
@@ -27,9 +26,6 @@ import org.hibernate.annotations.Check
             columnNames = ["name", "category_id"],
         ),
     ],
-)
-@Check(
-    constraints = "figure_name REGEXP '^[가-힣a-zA-Z()_]{2,20}$'",
 )
 @Entity(name = "figure")
 class Figure protected constructor(

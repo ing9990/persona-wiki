@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component
 @Component
 class ActivityEventPublisher(
     private val eventPublisher: ApplicationEventPublisher,
+    private val publisher: ApplicationEventPublisher,
 ) {
     fun publishCommentCreated(comment: Comment) {
         val event = CreateActivityEvent.createCommentEvent(comment, this)

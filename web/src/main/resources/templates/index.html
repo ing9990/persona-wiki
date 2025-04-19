@@ -3,11 +3,175 @@
       layout:decorate="~{layout/layout}">
 
 <head>
-  <title>홈</title>
+  <title>홈 - 국민사형투표</title>
+  <!-- 메타 태그 개선 -->
+  <th:block layout:fragment="meta">
+    <meta name="description" content="국민사형투표 - 공적인 인물들에 대한 평가와 의견을 자유롭게 나누는 공간입니다.">
+    <meta name="keywords" content="국민사형투표, 공인, 인물평가, 여론, 정치인, 연예인, 유튜버">
+  </th:block>
+
   <style>
-    /* 인물 이미지 컨테이너 스타일 수정 - .figure-image-container 부분 */
+    /* 애니메이션 및 강화된 스타일 */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.8s ease-out forwards;
+    }
+
+    .animate-float {
+      animation: floatUp 6s ease-in-out infinite;
+    }
+
+    .animate-pulse-icon {
+      animation: pulse 2s infinite;
+    }
+
+    /* 히어로 섹션 스타일 - 모바일 최적화 */
+    .hero-gradient {
+      background: linear-gradient(135deg, #6366F1, #8B5CF6);
+      background-size: 200% 200%;
+      animation: gradientBG 15s ease infinite;
+      overflow: hidden;
+    }
+
+    /* 모바일에서 더 작고 세련된 히어로 섹션 */
+    @media (max-width: 639px) {
+      .hero-section {
+        padding: 1.5rem 1rem;
+        border-radius: 1rem;
+      }
+
+      .hero-title {
+        font-size: 1.75rem;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+
+      .hero-description {
+        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 1.25rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+        gap: 0.75rem;
+      }
+
+      .hero-button {
+        width: 100%;
+        justify-content: center;
+        padding: 0.75rem 1rem;
+        font-size: 0.95rem;
+      }
+
+      .hero-image-container {
+        display: none;
+      }
+
+      /* 모바일에서는 작은 아이콘 표시 */
+      .hero-mobile-icon {
+        display: flex;
+        margin-bottom: 1rem;
+      }
+    }
+
+    /* 태블릿/데스크탑 최적화 */
+    @media (min-width: 640px) {
+      .hero-section {
+        padding: 2.5rem 1.5rem;
+      }
+
+      .hero-title {
+        font-size: 2.5rem;
+        line-height: 1.2;
+      }
+
+      .hero-description {
+        font-size: 1.125rem;
+      }
+
+      .hero-mobile-icon {
+        display: none;
+      }
+
+      .hero-image-container {
+        display: flex;
+      }
+
+      .hero-buttons {
+        flex-direction: row;
+      }
+
+      .hero-button {
+        width: auto;
+      }
+    }
+
+    /* 큰 화면 최적화 */
+    @media (min-width: 1024px) {
+      .hero-section {
+        padding: 3rem 2rem;
+      }
+
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .hero-description {
+        font-size: 1.25rem;
+      }
+    }
+
+    @keyframes gradientBG {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* 인물 이미지 컨테이너 스타일 */
     .figure-image-container {
-      height: 250px; /* 카드 크기 증가 */
+      height: 280px;
       overflow: hidden;
       position: relative;
     }
@@ -16,175 +180,278 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      object-position: center 15%; /* 이미지 위치 조정 - 얼굴이 더 잘 보이도록 상단에 맞춤 */
-      transition: transform 0.3s ease; /* 호버 효과를 위한 전환 추가 */
+      object-position: center 15%;
+      transition: transform 0.5s ease;
     }
 
-    /* 호버 효과 추가 */
     .card-hover:hover .figure-image {
-      transform: scale(1.05);
+      transform: scale(1.08);
     }
 
-    /* 인물 이름 텍스트에 그림자 효과 추가 */
-    .drop-shadow-lg {
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    /* 이름 오버레이 */
+    .name-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(0deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+      padding: 2rem 1rem 1rem;
     }
 
-    /* 카드 크기 균일화를 위한 스타일 */
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* 카드 최소 너비 증가 */
-      gap: 1.5rem;
-    }
-
-    @media (min-width: 768px) {
-      .grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .grid {
-        grid-template-columns: repeat(3, 1fr);
-      }
-    }
-
-    /* 히어로 섹션 스타일 */
-    .hero-section {
-      background: linear-gradient(135deg, #6366F1, #8B5CF6);
-      border-radius: 0.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      padding: 2rem;
-      margin-bottom: 3rem;
-    }
-
-    .hero-title {
-      font-size: 2rem;
-      font-weight: bold;
-      color: white;
-      margin-bottom: 1rem;
-      line-height: 1.3;
-    }
-
-    .hero-text {
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-button {
-      display: inline-block;
-      background-color: white;
-      color: #4F46E5;
-      font-weight: 600;
-      padding: 0.75rem 1.5rem;
-      border-radius: 9999px;
-      transition: all 0.2s;
-    }
-
-    .hero-button:hover {
-      background-color: rgba(255, 255, 255, 0.9);
-      transform: translateY(-2px);
-    }
-
-    @media (min-width: 768px) {
-      .hero-title {
-        font-size: 2.5rem;
-      }
-    }
-
-    /* 아이콘 버튼 스타일 */
-    .icon-button {
-      width: 40px;
-      height: 40px;
+    /* 평판 지표 스타일 */
+    .reputation-indicator {
       display: flex;
       align-items: center;
-      justify-content: center;
-      border-radius: 50%;
-      transition: all 0.2s ease;
+      gap: 0.5rem;
     }
 
-    .icon-button:hover {
-      transform: translateY(-2px);
+    .reputation-item {
+      display: flex;
+      align-items: center;
+      transition: transform 0.2s ease;
     }
 
-    /* 댓글 뱃지 스타일 추가 */
+    .reputation-item:hover {
+      transform: scale(1.15);
+    }
+
+    /* 댓글 뱃지 개선 스타일 */
     .comments-badge {
       display: flex;
       align-items: center;
+      gap: 0.25rem;
       background-color: #EEF2FF;
       color: #4F46E5;
       padding: 0.5rem 0.75rem;
       border-radius: 9999px;
       font-weight: 500;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      transition: all 0.25s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     .comments-badge:hover {
       background-color: #E0E7FF;
       transform: translateY(-2px);
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
     }
 
-    .comments-badge i {
-      margin-right: 0.4rem;
-      font-size: 0.875rem;
+    /* 인물 추가 카드 스타일 */
+    .add-figure-card {
+      height: 100%;
+      border: 2px dashed rgba(99, 102, 241, 0.3);
+      transition: all 0.3s ease;
     }
 
-    /* 반응형에서 댓글 뱃지 스타일 조정 */
-    @media (max-width: 640px) {
-      .comments-badge {
-        padding: 0.4rem 0.6rem;
-        font-size: 0.875rem;
+    .add-figure-card:hover {
+      border-color: rgba(99, 102, 241, 0.8);
+      background-color: rgba(99, 102, 241, 0.05);
+    }
+
+    .add-figure-icon {
+      transition: transform 0.3s ease;
+    }
+
+    .add-figure-card:hover .add-figure-icon {
+      transform: scale(1.1) rotate(15deg);
+    }
+
+    /* 광고 컨테이너 스타일 */
+    .ad-container {
+      border-radius: 0.75rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      border: 1px solid rgba(99, 102, 241, 0.1);
+    }
+
+    .ad-container:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    /* 카테고리 배지 */
+    .category-badge {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background-color: #6366F1;
+      color: white;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-weight: 500;
+      box-shadow: 0 2px 4px rgba(99, 102, 241, 0.3);
+      transition: all 0.2s ease;
+    }
+
+    .card-hover:hover .category-badge {
+      transform: translateY(-2px);
+      box-shadow: 0 3px 6px rgba(99, 102, 241, 0.4);
+    }
+
+    /* 스크롤 효과를 위한 스타일 */
+    .scroll-reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s ease;
+    }
+
+    .scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* 반응형 그리드 최적화 */
+    @media (min-width: 640px) {
+      .grid-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
       }
     }
 
-    /* 카드 하단 정보 영역에 댓글 관련 애니메이션 추가 */
-    @keyframes pulse-light {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.7;
+    @media (min-width: 1024px) {
+      .grid-cards {
+        grid-template-columns: repeat(3, 1fr);
       }
     }
 
-    .comments-badge.new-comments {
-      animation: pulse-light 2s infinite;
+    /* 애플 스타일 버튼 및 요소 */
+    .apple-button {
+      border-radius: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: -0.01em;
+    }
+
+    .apple-button-primary {
+      background-color: white;
+      color: #6366F1;
+    }
+
+    .apple-button-secondary {
+      background-color: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Notion 스타일 카드 */
+    .notion-card {
+      border-radius: 0.75rem;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      background-color: white;
+    }
+
+    .notion-card:hover {
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+      transform: translateY(-3px);
     }
   </style>
 </head>
 
 <body>
 <div layout:fragment="content">
-  <!-- 히어로 섹션 -->
-  <section class="hero-section mb-12">
-    <div class="flex flex-col md:flex-row items-center">
-      <div class="md:w-3/4 mb-6 md:mb-0">
-        <h1 class="hero-title">공적인 인물들에 대한 여러분의 생각을 공유해보세요 👍</h1>
-        <p class="hero-text">익명으로 안전하게 의견을 표현하고, 다양한 시각을 만나보세요.</p>
-        <a href="/figures" class="hero-button">
-          인물 둘러보기
-        </a>
+  <!-- 히어로 섹션 - 모바일 최적화 -->
+  <section
+      class="hero-gradient rounded-2xl shadow-lg mb-12 overflow-hidden relative animate-fadeIn hero-section">
+    <div class="absolute inset-0 overflow-hidden">
+      <!-- 배경 SVG 패턴 -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%"
+           class="absolute opacity-10">
+        <defs>
+          <pattern id="dotPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+            <circle cx="10" cy="10" r="1.5" fill="white"/>
+          </pattern>
+        </defs>
+        <rect width="100%" height="100%" fill="url(#dotPattern)"/>
+      </svg>
+    </div>
+
+    <div class="relative z-10">
+      <div class="max-w-5xl mx-auto">
+        <!-- 모바일용 작은 아이콘 -->
+        <div class="hero-mobile-icon flex justify-center">
+          <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                 stroke="white" stroke-width="1.5" stroke-linecap="round"
+                 stroke-linejoin="round" class="w-8 h-8 opacity-90">
+              <circle cx="12" cy="8" r="5"></circle>
+              <path d="M20 21v-2a7 7 0 0 0-14 0v2"></path>
+              <path d="M12 12l-2 3 2 2 2-2-2-3z"></path>
+            </svg>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center">
+          <div class="md:w-2/3 mb-4 md:mb-0 text-center sm:text-left">
+            <h1 class="hero-title font-bold text-white mb-4 leading-tight">
+              공적인 인물들에 대한<br class="hidden sm:inline"> 여러분의 생각을 공유해보세요
+              <span class="inline-block ml-1 animate-float">👍</span>
+            </h1>
+            <p class="hero-description text-white text-opacity-90 mb-6 max-w-2xl mx-auto sm:mx-0">
+              익명으로 안전하게 의견을 표현하고, 다양한 시각을 만나보세요.
+            </p>
+            <div class="hero-buttons flex flex-wrap gap-4">
+              <a href="/figures"
+                 class="hero-button apple-button apple-button-primary shadow-md hover:shadow-lg transition transform hover:-translate-y-1">
+                <i class="fas fa-users mr-2"></i>
+                인물 둘러보기
+              </a>
+              <a href="/ranking"
+                 class="hero-button apple-button apple-button-secondary transition transform hover:-translate-y-1">
+                <i class="fas fa-trophy mr-2"></i>
+                랭킹 보기
+              </a>
+            </div>
+          </div>
+
+          <div class="hero-image-container md:w-1/3 flex justify-center">
+            <!-- 히어로 이미지/일러스트 -->
+            <div class="relative w-60 h-60 animate-float" style="animation-delay: 1s;">
+              <div class="absolute inset-0 bg-white bg-opacity-20 rounded-full blur-xl"></div>
+              <div class="relative h-full flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                     stroke="white" stroke-width="1.5" stroke-linecap="round"
+                     stroke-linejoin="round" class="w-32 h-32 opacity-90">
+                  <circle cx="12" cy="8" r="5"></circle>
+                  <path d="M20 21v-2a7 7 0 0 0-14 0v2"></path>
+                  <path d="M12 12l-2 3 2 2 2-2-2-3z"></path>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
 
-  <!-- 인물 목록 섹션 -->
-  <section id="figures" class="mb-12">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-3xl font-bold text-gray-800">인기 급상승 인물 🔥 </h2>
+  <!-- 인기 인물 목록 섹션 -->
+  <section id="figures" class="mb-16">
+    <div class="flex justify-between items-center mb-8">
+      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 flex items-center">
+        인기 급상승 인물
+        <span class="ml-2 text-red-500 animate-pulse-icon">🔥</span>
+      </h2>
+
       <div class="flex space-x-3">
-        <!-- 인물 추가 버튼 (아이콘만) -->
-        <a class="requires-login icon-button bg-indigo-600 text-white hover:bg-indigo-700 transition"
+        <!-- 인물 추가 버튼 -->
+        <a class="requires-login icon-button bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-md"
            title="인물 추가"
            th:onclick="${current.loggedIn()} ? 'openFigureModal()' : ''">
           <i class="fas fa-plus-circle"></i>
         </a>
 
-        <!-- 모든 카테고리 버튼 (아이콘만) -->
+        <!-- 모든 카테고리 버튼 -->
         <a href="/categories"
-           class="icon-button bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition"
+           class="icon-button bg-indigo-100 text-indigo-600 hover:bg-indigo-200 transition shadow-sm"
            title="모든 카테고리">
           <i class="fas fa-th-large"></i>
         </a>
@@ -192,12 +459,12 @@
     </div>
 
     <!-- 인물 카드 그리드 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- 인물 카드 (Thymeleaf로 반복) -->
-      <div th:each="figure : ${figures}"
-           class="bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover flex flex-col h-full"
+    <div class="grid-cards">
+      <!-- 인물 카드 -->
+      <div th:each="figure, iterStat : ${figures}" th:if="${iterStat.index < 6}"
+           class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full"
       >
-        <div class="figure-image-container relative">
+        <div class="figure-image-container">
           <!-- 인물 이미지 -->
           <a th:href="${figure.toFigureDetailsUri()}">
             <img
@@ -208,22 +475,21 @@
           </a>
 
           <!-- 이름을 이미지 위에 오버레이로 배치 -->
-          <div
-              class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+          <div class="name-overlay">
             <h3 class="text-xl font-bold text-white mb-0 drop-shadow-lg" th:text="${figure.name}">인물
               이름</h3>
           </div>
 
           <!-- 카테고리 배지 -->
           <span th:text="${figure.categoryName}"
-                class="absolute top-4 right-4 bg-indigo-600 text-white text-sm px-3 py-1 rounded-full shadow-md">
-          카테고리
-        </span>
+                class="category-badge">
+            카테고리
+          </span>
         </div>
 
         <div class="p-5 flex flex-col flex-grow">
           <!-- 인물 소개 (일부만 표시) -->
-          <p class="text-gray-600 mb-4 flex-grow"
+          <p class="text-gray-600 mb-4 flex-grow line-clamp-3"
              th:text="${#strings.abbreviate(figure.bio, 100)}">
             인물 소개 텍스트...
           </p>
@@ -231,24 +497,24 @@
           <!-- 하단 정보 영역 - 통계와 댓글 수를 가로로 일렬 배치 -->
           <div class="mt-auto flex items-center justify-between">
             <!-- 평판 지표 -->
-            <div class="flex items-center">
-              <div class="flex items-center mr-3 tooltip" data-tooltip="숭배">
+            <div class="reputation-indicator">
+              <div class="reputation-item tooltip" data-tooltip="숭배">
                 <i class="fas fa-crown text-green-500 mr-1"></i>
-                <span th:text="${figure.positives}">0</span>
+                <span th:text="${figure.positives}" class="font-medium">0</span>
               </div>
-              <div class="flex items-center mr-3 tooltip" data-tooltip="중립">
+              <div class="reputation-item tooltip mx-3" data-tooltip="중립">
                 <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
-                <span th:text="${figure.neutrals}">0</span>
+                <span th:text="${figure.neutrals}" class="font-medium">0</span>
               </div>
-              <div class="flex items-center tooltip" data-tooltip="사형">
+              <div class="reputation-item tooltip" data-tooltip="사형">
                 <i class="fas fa-skull text-red-500 mr-1"></i>
-                <span th:text="${figure.negatives}">0</span>
+                <span th:text="${figure.negatives}" class="font-medium">0</span>
               </div>
             </div>
 
-            <!-- 댓글 수 표시 (자세히 보기 대체) -->
+            <!-- 댓글 수 표시 -->
             <a th:href="${@layoutHelper.toDetail(figure.categoryId, figure.slug) + '#comments'}"
-               th:class="${figure.commentsCount > 0 ? 'comments-badge' : 'comments-badge'}"
+               th:class="${figure.commentsCount > 0 ? 'comments-badge' : 'comments-badge opacity-70'}"
                th:attr="data-comment-count=${figure.commentsCount}">
               <i class="fas fa-comment-alt"></i>
               <span th:text="${figure.commentsCount}">0</span>
@@ -257,27 +523,88 @@
         </div>
       </div>
 
-      <script async
-              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
-              crossorigin="anonymous"></script>
-      <!-- 메인 페이지 하단 -->
-      <ins class="adsbygoogle"
-           style="display:block"
-           data-ad-client="ca-pub-1448769500494356"
-           data-ad-slot="4397896653"
-           data-ad-format="auto"
-           data-full-width-responsive="true"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+      <!-- 다음 6개 인물 -->
+      <div th:each="figure, iterStat : ${figures}"
+           th:if="${iterStat.index >= 6 && iterStat.index < 12}"
+           class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full"
+      >
+        <div class="figure-image-container">
+          <a th:href="${figure.toFigureDetailsUri()}">
+            <img
+                th:src="${@layoutHelper.getProfileImageByString(figure.image)}"
+                th:alt="${figure.name}" class="figure-image" data-handle-error="true"
+                data-placeholder="/img/profile-placeholder.svg"
+            >
+          </a>
+
+          <div class="name-overlay">
+            <h3 class="text-xl font-bold text-white mb-0 drop-shadow-lg" th:text="${figure.name}">인물
+              이름</h3>
+          </div>
+
+          <span th:text="${figure.categoryName}"
+                class="category-badge">
+            카테고리
+          </span>
+        </div>
+
+        <div class="p-5 flex flex-col flex-grow">
+          <p class="text-gray-600 mb-4 flex-grow line-clamp-3"
+             th:text="${#strings.abbreviate(figure.bio, 100)}">
+            인물 소개 텍스트...
+          </p>
+
+          <div class="mt-auto flex items-center justify-between">
+            <div class="reputation-indicator">
+              <div class="reputation-item tooltip" data-tooltip="숭배">
+                <i class="fas fa-crown text-green-500 mr-1"></i>
+                <span th:text="${figure.positives}" class="font-medium">0</span>
+              </div>
+              <div class="reputation-item tooltip mx-3" data-tooltip="중립">
+                <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
+                <span th:text="${figure.neutrals}" class="font-medium">0</span>
+              </div>
+              <div class="reputation-item tooltip" data-tooltip="사형">
+                <i class="fas fa-skull text-red-500 mr-1"></i>
+                <span th:text="${figure.negatives}" class="font-medium">0</span>
+              </div>
+            </div>
+
+            <a th:href="${@layoutHelper.toDetail(figure.categoryId, figure.slug) + '#comments'}"
+               th:class="${figure.commentsCount > 0 ? 'comments-badge' : 'comments-badge opacity-70'}"
+               th:attr="data-comment-count=${figure.commentsCount}">
+              <i class="fas fa-comment-alt"></i>
+              <span th:text="${figure.commentsCount}">0</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 구글 광고 영역 -->
+      <div
+          class="ad-container notion-card p-4 flex flex-col justify-center items-center">
+        <script async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                crossorigin="anonymous"></script>
+        <!-- 메인 페이지 하단 -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1448769500494356"
+             data-ad-slot="4397896653"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
 
       <!-- 인물 추가 카드 -->
       <a onclick="openFigureModal()"
-         class="open-figure-modal bg-white rounded-lg shadow-md overflow-hidden transition-all duration-300 card-hover flex flex-col h-full border-2 border-dashed border-indigo-300 hover:border-indigo-500">
-        <div class="figure-image-container relative flex items-center justify-center bg-indigo-50">
-          <div class="text-center p-4">
+         class="open-figure-modal notion-card overflow-hidden transition-all duration-300 card-hover add-figure-card flex flex-col h-full">
+        <div class="figure-image-container flex items-center justify-center bg-indigo-50">
+          <div class="text-center p-6">
             <div
-                class="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center mb-2 shadow-md">
+                class="w-20 h-20 mx-auto bg-white rounded-full flex items-center justify-center mb-4 shadow-md add-figure-icon">
               <i class="fas fa-user-plus text-indigo-600 text-3xl"></i>
             </div>
             <h3 class="text-xl font-bold text-indigo-600">새 인물 등록</h3>
@@ -285,17 +612,26 @@
         </div>
 
         <div class="p-5 flex flex-col flex-grow">
-          <p class="text-gray-600 mb-4 flex-grow text-center">
+          <p class="text-gray-600 mb-6 flex-grow text-center">
             알고 계신 공적 인물을 추가하고 다른 사용자들과 의견을 나눠보세요.
           </p>
 
           <div class="mt-auto flex justify-center">
-          <span
-              class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition text-sm">
-            <i class="fas fa-plus-circle mr-1"></i> 인물 추가하기
-          </span>
+            <span
+                class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-md">
+              <i class="fas fa-plus-circle mr-2"></i> 인물 추가하기
+            </span>
           </div>
         </div>
+      </a>
+    </div>
+
+    <!-- 더 많은 인물 보기 버튼 -->
+    <div class="text-center mt-10">
+      <a href="/figures"
+         class="apple-button apple-button-primary bg-indigo-100 text-indigo-700 hover:bg-indigo-200 transition transform hover:-translate-y-1 shadow-sm">
+        <i class="fas fa-users mr-2"></i>
+        더 많은 인물 보기
       </a>
     </div>
   </section>
@@ -310,9 +646,17 @@
   <script src="/js/utils/image-handler.js"></script>
 
   <script>
-    // 기본 페이지 초기화 코드
+    // 페이지 초기화 코드
     document.addEventListener('DOMContentLoaded', function () {
-      // 이미지 오류 처리 등의 초기화 코드만 유지
+      // 이미지 오류 처리
+      const images = document.querySelectorAll('[data-handle-error="true"]');
+      images.forEach(img => {
+        img.addEventListener('error', function () {
+          if (this.hasAttribute('data-placeholder')) {
+            this.src = this.getAttribute('data-placeholder');
+          }
+        });
+      });
 
       // 댓글 수에 따른 스타일 적용
       document.querySelectorAll('.comments-badge').forEach(badge => {
@@ -328,12 +672,23 @@
         } else if (commentCount === 0) {
           badge.classList.add('opacity-70');
         }
-
-        // 최근에 새 댓글이 추가된 항목 강조 (서버에서 이 정보를 제공해야 함)
-        if (badge.classList.contains('new-comments')) {
-          // 새 댓글이 있는 경우 애니메이션 적용됨 (CSS에 정의됨)
-        }
       });
+
+      // 스크롤 애니메이션
+      const handleScrollAnimation = () => {
+        const elements = document.querySelectorAll('.scroll-reveal');
+        elements.forEach(el => {
+          const rect = el.getBoundingClientRect();
+          const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+          if (rect.top <= windowHeight * 0.85) {
+            el.classList.add('revealed');
+          }
+        });
+      };
+
+      // 초기 로드 시와 스크롤 시 애니메이션 체크
+      handleScrollAnimation();
+      window.addEventListener('scroll', handleScrollAnimation);
     });
   </script>
 </th:block>

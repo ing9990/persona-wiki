@@ -49,8 +49,7 @@ class CommentService(
 
         val savedComment: Comment = commentRepository.save(comment)
         savedComment.rootItself()
-        activityEventPublisher
-            .publishCommentCreated(savedComment)
+        activityEventPublisher.publishCommentCreated(savedComment)
 
         return savedComment
     }
@@ -76,7 +75,6 @@ class CommentService(
     /**
      * 댓글에 좋아요/싫어요를 추가합니다.
      * @param commentId 댓글 ID
-     * @param isLike true면 좋아요, false면 싫어요
      */
     @Transactional
     fun likeOrDislikeComment(
@@ -85,13 +83,13 @@ class CommentService(
         user: User,
     ): CommentResult {
         val comment =
-            commentRepository.findByIdOrNull(commentId)
-                ?: throw IllegalArgumentException("해당 ID의 댓글이 존재하지 않습니다: $commentId")
+            commentRepository.findByIdOrNull(commentId) ?: throw IllegalArgumentException(
+                "해당 ID의 댓글이 존재하지 않습니다: $commentId",
+            )
 
         // 기존 상호작용 검색
         val existingInteraction =
-            commentInteractionRepository
-                .findByUserIdAndCommentId(user.id!!, commentId)
+            commentInteractionRepository.findByUserIdAndCommentId(user.id!!, commentId)
 
         when {
             existingInteraction?.interactionType == interactionType -> {

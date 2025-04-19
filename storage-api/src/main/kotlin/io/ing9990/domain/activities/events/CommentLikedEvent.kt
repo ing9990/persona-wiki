@@ -29,7 +29,7 @@ data class CommentLikedEvent(
         categoryId = categoryId,
     ) {
     companion object {
-        fun shorten(
+        private fun shorten(
             text: String,
             maxLength: Int = 20,
         ): String =
