@@ -29,7 +29,7 @@ class GmailService(
             val message: MimeMessage = sender.createMimeMessage()
             val helper = MimeMessageHelper(message, true, StandardCharsets.UTF_8.name())
 
-            helper.setFrom(config.fromAddress)
+            helper.setFrom(config.fromAddress, config.senderName)
             helper.setTo(to)
             helper.setSubject(subject)
             helper.setText(htmlContent, true)
