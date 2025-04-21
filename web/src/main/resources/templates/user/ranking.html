@@ -29,7 +29,7 @@
              class="rank-card silver">
           <!-- 2등 배지 -->
           <div class="rank-badge silver-badge">
-<!--            <span th:text="${user.rank}">2</span>-->
+            <!--            <span th:text="${user.rank}">2</span>-->
             <i class="fas fa-medal  silver-medal"></i>
           </div>
 
@@ -69,7 +69,6 @@
              class="rank-card gold">
           <!-- 1등 배지 -->
           <div class="rank-badge crown-badge">
-<!--            <span th:text="${user.rank}">1</span>-->
             <i class="fas fa-crown"></i>
           </div>
 
@@ -109,7 +108,7 @@
              class="rank-card bronze">
           <!-- 3등 배지 -->
           <div class="rank-badge bronze-badge">
-<!--            <span th:text="${user.rank}">3</span>-->
+            <!--            <span th:text="${user.rank}">3</span>-->
             <i class="fas fa-medal bronze-medal"></i>
           </div>
 
@@ -209,9 +208,9 @@
             <td>
               <div class="user-cell">
                 <a th:href="${@layoutHelper.toProfileLink(user.getNickname())}">
-                <img th:src="${@layoutHelper.getProfileImageByString(user.profileImage)}" alt=""
-                     class="table-profile-image"
-                     onerror="this.src='/img/profile-placeholder.svg';">
+                  <img th:src="${@layoutHelper.getProfileImageByString(user.profileImage)}" alt=""
+                       class="table-profile-image"
+                       onerror="this.src='/img/profile-placeholder.svg';">
                 </a>
                 <div class="table-user-name" th:text="${user.nickname}">사용자 이름</div>
               </div>

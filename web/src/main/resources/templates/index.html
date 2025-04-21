@@ -379,7 +379,8 @@
       <div class="max-w-5xl mx-auto">
         <!-- 모바일용 작은 아이콘 -->
         <div class="hero-mobile-icon flex justify-center">
-          <div class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center shadow-lg">
+          <div
+              class="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center shadow-lg">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                  stroke="white" stroke-width="1.5" stroke-linecap="round"
                  stroke-linejoin="round" class="w-8 h-8 opacity-90">
@@ -460,8 +461,8 @@
 
     <!-- 인물 카드 그리드 -->
     <div class="grid-cards">
-      <!-- 인물 카드 -->
-      <div th:each="figure, iterStat : ${figures}" th:if="${iterStat.index < 6}"
+      <!-- 인물 카드 1-10개 -->
+      <div th:each="figure, iterStat : ${figures}" th:if="${iterStat.index < 10}"
            class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full"
       >
         <div class="figure-image-container">
@@ -523,9 +524,28 @@
         </div>
       </div>
 
-      <!-- 다음 6개 인물 -->
+      <!-- 구글 광고 영역 1 (10개 인물 후) -->
+      <div
+          class="ad-container notion-card p-4 flex flex-col justify-center items-center"
+          th:if="${figures.size() >= 10}">
+        <script async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                crossorigin="anonymous"></script>
+        <!-- 메인 페이지 하단 -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1448769500494356"
+             data-ad-slot="4397896653"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+
+      <!-- 인물 카드 11-20개 -->
       <div th:each="figure, iterStat : ${figures}"
-           th:if="${iterStat.index >= 6 && iterStat.index < 12}"
+           th:if="${iterStat.index >= 10 && iterStat.index < 20}"
            class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full"
       >
         <div class="figure-image-container">
@@ -580,9 +600,10 @@
         </div>
       </div>
 
-      <!-- 구글 광고 영역 -->
+      <!-- 구글 광고 영역 2 (20개 인물 후) -->
       <div
-          class="ad-container notion-card p-4 flex flex-col justify-center items-center">
+          class="ad-container notion-card p-4 flex flex-col justify-center items-center"
+          th:if="${figures.size() >= 20}">
         <script async
                 src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
                 crossorigin="anonymous"></script>
@@ -598,7 +619,102 @@
         </script>
       </div>
 
-      <!-- 인물 추가 카드 -->
+      <!-- 인물 카드 21-30개 -->
+      <div th:each="figure, iterStat : ${figures}"
+           th:if="${iterStat.index >= 20 && iterStat.index < 30}"
+           class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full"
+      >
+        <div class="figure-image-container">
+          <a th:href="${figure.toFigureDetailsUri()}">
+            <img
+                th:src="${@layoutHelper.getProfileImageByString(figure.image)}"
+                th:alt="${figure.name}" class="figure-image" data-handle-error="true"
+                data-placeholder="/img/profile-placeholder.svg"
+            >
+          </a>
+
+          <div class="name-overlay">
+            <h3 class="text-xl font-bold text-white mb-0 drop-shadow-lg" th:text="${figure.name}">인물
+              이름</h3>
+          </div>
+
+          <span th:text="${figure.categoryName}"
+                class="category-badge">
+            카테고리
+          </span>
+        </div>
+
+        <div class="p-5 flex flex-col flex-grow">
+          <p class="text-gray-600 mb-4 flex-grow line-clamp-3"
+             th:text="${#strings.abbreviate(figure.bio, 100)}">
+            인물 소개 텍스트...
+          </p>
+
+          <div class="mt-auto flex items-center justify-between">
+            <div class="reputation-indicator">
+              <div class="reputation-item tooltip" data-tooltip="숭배">
+                <i class="fas fa-crown text-green-500 mr-1"></i>
+                <span th:text="${figure.positives}" class="font-medium">0</span>
+              </div>
+              <div class="reputation-item tooltip mx-3" data-tooltip="중립">
+                <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
+                <span th:text="${figure.neutrals}" class="font-medium">0</span>
+              </div>
+              <div class="reputation-item tooltip" data-tooltip="사형">
+                <i class="fas fa-skull text-red-500 mr-1"></i>
+                <span th:text="${figure.negatives}" class="font-medium">0</span>
+              </div>
+            </div>
+
+            <a th:href="${@layoutHelper.toDetail(figure.categoryId, figure.slug) + '#comments'}"
+               th:class="${figure.commentsCount > 0 ? 'comments-badge' : 'comments-badge opacity-70'}"
+               th:attr="data-comment-count=${figure.commentsCount}">
+              <i class="fas fa-comment-alt"></i>
+              <span th:text="${figure.commentsCount}">0</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 구글 광고 영역 3 (30개 인물 후) -->
+      <div
+          class="ad-container notion-card p-4 flex flex-col justify-center items-center"
+          th:if="${figures.size() >= 30}">
+        <script async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                crossorigin="anonymous"></script>
+        <!-- 메인 페이지 하단 -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1448769500494356"
+             data-ad-slot="4397896653"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+
+      <!-- 구글 광고 영역 3 (30개 인물 후) -->
+      <div
+          class="ad-container notion-card p-4 flex flex-col justify-center items-center"
+          th:if="${figures.size() >= 30}">
+        <script async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                crossorigin="anonymous"></script>
+        <!-- 메인 페이지 하단 -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1448769500494356"
+             data-ad-slot="4397896653"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+
+      <!-- 인물 추가 카드 (항상 마지막에 표시) -->
       <a onclick="openFigureModal()"
          class="open-figure-modal notion-card overflow-hidden transition-all duration-300 card-hover add-figure-card flex flex-col h-full">
         <div class="figure-image-container flex items-center justify-center bg-indigo-50">
