@@ -354,6 +354,55 @@
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
       transform: translateY(-3px);
     }
+
+    /* 광고 컨테이너 추가 스타일 */
+    .ad-wrapper {
+      width: 100%;
+      margin: 2rem 0;
+      position: relative;
+    }
+
+    .ad-label {
+      position: absolute;
+      top: -0.75rem;
+      left: 1rem;
+      background-color: #f3f4f6;
+      color: #6b7280;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.5rem;
+      border-radius: 0.25rem;
+      z-index: 1;
+    }
+
+    /* 광고 컨테이너 - 히어로 섹션 아래 */
+    .ad-hero-below {
+      background-color: #f9fafb;
+      border-radius: 1rem;
+      padding: 1rem;
+      margin-bottom: 3rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e5e7eb;
+    }
+
+    /* 그리드 내 광고 */
+    .ad-in-grid {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: #f9fafb;
+      padding: 1rem;
+    }
+
+    /* 하단 광고 */
+    .ad-bottom {
+      background-color: #f9fafb;
+      border-radius: 1rem;
+      padding: 1.5rem;
+      margin-top: 2rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      border: 1px solid #e5e7eb;
+    }
   </style>
 </head>
 
@@ -434,6 +483,26 @@
     </div>
   </section>
 
+  <!-- 광고 1: 히어로 섹션 아래 -->
+  <div class="ad-wrapper ad-hero-below scroll-reveal">
+    <span class="ad-label">sponsored</span>
+    <div class="ad-container">
+      <script async
+              src="https://pagead.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+              crossorigin="anonymous"></script>
+      <!-- 인덱스 페이지 광고 -->
+      <ins class="adsbygoogle"
+           style="display:block"
+           data-ad-client="ca-pub-1448769500494356"
+           data-ad-slot="1259960363"
+           data-ad-format="auto"
+           data-full-width-responsive="true"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+  </div>
+
   <!-- 인기 인물 목록 섹션 -->
   <section id="figures" class="mb-16">
     <div class="flex justify-between items-center mb-8">
@@ -463,7 +532,7 @@
     <div class="grid-cards">
       <!-- 인물 카드 1-10개 -->
       <div th:each="figure, iterStat : ${figures}" th:if="${iterStat.index < 10}"
-           class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full"
+           class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full scroll-reveal"
       >
         <div class="figure-image-container">
           <!-- 인물 이미지 -->
@@ -524,29 +593,33 @@
         </div>
       </div>
 
-      <!-- 구글 광고 영역 1 (10개 인물 후) -->
-      <div
-          class="ad-container notion-card p-4 flex flex-col justify-center items-center"
-          th:if="${figures.size() >= 10}">
-        <script async
-                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
-                crossorigin="anonymous"></script>
-        <!-- 메인 페이지 하단 -->
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-1448769500494356"
-             data-ad-slot="4397896653"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+      <!-- 광고 2: 인물 카드 10개 후 (그리드 내) -->
+      <div class="notion-card overflow-hidden ad-in-grid scroll-reveal"
+           th:if="${figures.size() >= 10}">
+        <div class="relative h-full">
+          <span class="ad-label">sponsored</span>
+          <div class="ad-container h-full flex items-center justify-center p-4">
+            <script async
+                    src="https://pagead.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                    crossorigin="anonymous"></script>
+            <!-- 인덱스 페이지 광고 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-1448769500494356"
+                 data-ad-slot="1259960363"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+          </div>
+        </div>
       </div>
 
       <!-- 인물 카드 11-20개 -->
       <div th:each="figure, iterStat : ${figures}"
            th:if="${iterStat.index >= 10 && iterStat.index < 20}"
-           class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full"
+           class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full scroll-reveal"
       >
         <div class="figure-image-container">
           <a th:href="${figure.toFigureDetailsUri()}">
@@ -600,37 +673,40 @@
         </div>
       </div>
 
-      <!-- 구글 광고 영역 2 (20개 인물 후) -->
-      <div
-          class="ad-container notion-card p-4 flex flex-col justify-center items-center"
-          th:if="${figures.size() >= 20}">
-        <script async
-                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
-                crossorigin="anonymous"></script>
-        <!-- 메인 페이지 하단 -->
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-1448769500494356"
-             data-ad-slot="4397896653"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
+      <!-- 광고 3: 인물 카드 20개 후 (그리드 내) -->
+      <div class="notion-card overflow-hidden ad-in-grid scroll-reveal"
+           th:if="${figures.size() >= 20}">
+        <div class="relative h-full">
+          <span class="ad-label">sponsored</span>
+          <div class="ad-container h-full flex items-center justify-center p-4">
+            <script async
+                    src="https://pagead.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                    crossorigin="anonymous"></script>
+            <!-- 인덱스 페이지 광고 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-1448769500494356"
+                 data-ad-slot="1259960363"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+              (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+          </div>
+        </div>
       </div>
 
       <!-- 인물 카드 21-30개 -->
       <div th:each="figure, iterStat : ${figures}"
            th:if="${iterStat.index >= 20 && iterStat.index < 30}"
-           class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full"
+           class="notion-card overflow-hidden transition-all duration-300 card-hover flex flex-col h-full scroll-reveal"
       >
         <div class="figure-image-container">
           <a th:href="${figure.toFigureDetailsUri()}">
             <img
                 th:src="${@layoutHelper.getProfileImageByString(figure.image)}"
                 th:alt="${figure.name}" class="figure-image" data-handle-error="true"
-                data-placeholder="/img/profile-placeholder.svg"
-            >
+                data-placeholder="/img/profile-placeholder.svg">
           </a>
 
           <div class="name-overlay">
@@ -676,47 +752,9 @@
         </div>
       </div>
 
-      <!-- 구글 광고 영역 3 (30개 인물 후) -->
-      <div
-          class="ad-container notion-card p-4 flex flex-col justify-center items-center"
-          th:if="${figures.size() >= 30}">
-        <script async
-                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
-                crossorigin="anonymous"></script>
-        <!-- 메인 페이지 하단 -->
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-1448769500494356"
-             data-ad-slot="4397896653"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-      </div>
-
-      <!-- 구글 광고 영역 3 (30개 인물 후) -->
-      <div
-          class="ad-container notion-card p-4 flex flex-col justify-center items-center"
-          th:if="${figures.size() >= 30}">
-        <script async
-                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
-                crossorigin="anonymous"></script>
-        <!-- 메인 페이지 하단 -->
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-1448769500494356"
-             data-ad-slot="4397896653"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-      </div>
-
       <!-- 인물 추가 카드 (항상 마지막에 표시) -->
       <a onclick="openFigureModal()"
-         class="open-figure-modal notion-card overflow-hidden transition-all duration-300 card-hover add-figure-card flex flex-col h-full">
+         class="open-figure-modal notion-card overflow-hidden transition-all duration-300 card-hover add-figure-card flex flex-col h-full scroll-reveal">
         <div class="figure-image-container flex items-center justify-center bg-indigo-50">
           <div class="text-center p-6">
             <div
@@ -740,6 +778,26 @@
           </div>
         </div>
       </a>
+    </div>
+
+    <!-- 광고 4: 버튼 위 하단 광고 -->
+    <div class="ad-wrapper ad-bottom scroll-reveal">
+      <span class="ad-label">sponsored</span>
+      <div class="ad-container">
+        <script async
+                src="https://pagead.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                crossorigin="anonymous"></script>
+        <!-- 인덱스 페이지 광고 -->
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-1448769500494356"
+             data-ad-slot="1259960363"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
     </div>
 
     <!-- 더 많은 인물 보기 버튼 -->
