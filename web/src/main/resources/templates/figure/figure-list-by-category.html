@@ -60,6 +60,40 @@
       margin-bottom: 1.5rem;
     }
 
+    /* 광고 컨테이너 스타일 */
+    .ad-container {
+      text-align: center;
+      margin: 2rem 0;
+      overflow: hidden;
+    }
+
+    .ad-container .inline-block {
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border-radius: 0.5rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ad-container .ad-label {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background-color: rgba(99, 102, 241, 0.1);
+      color: #4F46E5;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0 0.5rem 0 0.25rem;
+      z-index: 10;
+    }
+
+    /* 모바일에서 광고 크기 조정 */
+    @media (max-width: 767px) {
+      .ad-container ins {
+        width: 320px;
+        height: 100px;
+      }
+    }
+
     @keyframes fadeIn {
       from {
         opacity: 0;
@@ -83,8 +117,26 @@
     </div>
   </section>
 
+  <!-- 상단 광고 배너 -->
+  <div class="ad-container">
+    <div class="relative inline-block max-w-full">
+      <span class="ad-label">광고</span>
+      <script async
+              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+              crossorigin="anonymous"></script>
+      <!-- 가로형 배너 광고 -->
+      <ins class="adsbygoogle"
+           style="display:inline-block;width:728px;height:90px"
+           data-ad-client="ca-pub-1448769500494356"
+           data-ad-slot="8912986034"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
+  </div>
+
   <!-- 카테고리별 인물 목록 -->
-  <div th:each="result : ${categoryResult.datas}" class="category-section">
+  <div th:each="result, iterStat : ${categoryResult.datas}" class="category-section">
     <div class="category-header flex justify-between items-center">
       <h2 class="text-2xl font-bold text-gray-800">
         <i class="fas fa-folder text-indigo-500 mr-2"></i>
@@ -154,6 +206,42 @@
         </div>
       </div>
     </div>
+
+    <!-- 2개마다 광고 삽입 (첫 번째와 마지막은 제외) -->
+    <div th:if="${iterStat.count % 2 == 0 && !iterStat.last}" class="ad-container">
+      <div class="relative inline-block max-w-full">
+        <span class="ad-label">광고</span>
+        <script async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                crossorigin="anonymous"></script>
+        <!-- 가로형 배너 광고 -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-1448769500494356"
+             data-ad-slot="8912986034"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+    </div>
+  </div>
+
+  <!-- 마지막 광고 배너 (메인 버튼 위) -->
+  <div class="ad-container mt-8 mb-12">
+    <div class="relative inline-block max-w-full">
+      <span class="ad-label">광고</span>
+      <script async
+              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+              crossorigin="anonymous"></script>
+      <!-- 가로형 배너 광고 -->
+      <ins class="adsbygoogle"
+           style="display:inline-block;width:728px;height:90px"
+           data-ad-client="ca-pub-1448769500494356"
+           data-ad-slot="8912986034"></ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    </div>
   </div>
 
   <!-- 메인 페이지로 이동 -->
@@ -169,5 +257,46 @@
 <script src="/js/utils/image-handler.js"></script>
 <!-- 프로필 드롭다운 수정 스크립트 -->
 <script src="/js/utils/profile-dropdown-fix.js"></script>
+
+<!-- 추가 광고 최적화 스크립트 -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // 모바일에서 광고 크기 자동 조정
+    function adjustAdSize() {
+      const isMobile = window.innerWidth < 768;
+      const ads = document.querySelectorAll('.adsbygoogle');
+
+      ads.forEach(ad => {
+        if (isMobile) {
+          ad.style.width = '320px';
+          ad.style.height = '100px';
+        } else {
+          ad.style.width = '728px';
+          ad.style.height = '90px';
+        }
+      });
+    }
+
+    // 초기 실행 및 리사이즈 이벤트에 연결
+    adjustAdSize();
+    window.addEventListener('resize', adjustAdSize);
+
+    // 광고 컨테이너 진입 시 애니메이션 효과
+    const adContainers = document.querySelectorAll('.ad-container');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.transition = 'opacity 0.5s ease';
+          entry.target.style.opacity = '1';
+        }
+      });
+    }, {threshold: 0.1});
+
+    adContainers.forEach(container => {
+      container.style.opacity = '0';
+      observer.observe(container);
+    });
+  });
+</script>
 </body>
 </html>
