@@ -278,31 +278,22 @@
         </div>
       </div>
 
-      <!-- 광고 섹션 시작 -->
-      <div class="ad-container bg-white rounded-lg shadow-md p-4 mb-8 fade-in">
-        <div class="flex justify-center">
-          <span class="ad-label">- ad -</span>
-        </div>
-        <div class="ad-divider"></div>
-
-        <!-- 구글 광고 코드 -->
-        <script async
-                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
-                crossorigin="anonymous"></script>
-        <!-- 가로 김 -->
-        <ins class="adsbygoogle"
-             style="display:block"
-             data-ad-client="ca-pub-1448769500494356"
-             data-ad-slot="5626555131"
-             data-ad-format="auto"
-             data-full-width-responsive="true"></ins>
-        <script>
-          (adsbygoogle = window.adsbygoogle || []).push({});
-        </script>
-
-        <div class="ad-divider"></div>
-        <div class="flex justify-center">
-          <span class="ad-label">- ad -</span>
+      <!-- 개선된 광고 섹션 -->
+      <div class="content-card bg-white rounded-lg shadow-md p-4 mb-8 fade-in">
+        <div class="ad-content">
+          <!-- 구글 광고 코드 -->
+          <script async
+                  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                  crossorigin="anonymous"></script>
+          <ins class="adsbygoogle"
+               style="display:block"
+               data-ad-client="ca-pub-1448769500494356"
+               data-ad-slot="5626555131"
+               data-ad-format="auto"
+               data-full-width-responsive="true"></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
         </div>
       </div>
       <!-- 광고 섹션 끝 -->
@@ -317,36 +308,46 @@
       <!-- 페이지 우측 평판 통계 부분 -->
       <div
           th:replace="~{fragments/reputation-sidebar :: reputationSidebar(${detailsResult})}"></div>
-      <script async
-              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
-              crossorigin="anonymous"></script>
-      <ins class="adsbygoogle"
-           style="display:block; text-align:center;"
-           data-ad-layout="in-article"
-           data-ad-format="fluid"
-           data-ad-client="ca-pub-1448769500494356"
-           data-ad-slot="2115046924"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+      <!-- 개선된 사이드바 광고 -->
+      <div class="bg-white rounded-lg shadow-md p-5 stat-card fade-in mt-5 sidebar-article">
+        <div class="article-ad">
+          <script async
+                  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                  crossorigin="anonymous"></script>
+          <ins class="adsbygoogle"
+               style="display:block; text-align:center;"
+               data-ad-layout="in-article"
+               data-ad-format="fluid"
+               data-ad-client="ca-pub-1448769500494356"
+               data-ad-slot="2115046924"></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </div>
       <!-- 페이지 우측 카테고리 섹션 -->
       <div th:replace="~{fragments/category-section :: categorySection(${detailsResult})}"></div>
 
       <!-- 공유하기 -->
       <div th:replace="~{fragments/share-section :: shareSection}"></div>
 
-      <script async
-              src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
-              crossorigin="anonymous"></script>
-      <ins class="adsbygoogle"
-           style="display:block; text-align:center;"
-           data-ad-layout="in-article"
-           data-ad-format="fluid"
-           data-ad-client="ca-pub-1448769500494356"
-           data-ad-slot="2115046924"></ins>
-      <script>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
+      <!-- 개선된 관련 콘텐츠 광고 -->
+      <div class="bg-white rounded-lg shadow-md p-5 stat-card fade-in mt-5 sidebar-article">
+        <div class="article-ad">
+          <script async
+                  src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                  crossorigin="anonymous"></script>
+          <ins class="adsbygoogle"
+               style="display:block; text-align:center;"
+               data-ad-layout="in-article"
+               data-ad-format="fluid"
+               data-ad-client="ca-pub-1448769500494356"
+               data-ad-slot="2115046924"></ins>
+          <script>
+            (adsbygoogle = window.adsbygoogle || []).push({});
+          </script>
+        </div>
+      </div>
     </div>
   </div>
 

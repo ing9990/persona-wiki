@@ -13,6 +13,10 @@ dependencies {
     // Logback Slack Appender
     implementation("com.github.maricn:logback-slack-appender:1.6.1")
 
+    implementation("io.micrometer:micrometer-registry-prometheus")
+    implementation("io.github.microutils:kotlin-logging:2.1.0")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+
     // JSON 처리
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 }

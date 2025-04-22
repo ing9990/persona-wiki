@@ -8,6 +8,7 @@ spring:
       - "authentication.yml"
       - "google-api.yml"
       - "email-notification.yml"
+      - "actuator.yml"
 
   thymeleaf:
     cache: false
@@ -31,7 +32,6 @@ spring:
       on-profile: prod
     import:
       - "jpa.yml"
-      - "actuator.yml"
       - "slack-notifier.yml"
       - "authentication.yml"
       - "google-api.yml"

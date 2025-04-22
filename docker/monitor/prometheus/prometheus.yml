@@ -1,0 +1,40 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+# 알림 규칙 설정
+rule_files:
+  - "rules/alert_rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # 알림 매니저 구성이 추가되면 사용
+
+scrape_configs:
+  - job_name: 'spring-boot-app'
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 5s
+    scheme: http
+    static_configs:
+      - targets: [ 'host.docker.internal:8080' ]  # Docker에서 호스트 접근
+        labels:
+          application: 'persona-wiki'
+          env: 'production'
+
+    # Basic Auth 인증 설정
+    basic_auth:
+      username: 'admin'
+      password: 'ing9990'
+
+  - job_name: 'prometheus'
+    scrape_interval: 10s
+    static_configs:
+      - targets: [ 'localhost:9090' ]
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: [ 'node-exporter:9100' ]
+        labels:
+          instance: 'production-server'
