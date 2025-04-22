@@ -2,7 +2,23 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health,info,prometheus,metrics
   endpoint:
     health:
       show-details: always
+    prometheus:
+      enabled: true
+    web:
+      path-mapping:
+        prometheus: mts
+
+  metrics:
+    tags:
+      application: persona-wiki
+    export:
+      prometheus:
+        enabled: true
+
+auth:
+  username: "admin"
+  password: "ing9990"
