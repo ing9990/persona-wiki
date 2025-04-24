@@ -12,3 +12,7 @@ Allow: /activity
 # 사이트맵 위치 지정
 Sitemap: https://국민사형투표.com/sitemap.xml
 Sitemap: https://xn--3e0b39y4pd92v9pct9c.com/sitemap.xml
+
+
+User-agent: MJ12bot
+Disallow: /

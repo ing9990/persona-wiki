@@ -2,6 +2,14 @@ rootProject.name = "persona-wiki"
 
 include(
     "web",
+    "backend",
+    "common",
+    "monitor",
+    "authentication",
+    "storage-api",
+    "notification-api",
+    "google-image-api",
+    "wikipedia-api",
 )
 
 pluginManagement {
@@ -26,14 +34,7 @@ pluginManagement {
         }
     }
 }
+
 plugins {
     id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }
-include("storage-api")
-include("monitor")
-include("backend")
-include("common")
-include("authentication")
-include("google-image-api")
-include("wikipedia-api")
-include("notification-api")

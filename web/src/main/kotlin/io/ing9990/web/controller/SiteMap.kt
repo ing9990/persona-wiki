@@ -85,29 +85,11 @@ class SiteMap(
             // 사용자 프로필 페이지
             appendUrl(
                 stringBuilder,
-                escapeXml("$baseUrl/profile/${user.nickname}"),
+                escapeXml("$baseUrl/users/${user.nickname}"),
                 formatDate(LocalDateTime.now()),
                 "weekly",
                 "0.7",
                 escapeXml(user.image),
-            )
-
-            // 사용자 활동 페이지
-            appendUrl(
-                stringBuilder,
-                escapeXml("$baseUrl/profile/${user.nickname}/activity"),
-                formatDate(LocalDateTime.now()),
-                "weekly",
-                "0.6",
-            )
-
-            // 사용자가 작성한 콘텐츠 페이지 (예: 리뷰, 코멘트 등)
-            appendUrl(
-                stringBuilder,
-                escapeXml("$baseUrl/profile/${user.nickname}/contents"),
-                formatDate(LocalDateTime.now()),
-                "weekly",
-                "0.6",
             )
         }
 
