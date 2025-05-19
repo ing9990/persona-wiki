@@ -33,17 +33,14 @@ spring:
       mode: always
 
 ---
-# prod
+spring.config.activate.on-profile: prod
+
 storage:
   datasource:
-    jdbc-url: jdbc:mysql://persona-wiki.c7emcmko0vuq.ap-northeast-2.rds.amazonaws.com:3306/persona_wiki
+    jdbc-url: jdbc:mysql://persona-wiki.c7emcmko0vuq.ap-northeast-2.rds.amazonaws.com:3306/persona_wiki # disabled
     username: admin
-    password: inglife0??
+    password: admin
 spring:
-  config:
-    activate:
-      on-profile: prod
-
   jpa:
     hibernate:
       ddl-auto: update
