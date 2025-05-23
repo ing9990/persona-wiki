@@ -2,7 +2,6 @@ name: Deploy to EC2
 
 on:
   push:
-    branches: [ "main" ]
 
 jobs:
   deploy:
@@ -18,11 +17,37 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+            # Gradle 권한 변경
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./gradlew
+
       - name: Build JAR
-        run: ./gradlew clean bootJar
+        run: ./gradlew clean build
 
-      - name: Copy to EC2
-        run: scp build/libs/*.jar root@${{ secrets.EC2_HOST }}:~/persona-wiki/web-0.0.1-SNAPSHOT.jar
+      - name: Add SSH key
+        run: |
+          echo "${{ secrets.EC2_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
 
-      - name: Deploy on EC2
-        run: ssh root@${{ secrets.EC2_HOST }} "~/persona-wiki/deploy-script.sh"
+      - name: Compress and Copy JAR
+        run: |
+          tar -czf web.tar.gz -C ./web/build/libs web-0.0.1-SNAPSHOT.jar
+          scp -i private_key.pem -o StrictHostKeyChecking=no web.tar.gz root@${{ secrets.EC2_HOST }}:/root/persona-wiki/
+
+      - name: Extract on EC2
+        run: |
+          ssh -i private_key.pem -o StrictHostKeyChecking=no root@${{ secrets.EC2_HOST }} "cd /root/persona-wiki && tar -xzf web.tar.gz"
+
+      - name: Run deploy script on EC2
+        run: |
+          ssh -i private_key.pem -o StrictHostKeyChecking=no root@${{ secrets.EC2_HOST }} "bash /root/persona-wiki/deploy-script.sh"

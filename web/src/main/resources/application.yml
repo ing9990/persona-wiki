@@ -5,4 +5,42 @@ spring:
   config:
     import:
       - "jpa.yml"
+      - "authentication.yml"
+      - "google-api.yml"
+      - "email-notification.yml"
       - "actuator.yml"
+
+  thymeleaf:
+    cache: false
+    check-template-location: true
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML
+
+  devtools:
+    livereload:
+      enabled: true
+    restart:
+      enabled: true
+
+
+--- # prod
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import:
+      - "jpa.yml"
+      - "slack-notifier.yml"
+      - "authentication.yml"
+      - "google-api.yml"
+logging:
+  config: classpath:logback-prod.xml
+
+--- # test
+spring:
+  config:
+    activate:
+      on-profile: test
+

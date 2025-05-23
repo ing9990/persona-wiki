@@ -1,0 +1,130 @@
+/* 답글 작성 폼 스타일 - 댓글 작성 폼과 일치하도록 수정 */
+.add-reply-form {
+  margin-bottom: 1rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* 입력 필드 래퍼 스타일 */
+.add-reply-form .input-wrapper {
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  transition: border-color 0.2s ease;
+}
+
+.add-reply-form .input-wrapper:focus-within {
+  border-bottom-color: #000;
+}
+
+.add-reply-form textarea {
+  width: 100%;
+  font-size: 14px;
+  padding: 6px 0;
+  border: none;
+  background: transparent;
+  color: #000;
+  line-height: 1.5;
+  resize: none;
+}
+
+.add-reply-form textarea:focus {
+  outline: none;
+}
+
+/* 버튼 스타일 */
+.add-reply-form .button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.add-reply-form .button-custom {
+  border: 1px solid transparent;
+  font-size: 13px;
+  padding: 5px 12px;
+  border-radius: 16px;
+  transition: all 0.2s ease;
+  background-color: transparent;
+}
+
+.add-reply-form .cancel-btn {
+  color: #666;
+}
+
+.add-reply-form .cancel-btn:hover {
+  background-color: #f3f4f6;
+  color: #4b5563;
+}
+
+.add-reply-form .submit-btn {
+  color: black;
+  border: 1px solid #4f46e5;
+  background-color: #fff;
+}
+
+.add-reply-form .submit-btn:hover {
+  background-color: lightblue;
+  border-color: #4338ca;
+}
+
+.add-reply-form .submit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 답글 버튼 스타일 */
+.add-reply-button {
+  display: flex;
+  align-items: center;
+  color: #6B7280;
+  font-size: 0.875rem;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.add-reply-button:hover {
+  color: #3B82F6;
+}
+
+.add-reply-button i {
+  margin-right: 0.25rem;
+}
+
+
+/* 모바일 최적화용 텍스트 크기 */
+.text-2xs {
+  font-size: 0.65rem;
+}
+
+/* 모바일 최적화를 위한 미디어 쿼리 */
+@media (max-width: 640px) {
+  .add-reply-form {
+    margin-bottom: 0.75rem;
+  }
+
+  .add-reply-form .input-wrapper {
+    border-bottom-width: 1px;
+  }
+
+  .add-reply-form textarea {
+    font-size: 0.85rem;
+    padding: 4px 0;
+  }
+
+  .add-reply-form .button-custom {
+    font-size: 0.75rem;
+    padding: 3px 8px;
+  }
+}

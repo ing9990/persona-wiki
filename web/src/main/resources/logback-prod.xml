@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <!-- 콘솔 로깅 -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- 파일 로깅 -->
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>${LOG_PATH:-./logs}/${LOG_FILE:-application}.log</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${LOG_PATH:-./logs}/${LOG_FILE:-application}-%d{yyyy-MM-dd}.log
+      </fileNamePattern>
+      <maxHistory>30</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <!-- 슬랙 API 로깅 -->
+  <appender name="SLACK" class="io.ing9990.monitor.aop.log.SafeEnhancedSlackApiAppender">
+    <webhookUrl>https://hooks.slack.com/services/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
+    </webhookUrl>
+    <channel>#api-monitoring</channel>
+    <username>국민사형투표</username>
+    <iconEmoji>:chart_with_upwards_trend:</iconEmoji>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%msg%n</pattern>
+    </layout>
+  </appender>
+
+  <!-- 에러 로깅 전용 슬랙 Appender -->
+  <appender name="SLACK_ERROR" class="io.ing9990.monitor.aop.log.SafeEnhancedSlackApiAppender">
+    <webhookUrl>https://hooks.slack.com/services/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
+    </webhookUrl>
+    <channel>#api-errors</channel>
+    <username>국민사형투표 - 오류알림</username>
+    <iconEmoji>:rotating_light:</iconEmoji>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%msg%n</pattern>
+    </layout>
+  </appender>
+
+  <!-- 테스트용 슬랙 Appender -->
+  <appender name="SLACK_TEST" class="io.ing9990.monitor.aop.log.SafeEnhancedSlackApiAppender">
+    <webhookUrl>https://hooks.slack.com/services/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
+    </webhookUrl>
+    <channel>#api-test</channel>
+    <username>국민사형투표 - 테스트</username>
+    <iconEmoji>:test_tube:</iconEmoji>
+    <layout class="ch.qos.logback.classic.PatternLayout">
+      <pattern>%msg%n</pattern>
+    </layout>
+  </appender>
+
+  <!-- API 모니터링 로거 설정 -->
+  <logger name="api.monitor" level="INFO" additivity="false">
+    <appender-ref ref="SLACK"/>
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- 500 에러 전용 로거 설정 -->
+  <logger name="500_ERROR_LOGGER" level="ERROR" additivity="false">
+    <appender-ref ref="SLACK_ERROR"/>
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </logger>
+
+  <!-- 테스트 로거 설정 -->
+  <logger name="slack.test" level="INFO" additivity="false">
+    <appender-ref ref="SLACK_TEST"/>
+    <appender-ref ref="CONSOLE"/>
+  </logger>
+
+  <!-- 루트 로거 설정 -->
+  <root level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="FILE"/>
+  </root>
+</configuration>

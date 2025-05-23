@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title>내 정보 - 국민사형투표</title>
+  <meta name="description" content="내 계정 정보를 관리할 수 있습니다.">
+  <link rel="stylesheet" href="/css/users/my-page.css">
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- 페이지 헤더 -->
+  <section class="mb-8 animate-fade-in">
+    <div
+        class="bg-gradient-to-r from-indigo-600 via-purple-600 to-violet-500 text-white rounded-lg shadow-lg p-6 relative overflow-hidden">
+      <div class="absolute inset-0 bg-pattern opacity-10"></div>
+      <div class="relative z-10">
+        <h1 class="text-3xl font-bold mb-2 flex items-center">
+          <span
+              class="bg-white text-indigo-600 rounded-full w-10 h-10 flex items-center justify-center mr-3">
+            <i class="fas fa-user"></i>
+          </span>
+          내 정보
+        </h1>
+        <p class="text-lg text-indigo-100">회원 정보를 확인하고 관리할 수 있습니다.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 알림 메시지 (성공/에러) -->
+  <div th:if="${success}"
+       class="mb-6 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded-md animate-fade-in">
+    <div class="flex">
+      <i class="fas fa-check-circle text-green-500 mr-3 text-xl"></i>
+      <span th:text="${success}" class="self-center">성공 메시지</span>
+    </div>
+  </div>
+
+  <div th:if="${error}"
+       class="mb-6 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-md animate-fade-in">
+    <div class="flex">
+      <i class="fas fa-exclamation-circle text-red-500 mr-3 text-xl"></i>
+      <span th:text="${error}" class="self-center">오류 메시지</span>
+    </div>
+  </div>
+
+  <div th:if="${message}"
+       class="mb-6 p-4 bg-blue-100 border-l-4 border-blue-500 text-blue-700 rounded-md animate-fade-in">
+    <div class="flex">
+      <i class="fas fa-info-circle text-blue-500 mr-3 text-xl"></i>
+      <span th:text="${message}" class="self-center">정보 메시지</span>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- 왼쪽: 프로필 정보 -->
+    <div class="lg:col-span-2 space-y-6">
+      <!-- 프로필 사진 섹션 -->
+      <div class="info-card profile-section">
+        <h2 class="section-title">
+          <i class="fas fa-user-circle text-indigo-500 mr-2"></i>
+          <span>회원 정보</span>
+        </h2>
+
+        <!-- 명성 레벨 컨테이너 -->
+        <div class="prestige-level-container mb-6">
+          <div
+              th:class="${'prestige-level-badge level-' + @prestigeHelper.getLevel(user.prestige)}">
+            <span th:text="${@prestigeHelper.getLevel(user.prestige)}">0</span>
+          </div>
+          <div class="prestige-level-info-text">
+            <div class="prestige-level-title">
+              레벨 <span th:text="${@prestigeHelper.getLevel(user.prestige)}">0</span> -
+              <span
+                  th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(user.prestige))}"
+                  class="level-title">병아리</span>
+              <span id="userPrestige" th:data-prestige="${user.prestige}" class="hidden"></span>
+            </div>
+            <div class="prestige-level-desc">
+              다음 레벨까지
+              <span th:text="${@prestigeHelper.getPointsForNextLevel(user.prestige)}"
+                    id="pointsForNextLevel">100</span> 포인트 남았습니다
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row items-center">
+          <!-- 프로필 이미지 -->
+          <div class="profile-image-container mb-6 md:mb-0">
+            <img
+                th:src="${@layoutHelper.getProfileImageByString(user.image)}"
+                alt="프로필 이미지" class="profile-image"
+                onerror="this.src='/img/profile-placeholder.svg'">
+            <div class="profile-image-overlay" id="profileImageTrigger">
+              <span class="profile-image-text">
+                <i class="fas fa-camera mr-1"></i> 사진 변경
+              </span>
+            </div>
+          </div>
+
+          <!-- 프로필 정보 -->
+          <div class="md:ml-8 flex-grow text-center md:text-left">
+            <div class="mb-4">
+              <div class="flex items-center justify-center md:justify-start">
+                <h3 class="text-2xl font-bold text-gray-800 mr-2" th:text="${user.nickname}">사용자
+                  이름</h3>
+                <button id="editNicknameTrigger" class="edit-button">
+                  <i class="fas fa-pencil-alt mr-1"></i> 수정
+                </button>
+              </div>
+              <p class="text-gray-600 mt-1 ">가입일: <span
+                  th:text="${@layoutHelper.toRelative(user.createdAt)}">2023년 01월 01일</span>
+              </p>
+            </div>
+
+            <!-- 명성 포인트 배지 -->
+            <div class="mb-4">
+              <span th:class="${'prestige-badge level-' + @prestigeHelper.getLevel(user.prestige)}">
+                <i class="fas fa-award mr-1"></i>
+                명성: <span th:text="${user.prestige}" class="font-semibold">0</span> 포인트
+              </span>
+            </div>
+
+            <div class="mb-4">
+              <span class="badge">
+                <i class="fas fa-sign-in-alt mr-1"></i>
+                <span th:text="${user.provider}">소셜 로그인 제공자</span> 계정으로 로그인
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 한줄 소개 섹션 -->
+        <div class="mt-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-md font-semibold text-gray-700">
+              <i class="fas fa-quote-left text-indigo-400 mr-2"></i>한줄 소개
+            </h3>
+            <button id="editBioTrigger" class="edit-button">
+              <i class="fas fa-pencil-alt mr-1"></i> 수정
+            </button>
+          </div>
+          <p th:if="${!#strings.isEmpty(user.bio)}" th:text="${user.bio}" id="bioText"
+             class="text-gray-600 italic bio-text">
+            안녕하세요! 저는 국민사형투표 사용자입니다. 다양한 의견을 나누고 소통하고 싶습니다.
+          </p>
+          <p th:if="${#strings.isEmpty(user.bio)}" class="text-gray-400 italic bio-empty-text">
+            한줄 소개를 입력해 주세요.
+          </p>
+        </div>
+      </div>
+
+      <!-- 활동 요약 섹션 -->
+      <div class="info-card profile-section">
+        <h2 class="section-title">
+          <i class="fas fa-chart-line text-indigo-500 mr-2"></i>
+          <span>활동 요약</span>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="stat-card comment">
+            <div class="text-3xl font-bold text-indigo-600 mb-1"
+                 th:text="${activityOverview.commentCount}">0
+            </div>
+            <div class="text-sm text-gray-600">작성한 댓글</div>
+          </div>
+          <div class="stat-card vote">
+            <div class="text-3xl font-bold text-green-600 mb-1"
+                 th:text="${activityOverview.voteCount}">0
+            </div>
+            <div class="text-sm text-gray-600">참여한 투표</div>
+          </div>
+          <div class="stat-card person">
+            <div class="text-3xl font-bold text-blue-600 mb-1"
+                 th:text="${activityOverview.personAddCount}">0
+            </div>
+            <div class="text-sm text-gray-600">추가한 인물</div>
+          </div>
+        </div>
+
+        <!-- 명성 프로그레스 바 섹션 -->
+        <div
+            th:class="${'mt-6 prestige-progress-section level-' + @prestigeHelper.getLevel(user.prestige)}">
+
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="text-sm font-semibold text-gray-700">
+              활동 명성 - <span
+                th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(user.prestige))}">병아리</span>
+            </h3>
+            <span class="text-xs text-gray-500" th:text="${user.prestige} + ' 포인트'">0 포인트</span>
+          </div>
+          <div class="bg-gray-200 rounded-full h-4 overflow-hidden">
+            <div class="prestige-progress-bar h-4 rounded-full"
+                 th:style="'width: ' + ${T(java.lang.Math).min(100, @prestigeHelper.getProgressPercentage(user.prestige))} + '%'"></div>
+          </div>
+          <div
+              class="prestige-level-info mt-2 text-xs text-gray-500 flex justify-between items-center">
+            <span>
+              레벨 <span th:text="${@prestigeHelper.getLevel(user.prestige)}"
+                       id="prestigeLevel">0</span>
+              (<span
+                th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(user.prestige))}">병아리</span>)
+            </span>
+            <span>
+              다음 레벨까지 <span
+                th:text="${@prestigeHelper.getPointsForNextLevel(user.prestige)}">100</span> 포인트
+            </span>
+          </div>
+        </div>
+
+        <div class="mt-6 text-center">
+          <a href="/activity" class="primary-button">
+            <i class="fas fa-history mr-1"></i> 모든 활동 보기
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 사이드바 -->
+    <div class="space-y-6">
+      <!-- 최근 활동 -->
+      <div class="info-card profile-section">
+        <h2 class="section-title">
+          <i class="fas fa-history text-indigo-500 mr-2"></i>
+          <span>최근 활동</span>
+        </h2>
+
+        <!-- 활동이 없는 경우 -->
+        <div th:if="${#lists.isEmpty(recentActivities)}" class="text-center py-4 text-gray-500">
+          <i class="fas fa-info-circle text-xl mb-2 block"></i>
+          <p>아직 활동 내역이 없습니다.</p>
+        </div>
+
+        <!-- 활동이 있는 경우 -->
+        <div th:unless="${#lists.isEmpty(recentActivities)}" class="space-y-3">
+          <!-- my-page.html의 최근 활동 섹션 수정 -->
+          <div th:each="activity : ${recentActivities}" class="activity-item">
+            <div class="flex items-start">
+              <div th:switch="${activity.activityType.name()}" class="activity-icon">
+                <i th:case="'COMMENT'" class="fas fa-comment text-indigo-500"></i>
+                <i th:case="'VOTE'" class="fas fa-vote-yea text-green-500"></i>
+                <i th:case="'PERSON_ADD'" class="fas fa-user-plus text-blue-500"></i>
+                <i th:case="'PERSON_EDIT'" class="fas fa-user-edit text-yellow-500"></i>
+                <i th:case="'REPLY'" class="fas fa-reply text-purple-500"></i>
+                <i th:case="'LIKE'" class="fas fa-thumbs-up text-pink-500"></i>
+                <i th:case="'DISLIKE'" class="fas fa-thumbs-down text-gray-500"></i>
+              </div>
+              <div>
+                <div class="text-sm">
+                  <span th:switch="${activity.activityType.name()}">
+                    <span th:case="'COMMENT'">💬 댓글을 작성했습니다:  </span>
+                    <span th:case="'VOTE'">🗳️ 투표에 참여했습니다: </span>
+                    <span th:case="'PERSON_ADD'">👤 인물을 추가했습니다:</span>
+                    <span th:case="'PERSON_EDIT'">👤 인물 정보를 수정했습니다:</span>
+                    <span th:case="'REPLY'">💬 답글을 작성했습니다: </span>
+                    <span th:case="'LIKE'"> 😆 좋아요를 표시했습니다: </span>
+                    <span th:case="'DISLIKE'"> 😡싫어요를 표시했습니다: </span>
+                  </span>
+
+                  <!-- 댓글 활동인 경우 해당 댓글로 직접 이동하는 링크 수정 -->
+                  <a th:if="${activity.isCommentActivity()}"
+                     th:href="@{'/' + ${activity.categoryId} + '/@' + ${@layoutHelper.toSlug(activity.figureName)} + '#comment-' + ${activity.commentId}}"
+                     class="activity-target"
+                     th:text="${activity.figureName}">대상 이름</a>
+
+                  <!-- 그 외 활동은 기존대로 검색 링크 유지 -->
+                  <a th:unless="${activity.isCommentActivity()}"
+                     th:href="@{'/search?query=' + ${activity.figureName}}"
+                     class="activity-target"
+                     th:text="${activity.figureName}">대상 이름</a>
+                </div>
+                <div class="comment-date-relative text-xs text-gray-500 activity-date"
+                     th:text="${activity.createdAt}">
+                  2023년 01월 01일 12:34
+                </div>
+                <div th:if="${activity.description}" class="activity-description mt-1"
+                     th:text="${activity.description}">
+                  활동 설명
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 text-center">
+            <a href="/activity" class="text-indigo-600 hover:text-indigo-800 transition">
+              모든 활동 보기 <i class="fas fa-arrow-right ml-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- 계정 설정 섹션 -->
+      <div class="info-card profile-section">
+        <h2 class="section-title">
+          <i class="fas fa-cog text-indigo-500 mr-2"></i>
+          <span>계정 설정</span>
+        </h2>
+
+        <div class="space-y-3 mt-4">
+          <button id="withdrawTrigger"
+                  class="withdraw-button w-full flex items-center justify-center">
+            <i class="fas fa-user-times mr-2"></i> 로그아웃
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 프로필 이미지 변경 모달 -->
+  <div id="profileImageModal" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-gray-800">프로필 사진 변경</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form action="/me/delete-profile" method="post">
+        <div class="text-right space-x-3">
+          <button type="button"
+                  class="modal-close px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">
+            취소
+          </button>
+          <button type="submit"
+                  class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+            프로필 사진 제거하기
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 닉네임 변경 모달 -->
+  <div id="editNicknameModal" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-gray-800">닉네임 변경</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form action="/me/update-nickname" method="post">
+        <div class="mb-4">
+          <label for="nickname" class="block text-sm font-medium text-gray-700 mb-1">
+            새 닉네임
+          </label>
+          <input type="text" id="nickname" name="nickname" required
+                 th:value="${user.nickname}"
+                 class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+          <p class="mt-1 text-xs text-gray-500">다른 사용자에게 표시될 이름입니다.</p>
+        </div>
+
+        <div class="text-right space-x-3">
+          <button type="button"
+                  class="modal-close px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">
+            취소
+          </button>
+          <button type="submit"
+                  class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+            변경하기
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 한줄 소개 변경 모달 -->
+  <div id="editBioModal" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-gray-800">한줄 소개 변경</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <form id="updateBioForm">
+        <div class="mb-4">
+          <label for="bio" class="block text-sm font-medium text-gray-700 mb-1">
+            한줄 소개
+          </label>
+          <textarea id="bio" name="bio" rows="3"
+                    th:text="${user.bio}"
+                    class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    placeholder="자신을 소개하는 한 줄을 작성해주세요."></textarea>
+          <p class="mt-1 text-xs text-gray-500">
+            <span id="bioCharCount">0</span>/100자
+          </p>
+        </div>
+
+        <div class="text-right space-x-3">
+          <button type="button"
+                  class="modal-close px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">
+            취소
+          </button>
+          <button type="submit"
+                  class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition">
+            변경하기
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 회원 탈퇴 확인 모달 -->
+  <div id="withdrawModal" class="modal-backdrop">
+    <div class="modal-content">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-xl font-bold text-red-600">회원 탈퇴 확인</h3>
+        <button class="modal-close text-gray-500 hover:text-gray-700">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+
+      <div class="mb-6 bg-red-50 p-4 rounded-md">
+        <p class="text-red-600">탈퇴하시면 계정 정보와 모든 활동 내역이 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p>
+      </div>
+
+      <form action="/logout" method="post">
+        <div class="text-right space-x-3">
+          <button type="button"
+                  class="modal-close px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition">
+            취소
+          </button>
+          <button type="submit"
+                  class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition">
+            로그아웃
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 페이지 자바스크립트 -->
+  <th:block layout:fragment="script">
+    <script src="/js/users/my-page.js"></script>
+    <script src="/js/utils/relative-time.js"></script>
+    <script>
+      // 댓글 하이라이트 및 스크롤 스크립트
+      document.addEventListener('DOMContentLoaded', function () {
+        // URL 해시 확인
+        const hash = window.location.hash;
+
+        if (hash && hash.startsWith('#comment-')) {
+          // 댓글 ID 추출
+          const commentId = hash.substring(9); // '#comment-'를 제외한 부분
+
+          // 해당 댓글 요소 찾기
+          const commentElement = document.getElementById('comment-' + commentId);
+
+          if (commentElement) {
+            // 페이지 로드 후 스크롤 및 하이라이트 적용 (약간의 지연 추가)
+            setTimeout(() => {
+              // 댓글로 스크롤
+              commentElement.scrollIntoView({behavior: 'smooth', block: 'center'});
+
+              // 하이라이트 효과 추가
+              commentElement.style.transition = 'background-color 0.5s ease';
+              commentElement.style.backgroundColor = 'rgba(250, 240, 137, 0.5)';
+
+              // 일정 시간 후 하이라이트 제거
+              setTimeout(() => {
+                commentElement.style.backgroundColor = '';
+              }, 3000);
+
+              // 답글인 경우 부모 댓글의 답글 컨테이너 펼치기
+              const replyContainer = commentElement.closest('.reply-container');
+              if (replyContainer && replyContainer.classList.contains('hidden')) {
+                const viewRepliesBtn = replyContainer.closest('.comment-item').querySelector(
+                    '.view-replies-btn');
+                if (viewRepliesBtn) {
+                  viewRepliesBtn.click();
+                }
+              }
+            }, 500);
+          }
+        }
+      });
+    </script>
+  </th:block>
+</div>
+</body>
+</html>

@@ -1,0 +1,29 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "vote4.korean@gmail.com"
+    password: "idqyjtnbnquqwufn"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    encoding: UTF-8
+
+notification:
+  email:
+    from-address: "vote4.korean@gmail.com"
+    sender-name: "국민사형투표"
+    enabled: true
+    retry:
+      max-attempts: 3
+      initial-delay: 1000
+      multiplier: 2.0

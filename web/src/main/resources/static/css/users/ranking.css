@@ -1,0 +1,642 @@
+/* 랭킹 페이지 스타일 */
+
+/* 애니메이션 키프레임 */
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 15px rgba(217, 119, 6, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(217, 119, 6, 0);
+  }
+}
+
+@keyframes shine {
+  0% {
+    background-position: -100px;
+  }
+  40%, 100% {
+    background-position: 300px;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes glowing {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 20px 10px rgba(255, 215, 0, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+  }
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+  }
+}
+
+/* 랭킹 헤더 애니메이션 */
+.ranking-header {
+  animation: fadeInUp 1s ease;
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+/* TOP 3 섹션 스타일 - 가로 배치 */
+.top-ranks-container {
+  overflow: visible; /* 중요: visible로 설정하여 카드 윗부분이 잘리지 않도록 함 */
+  animation: fadeInUp 1s ease 0.2s both;
+  margin: 5rem auto 5rem; /* 상단 여백 증가로 배지가 잘리지 않도록 함 */
+  padding: 3rem 1rem 3rem; /* 상단 패딩 증가 */
+  position: relative;
+  max-width: 1200px;
+  background: linear-gradient(to bottom, rgba(243, 244, 246, 0.8), rgba(249, 250, 251, 0.9));
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+}
+
+/* TOP 3 제목 */
+.top-ranks-container h2 {
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #1F2937;
+  margin-bottom: 3.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+.top-ranks-container h2::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(to right, #F59E0B, #EF4444);
+  border-radius: 3px;
+}
+
+/* TOP 3 카드 컨테이너 */
+.top-ranks-cards {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1.5rem;
+  position: relative;
+  width: 100%;
+  padding-top: 2rem; /* 상단 패딩 추가로 배지가 잘리지 않게 함 */
+}
+
+/* 공통 카드 스타일 */
+.rank-card {
+  transition: all 0.3s ease;
+  border-radius: 1.5rem;
+  overflow: visible; /* 중요: visible로 설정하여 배지가 잘리지 않도록 함 */
+  position: relative;
+  margin-top: 2rem; /* 카드 상단 여백 추가 */
+}
+
+.rank-card:hover {
+  transform: translateY(-0.5rem);
+}
+
+/* 카드 내부 컨테이너 스타일 */
+.gold-card, .silver-card, .bronze-card {
+  border-radius: 1.5rem;
+  padding: 2rem 1.5rem;
+  overflow: hidden; /* 내부 콘텐츠만 hidden으로 설정 */
+  position: relative;
+  z-index: 1;
+  /* 경계선 제거 */
+  border: none;
+  /* 그림자 조정으로 경계 느낌 강화 */
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.08);
+}
+
+/* 1등 카드 스타일 */
+.rank-card.gold {
+  animation: fadeInUp 1s ease 0.4s both;
+  order: 2;
+  z-index: 10;
+  transform: scale(1.1);
+  max-width: 300px;
+  width: 100%;
+}
+
+/* 1등 카드 내부 스타일 */
+.gold-card {
+  background: linear-gradient(135deg, #FFFDE7, #FFF59D, #FFF176);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.08), 0 0 15px 5px rgba(255, 215, 0, 0.3);
+  background-size: 200% 200%;
+  animation: gradientShift 5s ease infinite;
+}
+
+/* 2등 카드 스타일 */
+.rank-card.silver {
+  animation: fadeInUp 1s ease 0.8s both;
+  order: 1;
+  transform: scale(0.95);
+  max-width: 260px;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* 2등 카드 내부 스타일 */
+.silver-card {
+  background: linear-gradient(135deg, #F9FAFB, #E5E7EB, #D1D5DB);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* 3등 카드 스타일 */
+.rank-card.bronze {
+  animation: fadeInUp 1s ease 1.2s both;
+  order: 3;
+  transform: scale(0.95);
+  max-width: 260px;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+/* 3등 카드 내부 스타일 */
+.bronze-card {
+  background: linear-gradient(135deg, #FEF3C7, #FBBF24, #F59E0B);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* 순위 뱃지 스타일 */
+.rank-badge {
+  position: absolute;
+  top: -1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  z-index: 20;
+}
+
+/* 1등 배지 스타일 */
+.crown-badge {
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  font-size: 1.25rem;
+  box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.4);
+  animation: pulse 2s infinite;
+}
+
+.fa-crown {
+  color: #FFFFFF !important;
+  font-size: 1.25rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  animation: float 3s ease-in-out infinite;
+}
+
+/* 2등 배지 스타일 */
+.silver-badge {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(135deg, #E5E7EB, #9CA3AF);
+  font-size: 1rem;
+}
+
+.fa-medal.silver-medal {
+  color: #F3F4F6 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 3등 배지 스타일 */
+.bronze-badge {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: linear-gradient(135deg, #D97706, #92400E);
+  font-size: 1rem;
+}
+
+.fa-medal.bronze-medal {
+  color: #FEF3C7 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 프로필 이미지 스타일 */
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.profile-image-container {
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+/* 1등 프로필 이미지 스타일 */
+.gold-profile-container {
+  width: 7rem !important;
+  height: 7rem !important;
+  border: 3px solid #FFD700;
+  box-shadow: 0 0 15px 5px rgba(255, 215, 0, 0.5);
+  animation: profile-pulse 2s infinite;
+}
+
+.gold-profile {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 2등 프로필 이미지 스타일 */
+.silver-profile {
+  border: 3px solid #C0C0C0;
+  box-shadow: 0 0 10px rgba(192, 192, 192, 0.6);
+}
+
+/* 3등 프로필 이미지 스타일 */
+.bronze-profile {
+  border: 3px solid #CD7F32;
+  box-shadow: 0 0 10px rgba(205, 127, 50, 0.6);
+}
+
+/* 유저 정보 스타일 */
+.user-info {
+  text-align: center;
+}
+
+.user-name {
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+/* 1등 이름 스타일 */
+.gold-name {
+  font-size: 1.5rem;
+  color: #B8860B; /* 골드 색상으로 변경 */
+  /* 그라데이션 효과 제거 */
+  text-shadow: 0 0 3px rgba(255, 215, 0, 0.3); /* 약간의 그림자 효과 추가 */
+}
+
+/* 2등 이름 스타일 */
+.silver-name {
+  font-size: 1.25rem;
+  color: #4B5563;
+}
+
+/* 3등 이름 스타일 */
+.bronze-name {
+  font-size: 1.25rem;
+  color: #92400E;
+}
+
+/* 레벨 정보 스타일 */
+.level-info {
+  color: #6B7280;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+/* 점수 스타일 */
+.score-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-icon {
+  margin-right: 0.5rem;
+}
+
+.fa-star.gold-star {
+  color: #F59E0B !important;
+  animation: shimmer 1.5s infinite;
+}
+
+.score-value {
+  font-weight: bold;
+}
+
+.gold-score {
+  color: #92400E;
+  font-size: 1.25rem;
+}
+
+/* 나의 랭킹 컨테이너 */
+.my-rank-container {
+  animation: fadeInUp 1s ease 1.6s both;
+  position: relative;
+  margin-bottom: 2rem;
+  background-color: #EEF2FF;
+  border-left: 4px solid #6366F1;
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.my-rank-container::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.5rem;
+  content: '';
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+  background-size: 200% 100%;
+  animation: shine 3s infinite;
+}
+
+/* 랭킹 리스트 컨테이너 */
+.ranking-list-container {
+  margin-top: 2rem;
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+}
+
+.ranking-list-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid #E5E7EB;
+  background-color: #F9FAFB;
+}
+
+.ranking-list-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1F2937;
+}
+
+.ranking-list-subtitle {
+  color: #6B7280;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+/* 테이블 스타일 */
+.ranking-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.ranking-table th {
+  background-color: #F9FAFB;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #E5E7EB;
+}
+
+.ranking-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #F3F4F6;
+  vertical-align: middle;
+}
+
+.ranking-table tr:hover td {
+  background-color: #F9FAFB;
+}
+
+/* 현재 사용자 행 하이라이트 */
+.ranking-table tr.current-user {
+  background-color: #EEF2FF;
+  position: relative;
+}
+
+.ranking-table tr.current-user::after {
+  content: '현재 회원';
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: rgba(99, 102, 241, 0.1);
+  color: #4F46E5;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+}
+
+/* 테이블 사용자 셀 스타일 */
+.user-cell {
+  display: flex;
+  align-items: center;
+}
+
+.table-profile-image {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  object-fit: cover;
+  transition: transform 0.2s;
+}
+
+.table-profile-image:hover {
+  transform: scale(1.1);
+}
+
+.table-user-name {
+  font-weight: 500;
+  color: #1F2937;
+}
+
+/* 페이지네이션 스타일 */
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem;
+  background-color: #F9FAFB;
+  border-top: 1px solid #E5E7EB;
+}
+
+.pagination-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  padding: 0 0.75rem;
+  margin: 0 0.25rem;
+  border: 1px solid #E5E7EB;
+  border-radius: 0.375rem;
+  background-color: white;
+  color: #4B5563;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.pagination-link:hover {
+  background-color: #F3F4F6;
+  transform: translateY(-2px);
+}
+
+.pagination-link.active {
+  background-color: #6366F1;
+  border-color: #4F46E5;
+  color: white;
+}
+
+.pagination-link.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* 애니메이션 클래스 */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
+}
+
+.animate-on-scroll.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+  .top-ranks-container {
+    margin-top: 4rem;
+    padding-top: 2.5rem;
+  }
+
+  .top-ranks-cards {
+    flex-direction: column;
+    align-items: center;
+    gap: 3rem;
+    padding-top: 1.5rem;
+  }
+
+  .rank-card {
+    margin-top: 1.5rem;
+  }
+
+  .rank-card.gold {
+    order: 1;
+    transform: scale(1);
+    margin-bottom: 0;
+  }
+
+  .rank-card.silver {
+    order: 2;
+    transform: scale(1);
+    margin-bottom: 0;
+  }
+
+  .rank-card.bronze {
+    order: 3;
+    transform: scale(1);
+    margin-bottom: 0;
+  }
+
+  .gold-card, .silver-card, .bronze-card {
+    padding: 1.5rem 1rem;
+  }
+
+  .gold-profile-container {
+    width: 6rem !important;
+    height: 6rem !important;
+  }
+
+  .rank-badge {
+    top: -1rem;
+  }
+
+  .crown-badge {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+
+  .gold-name {
+    font-size: 1.25rem;
+  }
+
+  .ranking-table th:nth-child(3),
+  .ranking-table td:nth-child(3),
+  .ranking-table th:nth-child(5),
+  .ranking-table td:nth-child(5) {
+    display: none;
+  }
+
+  .ranking-table tr.current-user::after {
+    content: none;
+  }
+
+  .my-rank-container .flex {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .my-rank-container .flex > div:last-child {
+    margin-top: 0.75rem;
+  }
+
+  .pagination-container {
+    justify-content: center;
+  }
+}

@@ -1,0 +1,19 @@
+slack:
+  webhook:
+    url: "https://hooks.slack.com/services/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"
+  channel: "#api-monitoring"
+  username: 국민사형투표
+
+spring:
+  aop:
+    proxy-target-class: true
+
+logging:
+  file:
+    path: ./logs
+    name: ${spring.application.name}.log
+  level:
+    root: INFO
+    com.example: DEBUG
+    org.springframework.web: INFO
+    org.hibernate: INFO

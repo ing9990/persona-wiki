@@ -1,0 +1,200 @@
+/* category-section.css - 카테고리 섹션을 위한 스타일 */
+
+/* 카테고리 카드 기본 스타일 */
+.category-card-header {
+  position: relative;
+  width: 100%;
+  height: 130px;
+  overflow: hidden;
+}
+
+.category-image-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.category-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease, filter 0.6s ease;
+}
+
+.category-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.5));
+  z-index: 1;
+  transition: opacity 0.4s ease;
+}
+
+/* 카테고리 본문 스타일 */
+.category-card-body {
+  position: relative;
+  padding: 2rem 1.5rem 1.5rem;
+  background-color: white;
+}
+
+.category-icon-badge {
+  position: absolute;
+  top: -25px;
+  left: 20px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+  z-index: 5;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.category-icon-badge i {
+  color: white;
+  font-size: 1.25rem;
+}
+
+.category-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1F2937;
+  margin-bottom: 0.75rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.category-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #6366F1, #8B5CF6);
+  border-radius: 3px;
+}
+
+.category-description {
+  color: #4B5563;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+.category-link-container {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid #E5E7EB;
+}
+
+.category-link {
+  display: inline-flex;
+  align-items: center;
+  color: #6366F1;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  background-color: #EEF2FF;
+  transition: all 0.3s ease;
+}
+
+.category-link:hover {
+  background-color: #E0E7FF;
+  color: #4F46E5;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(99, 102, 241, 0.15);
+}
+
+.category-link i {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  transition: transform 0.3s ease;
+}
+
+.category-link:hover i {
+  transform: translateX(3px);
+}
+
+/* 카드 호버 효과 */
+.stat-card:hover .category-card-image {
+  transform: scale(1.05);
+  filter: brightness(110%);
+}
+
+.stat-card:hover .category-icon-badge {
+  transform: scale(1.1) rotate(10deg);
+  box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
+}
+
+/* 반응형 조정 */
+@media (max-width: 768px) {
+  .category-card-header {
+    height: 100px;
+  }
+
+  .category-card-body {
+    padding: 1.75rem 1.25rem 1.25rem;
+  }
+
+  .category-icon-badge {
+    width: 40px;
+    height: 40px;
+    top: -20px;
+  }
+
+  .category-icon-badge i {
+    font-size: 1rem;
+  }
+
+  .category-title {
+    font-size: 1.25rem;
+  }
+
+  .category-description {
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .category-card-header {
+    height: 80px;
+  }
+
+  .category-title {
+    font-size: 1.125rem;
+  }
+
+  .category-description {
+    font-size: 0.8125rem;
+    margin-bottom: 1rem;
+  }
+
+  .category-link {
+    font-size: 0.875rem;
+    padding: 0.4rem 0.6rem;
+  }
+}
+
+/* 애니메이션 효과 */
+.fade-in {
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

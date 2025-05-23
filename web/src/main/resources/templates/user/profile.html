@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title th:text="${profile.nickname} + '의 프로필'">사용자 프로필</title>
+  <meta name="description" th:content="${profile.nickname} + '의 프로필과 활동 내역을 확인할 수 있습니다.'">
+  <link rel="stylesheet" href="/css/users/profile.css">
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- 프로필 헤더 섹션 -->
+  <section class="mb-8 animate-fade-in">
+    <div
+        class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-500 text-white rounded-lg shadow-lg p-6 relative overflow-hidden">
+      <div class="absolute inset-0 bg-pattern opacity-10"></div>
+      <div class="relative z-10">
+        <div class="flex flex-col md:flex-row items-center md:items-start">
+          <!-- 프로필 이미지 -->
+          <div class="profile-image-container mb-4 md:mb-0 md:mr-6">
+            <img th:src="${@layoutHelper.getProfileImageByString(profile.image)}" alt="프로필 이미지"
+                 class="profile-image">
+          </div>
+
+          <!-- 프로필 정보 -->
+          <div class="text-center md:text-left">
+            <div class="flex items-center justify-center md:justify-start mb-2">
+              <h1 class="text-3xl font-bold mr-3" th:text="${profile.nickname}">사용자 닉네임</h1>
+              <!-- 명성 레벨 배지 -->
+              <span
+                  th:class="${'prestige-badge level-' + @prestigeHelper.getLevel(profile.prestige)}"
+                  th:data-prestige="${profile.prestige}">
+                <i class="fas fa-award mr-1"></i>
+                Lv.<span th:text="${@prestigeHelper.getLevel(profile.prestige)}">0</span>
+                <span class="title-text"
+                      th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(profile.prestige))}">병아리</span>
+              </span>
+            </div>
+
+            <p th:if="${profile.bio}" class="text-lg text-indigo-100 mb-3" th:text="${profile.bio}">
+              사용자 소개글</p>
+            <p class="text-indigo-200 text-sm flex items-center justify-center md:justify-start">
+              <i class="far fa-calendar-alt mr-2"></i>
+              가입일: <span
+                th:text="${@layoutHelper.toRelative(profile.createdAt)}">2023년 01월 01일</span>
+            </p>
+          </div>
+        </div>
+
+        <!-- 명성 프로그레스 바 -->
+        <div class="mt-4 prestige-progress-container">
+          <div class="flex justify-between items-center mb-1 text-sm">
+            <span class="text-indigo-100">
+              명성:  <span th:text="${profile.prestige}">0</span> 포인트
+            </span>
+            <span class="text-indigo-100">
+              다음 레벨까지: <span th:text="${@prestigeHelper.getPointsForNextLevel(profile.prestige)}">100</span> 포인트
+            </span>
+          </div>
+          <div class="bg-indigo-900 bg-opacity-40 rounded-full h-3 overflow-hidden">
+            <div class="prestige-progress-bar h-3 rounded-full"
+                 th:style="'width: ' + ${T(java.lang.Math).min(100, @prestigeHelper.getProgressPercentage(profile.prestige))} + '%'"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- 왼쪽: 최근 활동 -->
+    <div class="lg:col-span-2">
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-8">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center">
+          <i class="fas fa-history text-xl text-indigo-500 mr-3"></i>
+          <h2 class="text-xl font-semibold text-gray-800">최근 활동</h2>
+        </div>
+
+        <div class="p-6">
+          <!-- 활동이 없는 경우 -->
+          <div th:if="${#lists.isEmpty(recentActivities)}" class="text-center py-8 text-gray-500">
+            <div class="mb-4">
+              <i class="far fa-folder-open text-4xl text-indigo-300"></i>
+            </div>
+            <h3 class="text-xl font-medium mb-2">아직 활동 내역이 없습니다</h3>
+            <p class="text-gray-600">이 사용자는 아직 활동을 시작하지 않았습니다.</p>
+          </div>
+
+          <!-- 활동이 있는 경우 -->
+          <div th:unless="${#lists.isEmpty(recentActivities)}" class="activity-timeline">
+            <div th:each="activity : ${recentActivities}" class="activity-item">
+              <div class="activity-icon-container">
+                <div class="activity-icon-wrapper" th:classappend="${activity.activityType.name() == 'COMMENT' || activity.activityType.name() == 'REPLY'} ? 'bg-blue-100 text-blue-600' :
+                                             (${activity.activityType.name() == 'VOTE'} ? 'bg-purple-100 text-purple-600' :
+                                             (${activity.activityType.name() == 'PERSON_ADD' || activity.activityType.name() == 'PERSON_EDIT'} ? 'bg-green-100 text-green-600' :
+                                             (${activity.activityType.name() == 'LIKE'} ? 'bg-red-100 text-red-600' :
+                                             (${activity.activityType.name() == 'DISLIKE'} ? 'bg-gray-100 text-gray-600' : 'bg-gray-100 text-gray-600'))))">
+                  <i th:class="${activity.activityType.name() == 'COMMENT'} ? 'fas fa-comment-alt' :
+                               (${activity.activityType.name() == 'REPLY'} ? 'fas fa-reply' :
+                               (${activity.activityType.name() == 'VOTE'} ? 'fas fa-vote-yea' :
+                               (${activity.activityType.name() == 'PERSON_ADD'} ? 'fas fa-user-plus' :
+                               (${activity.activityType.name() == 'PERSON_EDIT'} ? 'fas fa-user-edit' :
+                               (${activity.activityType.name() == 'LIKE'} ? 'fas fa-thumbs-up' :
+                               (${activity.activityType.name() == 'DISLIKE'} ? 'fas fa-thumbs-down' : 'fas fa-circle'))))))"></i>
+                </div>
+                <div class="activity-timeline-line"></div>
+              </div>
+
+              <div class="activity-content">
+                <div class="activity-time comment-date-relative"
+                     th:data-original-date="${#temporals.format(activity.createdAt, 'yyyy-MM-dd HH:mm:ss')}"
+                     th:text="${#temporals.format(activity.createdAt, 'yyyy.MM.dd HH:mm')}">
+                  2023.01.01 12:00
+                </div>
+                <div class="activity-details">
+                  <span class="activity-type" th:text="${activity.activityType.name() == 'COMMENT'} ? '댓글 작성' :
+                                   (${activity.activityType.name() == 'REPLY'} ? '답글 작성' :
+                                   (${activity.activityType.name() == 'VOTE'} ? '투표 참여' :
+                                   (${activity.activityType.name() == 'PERSON_ADD'} ? '인물 추가' :
+                                   (${activity.activityType.name() == 'PERSON_EDIT'} ? '인물 정보 수정' :
+                                   (${activity.activityType.name() == 'LIKE'} ? '좋아요' :
+                                   (${activity.activityType.name() == 'DISLIKE'} ? '싫어요' : '활동'))))))">활동 타입</span>
+                  <span class="mx-2">-</span>
+
+                  <!-- 댓글 관련 활동인 경우 해당 댓글로 직접 이동하는 링크 수정 -->
+                  <a th:if="${activity.isCommentActivity()}"
+                     th:href="@{'/' + ${activity.categoryId} + '/@' + ${@layoutHelper.toSlug(activity.figureName)} + '#comment-' + ${activity.commentId}}"
+                     class="activity-target"
+                     th:text="${activity.figureName}">대상명</a>
+
+                  <!-- 그 외 활동은 기존대로 인물 상세 페이지 링크 유지 -->
+                  <a th:unless="${activity.isCommentActivity()}"
+                     th:href="${@layoutHelper.toDetail(activity.getCategoryId(), activity.getFigureName())}"
+                     class="activity-target"
+                     th:text="${activity.figureName}">대상명</a>
+                </div>
+                <p th:if="${activity.description}" class="activity-description"
+                   th:text="${activity.description}">활동 설명...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 오른쪽: 사이드바 -->
+    <div>
+      <!-- 명성 레벨 카드 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center">
+          <i class="fas fa-award text-xl text-indigo-500 mr-3"></i>
+          <h2 class="text-xl font-semibold text-gray-800">명성 레벨</h2>
+        </div>
+
+        <div class="p-6">
+          <div class="prestige-level-card"
+               th:class="${'prestige-level-card level-' + @prestigeHelper.getLevel(profile.prestige)}">
+            <div class="prestige-level-number">
+              <span th:text="${@prestigeHelper.getLevel(profile.prestige)}">0</span>
+            </div>
+            <div class="prestige-level-info">
+              <div class="prestige-level-title">
+                <span
+                    th:text="${@prestigeHelper.getLevelTitle(@prestigeHelper.getLevel(profile.prestige))}">병아리</span>
+              </div>
+              <div class="prestige-level-points">
+                <span th:text="${profile.prestige}">0</span> 포인트
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-4 text-sm text-gray-500">
+            <div class="flex justify-between">
+              <span>현재 레벨</span>
+              <span>다음 레벨까지</span>
+            </div>
+            <div class="flex justify-between font-medium text-gray-700">
+              <span>
+                레벨 <span th:text="${@prestigeHelper.getLevel(profile.prestige)}">0</span>
+              </span>
+              <span>
+                <span
+                    th:text="${@prestigeHelper.getPointsForNextLevel(profile.prestige)}">100</span> 포인트
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 활동 통계 카드 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden mb-6">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center">
+          <i class="fas fa-chart-pie text-xl text-indigo-500 mr-3"></i>
+          <h2 class="text-xl font-semibold text-gray-800">활동 통계</h2>
+        </div>
+
+        <div class="p-6">
+          <div class="grid grid-cols-1 gap-4">
+            <!-- 댓글 통계 -->
+            <div
+                class="stat-card bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-4 shadow-sm">
+              <div class="flex items-center">
+                <div class="stat-icon-container bg-blue-500 text-white">
+                  <i class="fas fa-comment-alt"></i>
+                </div>
+                <div class="ml-4">
+                  <div class="text-2xl font-bold text-blue-700"
+                       th:text="${activityOverview.commentCount}">0
+                  </div>
+                  <div class="text-sm text-blue-600">댓글 작성</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 투표 통계 -->
+            <div
+                class="stat-card bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg p-4 shadow-sm">
+              <div class="flex items-center">
+                <div class="stat-icon-container bg-purple-500 text-white">
+                  <i class="fas fa-vote-yea"></i>
+                </div>
+                <div class="ml-4">
+                  <div class="text-2xl font-bold text-purple-700"
+                       th:text="${activityOverview.voteCount}">0
+                  </div>
+                  <div class="text-sm text-purple-600">투표 참여</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 인물 추가 통계 -->
+            <div
+                class="stat-card bg-gradient-to-br from-green-50 to-green-100 rounded-lg p-4 shadow-sm">
+              <div class="flex items-center">
+                <div class="stat-icon-container bg-green-500 text-white">
+                  <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="ml-4">
+                  <div class="text-2xl font-bold text-green-700"
+                       th:text="${activityOverview.personAddCount}">0
+                  </div>
+                  <div class="text-sm text-green-600">인물 추가</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 추천 인물 카드 -->
+      <div class="bg-white rounded-lg shadow-md overflow-hidden">
+        <div class="px-6 py-4 border-b border-gray-100 flex items-center">
+          <i class="fas fa-users text-xl text-indigo-500 mr-3"></i>
+          <h2 class="text-xl font-semibold text-gray-800">추천 인물</h2>
+        </div>
+
+        <div class="p-6">
+          <a href="/figures"
+             class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition w-full text-center">
+            <i class="fas fa-users mr-2"></i> 인물 둘러보기
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 페이지 자바스크립트 -->
+<th:block layout:fragment="script">
+  <script src="/js/users/profile.js"></script>
+  <script>
+    // 댓글 하이라이트 및 스크롤 스크립트
+    document.addEventListener('DOMContentLoaded', function () {
+      // URL 해시 확인
+      const hash = window.location.hash;
+
+      if (hash && hash.startsWith('#comment-')) {
+        // 댓글 ID 추출
+        const commentId = hash.substring(9); // '#comment-'를 제외한 부분
+
+        // profile 페이지에서는 댓글로 바로 이동하지 않고, 인물 페이지로 이동하므로
+        // 직접적인 처리는 필요하지 않습니다. 이 스크립트는 인물 페이지로 이동 후 실행됩니다.
+        console.log('댓글로 이동하는 링크가 감지되었습니다:', commentId);
+      }
+    });
+  </script>
+</th:block>
+</body>
+</html>

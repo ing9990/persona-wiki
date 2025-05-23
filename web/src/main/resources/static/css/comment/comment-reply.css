@@ -1,0 +1,77 @@
+/* 답글 버튼 스타일 */
+.reply-button, .view-replies-btn {
+  transition: all 0.2s ease;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.reply-button:hover, .view-replies-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* 소셜미디어 스타일의 "답글 x개" 버튼 */
+.view-replies-btn {
+  color: #3B82F6; /* Tailwind blue-500 */
+  margin-left: 0.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+
+/* 좋아요/싫어요 버튼 스타일 */
+.like-button, .dislike-button, .like-btn, .dislike-btn {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.like-button.clicked, .like-btn.clicked {
+  color: #3B82F6; /* Tailwind blue-500 */
+  font-weight: 500;
+}
+
+.dislike-button.clicked, .dislike-btn.clicked {
+  color: #EF4444; /* Tailwind red-500 */
+  font-weight: 500;
+}
+
+/* 답글 컨테이너 */
+.reply-container {
+  transition: all 0.3s ease;
+  border-left: 2px solid #E0E7FF; /* Tailwind indigo-100 */
+  margin-top: 0.75rem;
+  padding-left: 1.5rem;
+}
+
+/* 답글 아이템 스타일 */
+.reply {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #F3F4F6; /* Tailwind gray-100 */
+  font-size: 0.95rem;
+}
+
+.reply:last-child {
+  border-bottom: none;
+}
+
+/* 답글 폼 애니메이션 */
+.reply-form {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+}
+
+/* 숨김 상태일 때 */
+.reply-form.hidden {
+  max-height: 0;
+  opacity: 0;
+}
+
+/* 답글 버튼 구역 */
+.reply-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}

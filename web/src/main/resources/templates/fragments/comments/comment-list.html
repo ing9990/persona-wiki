@@ -1,0 +1,77 @@
+<div th:fragment="commentList" th:attr="data-last=${comments.last}">
+  <div th:each="comment : ${comments.content}" class="comment-item border-b border-gray-200 py-4"
+       th:id="${'comment-' + comment.id}">
+    <div class="flex">
+      <div class="flex-shrink-0 mr-3">
+        <a th:href="${comment.toWriterProfile()}">
+          <img th:src="${@layoutHelper.getProfileImageByString(comment.userProfileImage)}"
+               class="h-10 w-10 rounded-full object-cover"
+               alt="프로필 이미지"
+               onerror="this.src='/img/profile-placeholder.svg'">
+        </a>
+      </div>
+
+      <div class="flex-grow">
+        <div class="flex items-center mb-1">
+          <span class="font-medium text-gray-900 mr-2"
+                th:text="${comment.userNickname != null} ? ${comment.userNickname} : '익명'"></span>
+          <span class="text-sm text-gray-500 comment-date-relative"
+                th:text="${comment.createdAt}"></span>
+        </div>
+
+        <div class="text-gray-700 mb-2"
+             th:text="${comment.content}"></div>
+
+        <!-- 버튼 그룹을 모바일에 최적화 -->
+        <div class="flex flex-wrap items-center text-sm text-gray-500 gap-x-4 gap-y-2">
+          <button
+              class="like-button requires-login flex items-center hover:text-indigo-600 text-base"
+              th:classappend="${comment.isLikedByUser} ? 'clicked text-indigo-600' : ''"
+              th:attr="data-id=${comment.id}, data-figure-id=${figureId}">
+            <i class="far fa-thumbs-up mr-2 text-lg"></i>
+            <span class="like-count" th:text="${comment.likes}">0</span>
+          </button>
+
+          <button
+              class="dislike-button requires-login flex items-center hover:text-red-600 text-base"
+              th:classappend="${comment.isDislikedByUser} ? 'clicked text-red-600' : ''"
+              th:attr="data-id=${comment.id}, data-figure-id=${figureId}">
+            <i class="far fa-thumbs-down mr-2 text-lg"></i>
+            <span class="dislike-count" th:text="${comment.dislikes}">0</span>
+          </button>
+
+          <button
+              class="add-reply-button requires-login flex items-center hover:text-indigo-600 text-base"
+              th:attr="data-id=${comment.id}">
+            <i class="far fa-comment mr-2"></i>
+            <span>답글</span>
+          </button>
+
+          <!-- 답글 개수 버튼 -->
+          <button th:if="${comment.replyCount > 0}"
+                  class="view-replies-btn flex items-center text-blue-500 hover:text-blue-700 text-base"
+                  th:attr="data-id=${comment.id}">
+            <span class="reply-count" th:text="'답글 ' + ${comment.replyCount} + '개'">답글 0개</span>
+          </button>
+        </div>
+
+        <div class="reply-container mt-3 pl-3 border-l-2 border-gray-200 hidden">
+          <div class="replies-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+          crossorigin="anonymous"></script>
+  <!-- 가로 김 -->
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-1448769500494356"
+       data-ad-slot="5626555131"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+</div>

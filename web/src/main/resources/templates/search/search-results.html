@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}">
+
+<head>
+  <title th:text="'검색 결과: ' + ${query}">검색 결과</title>
+  <meta name="description" content="국민사형투표 검색 결과">
+
+  <!-- 추가 스타일 -->
+  <style>
+    .search-result-card {
+      transition: all 0.3s ease;
+    }
+
+    .search-result-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .highlight {
+      background-color: #FFE082;
+      padding: 0 2px;
+      border-radius: 2px;
+    }
+
+    /* 애니메이션 효과 */
+    .fade-in {
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .add-figure-button {
+      background-color: #10B981;
+      transition: all 0.3s ease;
+    }
+
+    .add-figure-button:hover {
+      background-color: #059669;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- 검색 결과 헤더 -->
+  <section class="mb-8">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h1 class="text-2xl font-bold text-gray-800 mb-2 flex items-center">
+        <i class="fas fa-search text-indigo-500 mr-3"></i>
+        <span>'<span th:text="${query}" class="text-indigo-600"></span>'에 대한 검색 결과</span>
+      </h1>
+      <p class="text-gray-600">
+        총 <span th:text="${searchResults.size()}" class="font-bold"></span>개의 결과를 찾았습니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- 검색 결과가 없는 경우 -->
+  <section th:if="${#lists.isEmpty(searchResults)}" class="mb-8 fade-in">
+    <div class="bg-gray-50 rounded-lg p-10 text-center">
+      <i class="fas fa-search text-gray-300 text-5xl mb-4"></i>
+      <h2 class="text-xl font-bold text-gray-700 mb-2">검색 결과가 없습니다</h2>
+      <p class="text-gray-600 mb-4">원하는 인물을 찾을 수 없나요? 직접 추가해보세요!</p>
+
+      <!-- 새 인물 추가 버튼 -->
+      <div class="mb-6">
+        <a onclick="openFigureModal()"
+           class="requires-login add-figure-button open-figure-modal inline-flex items-center px-6 py-3 text-white font-medium rounded-lg shadow-md">
+          <i class="fas fa-user-plus mr-2"></i>
+          <span th:text="'&quot;' + ${query} + '&quot; 인물 추가하기'">인물 추가하기</span>
+        </a>
+      </div>
+
+      <div class="my-6 border-t border-gray-200 pt-6">
+        <p class="text-gray-600 mb-6">또는 다른 검색어로 다시 시도해보세요.</p>
+        <div class="max-w-md mx-auto">
+          <form action="/search" method="get" class="flex">
+            <input type="text" name="query" th:value="${query}"
+                   class="flex-grow px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <button type="submit"
+                    class="bg-indigo-600 text-white px-4 py-2 rounded-r-lg hover:bg-indigo-700 transition">
+              <i class="fas fa-search"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="mt-8">
+        <h3 class="text-md font-semibold text-gray-700 mb-3">인기 카테고리 바로가기</h3>
+        <div class="flex flex-wrap justify-center gap-3">
+          <a href="/categories/president"
+             class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200 transition">
+            <i class="fas fa-flag mr-1"></i> 대통령
+          </a>
+          <a href="/categories/youtuber"
+             class="px-4 py-2 bg-red-100 text-red-800 rounded-full hover:bg-red-200 transition">
+            <i class="fas fa-youtube mr-1"></i> 유튜버
+          </a>
+          <a href="/categories/celebrity"
+             class="px-4 py-2 bg-pink-100 text-pink-800 rounded-full hover:bg-pink-200 transition">
+            <i class="fas fa-film mr-1"></i> 연예인
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 검색 결과 목록 -->
+  <section th:if="${not #lists.isEmpty(searchResults)}" class="mb-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <!-- 검색 결과 카드 (반복) -->
+      <div th:each="figure : ${searchResults}"
+           class="bg-white rounded-lg shadow-md overflow-hidden search-result-card fade-in">
+        <div class="relative">
+          <!-- 인물 이미지 -->
+          <img th:src="${figure.image}"
+               alt="인물 이미지"
+               class="w-full h-48 object-cover"
+               data-handle-error="true"
+               data-placeholder="/img/profile-placeholder.svg">
+          <!-- 카테고리 배지 -->
+          <span th:text="${figure.categoryName}"
+                class="absolute top-4 right-4 bg-indigo-600 text-white text-sm px-3 py-1 rounded-full">
+            카테고리
+          </span>
+        </div>
+
+        <div class="p-6">
+          <!-- 인물 이름 -->
+          <h3 class="text-xl font-bold text-gray-800 mb-2" th:text="${figure.name}">인물 이름</h3>
+
+          <!-- 인물 소개 (일부만 표시) -->
+          <p class="text-gray-600 mb-4" th:text="${#strings.abbreviate(figure.bio, 40)}">
+            인물 소개 텍스트...
+          </p>
+
+          <!-- 평판 지표 -->
+          <div class="flex items-center mb-4">
+            <div class="flex items-center mr-4">
+              <i class="fas fa-crown text-green-500 mr-1"></i>
+              <span th:text="${figure.positives}">0</span>
+            </div>
+            <div class="flex items-center mr-4">
+              <i class="fas fa-balance-scale text-blue-500 mr-1"></i>
+              <span th:text="${figure.neutrals}">0</span>
+            </div>
+            <div class="flex items-center">
+              <i class="fas fa-skull text-red-500 mr-1"></i>
+              <span th:text="${figure.negatives}">0</span>
+            </div>
+          </div>
+
+          <!-- 상세 페이지 링크 -->
+          <a th:href="@{'/' + ${figure.categoryId} + '/@' + ${figure.slug}}"
+             class="inline-block bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition">
+            자세히 보기
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 찾는 인물이 없는 경우 인물 추가 섹션 -->
+    <div class="mt-10 bg-white rounded-lg shadow-md p-6 text-center fade-in">
+      <h3 class="text-lg font-semibold text-gray-800 mb-3">원하는 인물을 찾지 못하셨나요?</h3>
+      <p class="text-gray-600 mb-4">검색하신 인물이 없다면 직접 추가해보세요!</p>
+      <a class="add-figure-button inline-flex items-center px-5 py-2 text-white font-medium rounded-md shadow-sm">
+        <i class="fas fa-user-plus mr-2"></i>
+        <span>새 인물 추가하기</span>
+      </a>
+    </div>
+  </section>
+
+  <!-- 연관 검색어 제안 -->
+  <section th:if="${not #lists.isEmpty(searchResults)}" class="mb-8 fade-in">
+    <div class="bg-white rounded-lg shadow-md p-6">
+      <h2 class="text-xl font-bold text-gray-800 mb-4">연관 카테고리 바로가기</h2>
+
+      <div class="flex flex-wrap gap-3">
+        <a href="/categories/president"
+           class="px-4 py-2 bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200 transition">
+          <i class="fas fa-flag mr-1"></i> 대통령
+        </a>
+        <a href="/categories/youtuber"
+           class="px-4 py-2 bg-red-100 text-red-800 rounded-full hover:bg-red-200 transition">
+          <i class="fas fa-youtube mr-1"></i> 유튜버
+        </a>
+        <a href="/categories/celebrity"
+           class="px-4 py-2 bg-pink-100 text-pink-800 rounded-full hover:bg-pink-200 transition">
+          <i class="fas fa-film mr-1"></i> 연예인
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 페이지 자바스크립트 -->
+<script src="/js/search/search-results-handler.js"></script>
+</body>
+</html>

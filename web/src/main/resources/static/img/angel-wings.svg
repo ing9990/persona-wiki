@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+      <feFlood flood-color="gold" flood-opacity="0.5" result="color" />
+      <feComposite in="color" in2="blur" operator="in" result="glow" />
+      <feComposite in="SourceGraphic" in2="glow" operator="over" />
+    </filter>
+    <linearGradient id="wing-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="white" stop-opacity="0.9"/>
+      <stop offset="30%" stop-color="white" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="gold" stop-opacity="0.5"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 왼쪽 날개 -->
+  <path d="M 100,60
+           C 80,40 60,15 30,10
+           C 10,8 5,20 10,30
+           C 15,40 20,45 25,50
+           C 15,50 5,50 0,65
+           C 0,80 10,85 20,80
+           C 30,75 35,70 40,65
+           C 35,75 30,90 35,100
+           C 45,105 55,90 65,75
+           C 75,60 85,50 100,60 Z"
+    fill="url(#wing-gradient)" filter="url(#glow)">
+    <animate attributeName="d" values="
+      M 100,60 C 80,40 60,15 30,10 C 10,8 5,20 10,30 C 15,40 20,45 25,50 C 15,50 5,50 0,65 C 0,80 10,85 20,80 C 30,75 35,70 40,65 C 35,75 30,90 35,100 C 45,105 55,90 65,75 C 75,60 85,50 100,60 Z;
+      M 100,60 C 80,45 60,20 30,15 C 10,13 5,25 10,35 C 15,45 20,50 25,55 C 15,55 5,55 0,70 C 0,85 10,90 20,85 C 30,80 35,75 40,70 C 35,80 30,95 35,105 C 45,110 55,95 65,80 C 75,65 85,55 100,60 Z;
+      M 100,60 C 80,40 60,15 30,10 C 10,8 5,20 10,30 C 15,40 20,45 25,50 C 15,50 5,50 0,65 C 0,80 10,85 20,80 C 30,75 35,70 40,65 C 35,75 30,90 35,100 C 45,105 55,90 65,75 C 75,60 85,50 100,60 Z"
+      dur="3s" repeatCount="indefinite" />
+  </path>
+
+  <!-- 오른쪽 날개 -->
+  <path d="M 100,60
+           C 120,40 140,15 170,10
+           C 190,8 195,20 190,30
+           C 185,40 180,45 175,50
+           C 185,50 195,50 200,65
+           C 200,80 190,85 180,80
+           C 170,75 165,70 160,65
+           C 165,75 170,90 165,100
+           C 155,105 145,90 135,75
+           C 125,60 115,50 100,60 Z"
+    fill="url(#wing-gradient)" filter="url(#glow)">
+    <animate attributeName="d" values="
+      M 100,60 C 120,40 140,15 170,10 C 190,8 195,20 190,30 C 185,40 180,45 175,50 C 185,50 195,50 200,65 C 200,80 190,85 180,80 C 170,75 165,70 160,65 C 165,75 170,90 165,100 C 155,105 145,90 135,75 C 125,60 115,50 100,60 Z;
+      M 100,60 C 120,45 140,20 170,15 C 190,13 195,25 190,35 C 185,45 180,50 175,55 C 185,55 195,55 200,70 C 200,85 190,90 180,85 C 170,80 165,75 160,70 C 165,80 170,95 165,105 C 155,110 145,95 135,80 C 125,65 115,55 100,60 Z;
+      M 100,60 C 120,40 140,15 170,10 C 190,8 195,20 190,30 C 185,40 180,45 175,50 C 185,50 195,50 200,65 C 200,80 190,85 180,80 C 170,75 165,70 160,65 C 165,75 170,90 165,100 C 155,105 145,90 135,75 C 125,60 115,50 100,60 Z"
+      dur="3s" repeatCount="indefinite" />
+  </path>
+
+  <!-- 중앙 광채 -->
+  <circle cx="100" cy="60" r="15" fill="gold" opacity="0.7">
+    <animate attributeName="opacity" values="0.7;0.3;0.7" dur="2s" repeatCount="indefinite" />
+    <animate attributeName="r" values="15;17;15" dur="2s" repeatCount="indefinite" />
+  </circle>
+</svg>

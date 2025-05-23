@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}" lang="ko">
+<head>
+  <title>사용자 랭킹</title>
+  <meta name="description" content="국민사형투표의 사용자 랭킹을 확인해보세요. 명성 점수에 따른 순위를 볼 수 있습니다.">
+  <meta name="keywords" content="국민사형투표, 랭킹, 명성, 사용자 순위">
+
+  <!-- 랭킹 페이지 전용 CSS -->
+  <link rel="stylesheet" href="/css/users/ranking.css">
+</head>
+
+<body>
+<main layout:fragment="content" class="py-6 md:py-12">
+  <div class="container mx-auto px-4">
+    <!-- 페이지 헤더 -->
+    <div class="ranking-header">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-5">사용자 랭킹</h1>
+      <p class="text-gray-600 max-w-2xl mx-auto mt-5">최고의 인물 평가자들을 확인해보세요!</p>
+    </div>
+
+    <!-- 상단 광고 배너 -->
+    <div class="ad-container text-center my-8">
+      <div class="relative inline-block max-w-full">
+        <span
+            class="absolute top-0 right-0 bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-bl z-10">광고</span>
+        <script async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                crossorigin="anonymous"></script>
+        <!-- 반응형 가로 배너 -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-1448769500494356"
+             data-ad-slot="8912986034"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+    </div>
+
+    <!-- TOP 3 섹션 -->
+    <div class="top-ranks-container">
+      <h2 class="text-2xl font-bold">TOP 3</h2>
+
+      <div class="top-ranks-cards">
+        <!-- 2등 카드 -->
+        <div th:if="${rankingData.topUsers.size() > 1}" th:with="user=${rankingData.topUsers[1]}"
+             class="rank-card silver">
+          <!-- 2등 배지 -->
+          <div class="rank-badge silver-badge">
+            <!--            <span th:text="${user.rank}">2</span>-->
+            <i class="fas fa-medal  silver-medal"></i>
+          </div>
+
+          <div class="relative flex flex-col items-center silver-card">
+            <!-- 프로필 이미지 -->
+            <div class="profile-container">
+              <a th:href="${@layoutHelper.toProfileLink(user.getNickname())}">
+
+                <div class="profile-image-container silver-profile">
+                  <img th:src="${@layoutHelper.getProfileImageByString(user.profileImage)}"
+                       alt="프로필 이미지" class="w-full h-full object-cover"
+                       onerror="this.src='/img/profile-placeholder.svg';">
+                </div>
+              </a>
+            </div>
+
+            <!-- 유저 정보 -->
+            <div class="user-info">
+              <h3 class="user-name silver-name" th:text="${user.nickname}">실버 사용자</h3>
+              <div class="level-info">
+                레벨 <span th:text="${@rankingHelper.calculateLevel(user.prestige).level}">5</span>
+                (<span
+                  th:text="${@rankingHelper.getLevelTitle(@rankingHelper.calculateLevel(user.prestige).level)}">분석가</span>)
+              </div>
+              <div class="score-container">
+                <i class="fas fa-star score-icon text-yellow-500"></i>
+                <span class="score-value"
+                      th:text="${#numbers.formatInteger(user.prestige, 0, 'COMMA')}">12,345</span>
+                <span class="text-sm ml-1"> 명성</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1등 카드 -->
+        <div th:if="${!rankingData.topUsers.isEmpty()}" th:with="user=${rankingData.topUsers[0]}"
+             class="rank-card gold">
+          <!-- 1등 배지 -->
+          <div class="rank-badge crown-badge">
+            <i class="fas fa-crown"></i>
+          </div>
+
+          <div class="relative flex flex-col items-center gold-card">
+            <!-- 프로필 이미지 -->
+            <div class="profile-container">
+              <a th:href="${@layoutHelper.toProfileLink(user.getNickname())}">
+
+                <div class="profile-image-container gold-profile-container">
+                  <img th:src="${@layoutHelper.getProfileImageByString(user.profileImage)}"
+                       alt="프로필 이미지" class="gold-profile"
+                       onerror="this.src='/img/profile-placeholder.svg';">
+                </div>
+              </a>
+            </div>
+
+            <!-- 유저 정보 -->
+            <div class="user-info">
+              <h3 class="user-name gold-name" th:text="${user.nickname}">골드 사용자</h3>
+              <div class="level-info">
+                레벨 <span th:text="${@rankingHelper.calculateLevel(user.prestige).level}">8</span>
+                (<span
+                  th:text="${@rankingHelper.getLevelTitle(@rankingHelper.calculateLevel(user.prestige).level)}">대가</span>)
+              </div>
+              <div class="score-container">
+                <i class="fas fa-star score-icon gold-star"></i>
+                <span class="score-value gold-score"
+                      th:text="${#numbers.formatInteger(user.prestige, 0, 'COMMA')}">45,678</span>
+                <span class="text-sm ml-1"> 명성</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3등 카드 -->
+        <div th:if="${rankingData.topUsers.size() > 2}" th:with="user=${rankingData.topUsers[2]}"
+             class="rank-card bronze">
+          <!-- 3등 배지 -->
+          <div class="rank-badge bronze-badge">
+            <!--            <span th:text="${user.rank}">3</span>-->
+            <i class="fas fa-medal bronze-medal"></i>
+          </div>
+
+          <div class="relative flex flex-col items-center bronze-card">
+            <!-- 프로필 이미지 -->
+            <div class="profile-container">
+              <a th:href="${@layoutHelper.toProfileLink(user.getNickname())}">
+                <div class="profile-image-container bronze-profile">
+
+                  <img th:src="${@layoutHelper.getProfileImageByString(user.profileImage)}"
+                       alt="프로필 이미지" class="w-full h-full object-cover"
+                       onerror="this.src='/img/profile-placeholder.svg';">
+                </div>
+              </a>
+            </div>
+
+            <!-- 유저 정보 -->
+            <div class="user-info">
+              <h3 class="user-name bronze-name" th:text="${user.nickname}">브론즈 사용자</h3>
+              <div class="level-info">
+                레벨 <span th:text="${@rankingHelper.calculateLevel(user.prestige).level}">3</span>
+                (<span
+                  th:text="${@rankingHelper.getLevelTitle(@rankingHelper.calculateLevel(user.prestige).level)}">평론가</span>)
+              </div>
+              <div class="score-container">
+                <i class="fas fa-star score-icon text-yellow-500"></i>
+                <span class="score-value"
+                      th:text="${#numbers.formatInteger(user.prestige, 0, 'COMMA')}">8,765</span>
+                <span class="text-sm ml-1"> 명성</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TOP 3와 나의 랭킹 사이 광고 배너 -->
+    <div class="ad-container text-center my-8">
+      <div class="relative inline-block max-w-full">
+        <span
+            class="absolute top-0 right-0 bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-bl z-10">광고</span>
+        <script async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                crossorigin="anonymous"></script>
+        <!-- 반응형 가로 배너 -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-1448769500494356"
+             data-ad-slot="8912986034"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+    </div>
+
+    <!-- 나의 랭킹 -->
+    <div th:if="${currentUserRank != null}" class="my-rank-container">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <div class="text-3xl font-bold text-indigo-600 mr-4" th:text="${currentUserRank.rank}">
+            721
+          </div>
+          <div class="flex items-center">
+            <div class="w-12 h-12 rounded-full overflow-hidden mr-3">
+              <img th:src="${@layoutHelper.getProfileImageByString(currentUserRank.profileImage)}"
+                   alt="내 프로필" class="w-full h-full object-cover"
+                   onerror="this.src='/img/profile-placeholder.svg';">
+            </div>
+            <div>
+              <div class="font-bold text-gray-800" th:text="${currentUserRank.nickname}">나의 닉네임
+              </div>
+              <div class="text-sm text-gray-600">
+                레벨 <span th:text="${@rankingHelper.calculateLevel(currentUserRank.prestige).level}">2</span>
+                (<span
+                  th:text="${@rankingHelper.getLevelTitle(@rankingHelper.calculateLevel(currentUserRank.prestige).level)}">관찰자</span>)
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center">
+          <i class="fas fa-star mr-2 text-yellow-500"></i>
+          <span class="font-bold"
+                th:text="${#numbers.formatInteger(currentUserRank.prestige, 0, 'COMMA')}">2,345</span>
+          <span class="text-sm ml-1"> 명성</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 랭킹 목록 -->
+    <div class="ranking-list-container">
+      <div class="ranking-list-header">
+        <h3 class="ranking-list-title">전체 랭킹</h3>
+        <p class="ranking-list-subtitle">현재 총 <span th:text="${rankingData.totalUsers}">1,234</span>명의
+          사용자가 있습니다</p>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="ranking-table">
+          <thead>
+          <tr>
+            <th>순위</th>
+            <th>사용자</th>
+            <th>레벨</th>
+            <th>명성 점수</th>
+            <th>한줄 소개</th>
+          </tr>
+          </thead>
+          <tbody>
+          <!-- 랭킹 목록 -->
+          <tr th:each="user : ${rankingData.rankings}"
+              th:classappend="${currentUserRank != null && currentUserRank.userId == user.userId ? 'current-user' : ''}">
+            <td>
+              <div class="text-sm font-medium text-gray-900" th:text="${user.rank}">4</div>
+            </td>
+            <td>
+              <div class="user-cell">
+                <a th:href="${@layoutHelper.toProfileLink(user.getNickname())}">
+                  <img th:src="${@layoutHelper.getProfileImageByString(user.profileImage)}" alt=""
+                       class="table-profile-image"
+                       onerror="this.src='/img/profile-placeholder.svg';">
+                </a>
+                <div class="table-user-name" th:text="${user.nickname}">사용자 이름</div>
+              </div>
+            </td>
+            <td>
+              <div class="text-sm text-gray-900">
+                <span th:text="${@rankingHelper.calculateLevel(user.prestige).level}">3</span>
+                (<span
+                  th:text="${@rankingHelper.getLevelTitle(@rankingHelper.calculateLevel(user.prestige).level)}">평론가</span>)
+              </div>
+            </td>
+            <td>
+              <div class="flex items-center text-sm text-gray-900">
+                <i class="fas fa-star mr-2 text-yellow-500"></i>
+                <span th:text="${#numbers.formatInteger(user.prestige, 0, 'COMMA')}">7,890</span>
+              </div>
+            </td>
+            <td>
+              <div class="text-sm text-gray-500 truncate max-w-xs"
+                   th:text="${#strings.isEmpty(user.bio) ? '한줄 소개가 없습니다.' : user.bio}">
+                사용자 한줄 소개 텍스트가 들어갑니다...
+              </div>
+            </td>
+          </tr>
+
+          <!-- 데이터가 없을 경우 -->
+          <tr th:if="${rankingData.rankings.isEmpty()}">
+            <td colspan="5" class="px-6 py-8 text-center text-gray-500">
+              <div class="flex flex-col items-center">
+                <i class="fas fa-users text-gray-300 text-5xl mb-4"></i>
+                <p>표시할 사용자가 없습니다.</p>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- 페이지네이션 -->
+      <div class="pagination-container" th:if="${rankingData.totalPages > 1}">
+        <a th:href="@{/ranking(page=${rankingData.currentPage - 1})}"
+           th:class="${rankingData.currentPage == 0 ? 'pagination-link disabled' : 'pagination-link'}"
+           class="pagination-link">
+          이전
+        </a>
+
+        <div class="hidden md:flex mx-2">
+            <span th:each="i : ${#numbers.sequence(1, rankingData.totalPages)}"
+                  th:if="${i <= 5 || i > rankingData.totalPages - 5 || (i > rankingData.currentPage - 3 && i < rankingData.currentPage + 3)}">
+              <a th:href="@{/ranking(page=${i - 1})}" th:text="${i}"
+                 th:class="${rankingData.currentPage == i - 1 ? 'pagination-link active' : 'pagination-link'}"
+                 class="pagination-link">1</a>
+
+              <span th:if="${i == 5 && rankingData.totalPages > 10 && rankingData.currentPage >= 7}"
+                    class="px-2">...</span>
+              <span
+                  th:if="${i == rankingData.totalPages - 5 && rankingData.totalPages > 10 && rankingData.currentPage < rankingData.totalPages - 7}"
+                  class="px-2">...</span>
+            </span>
+        </div>
+
+        <a th:href="@{/ranking(page=${rankingData.currentPage + 1})}"
+           th:class="${rankingData.currentPage >= rankingData.totalPages - 1 ? 'pagination-link disabled' : 'pagination-link'}"
+           class="pagination-link">
+          다음
+        </a>
+      </div>
+    </div>
+
+    <!-- 페이지 하단 광고 배너 -->
+    <div class="ad-container text-center my-8">
+      <div class="relative inline-block max-w-full">
+        <span
+            class="absolute top-0 right-0 bg-gray-100 text-gray-500 text-xs px-2 py-1 rounded-bl z-10">광고</span>
+        <script async
+                src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1448769500494356"
+                crossorigin="anonymous"></script>
+        <!-- 반응형 가로 배너 -->
+        <ins class="adsbygoogle"
+             style="display:inline-block;width:728px;height:90px"
+             data-ad-client="ca-pub-1448769500494356"
+             data-ad-slot="8912986034"></ins>
+        <script>
+          (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- 광고 관련 추가 스타일 -->
+<style>
+  .ad-container {
+    text-align: center;
+    margin: 2rem 0;
+    overflow: hidden;
+  }
+
+  .ad-container .inline-block {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  /* 모바일에서 광고 크기 조정 */
+  @media (max-width: 767px) {
+    .ad-container ins {
+      width: 320px;
+      height: 100px;
+    }
+  }
+</style>
+
+<!-- 랭킹 페이지 전용 JS -->
+<script layout:fragment="script">
+  document.addEventListener('DOMContentLoaded', function () {
+    // TOP 3 카드 애니메이션
+    initTopRanksAnimation();
+
+    // 현재 사용자 행으로 스크롤
+    scrollToCurrentUser();
+
+    // 프로필 이미지 효과
+    initProfileEffects();
+
+    // 반응형 테이블 최적화
+    optimizeTableForMobile();
+  });
+
+  /**
+   * TOP 3 카드 애니메이션 초기화
+   */
+  function initTopRanksAnimation() {
+    // 카드 선택
+    const cards = document.querySelectorAll('.rank-card');
+
+    // 초기 상태 설정 (모두 숨김)
+    cards.forEach(card => {
+      card.style.opacity = '0';
+      card.style.transform = card.classList.contains('gold')
+          ? 'translateY(30px) scale(1.1)'
+          : 'translateY(30px) scale(0.95)';
+    });
+
+    // 순차적으로 표시
+    setTimeout(() => {
+      // 1등 카드 표시 (가운데)
+      const goldCard = document.querySelector('.rank-card.gold');
+      if (goldCard) {
+        goldCard.style.transition = 'all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        goldCard.style.opacity = '1';
+        goldCard.style.transform = 'translateY(0) scale(1.1)';
+
+        // 왕관 효과
+        const crown = goldCard.querySelector('.crown-badge');
+        if (crown) {
+          setTimeout(() => {
+            crown.style.transition = 'transform 0.5s cubic-bezier(0.18, 0.89, 0.32, 1.28)';
+            crown.style.transform = 'translateX(-50%) scale(1.2)';
+
+            setTimeout(() => {
+              crown.style.transform = 'translateX(-50%) scale(1)';
+            }, 300);
+          }, 500);
+        }
+
+        // 프로필 효과
+        const profileContainer = goldCard.querySelector('.gold-profile-container');
+        if (profileContainer) {
+          setTimeout(() => {
+            profileContainer.classList.add('pulse-effect');
+          }, 800);
+        }
+      }
+
+      // 2등 카드 표시 (왼쪽)
+      setTimeout(() => {
+        const silverCard = document.querySelector('.rank-card.silver');
+        if (silverCard) {
+          silverCard.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+          silverCard.style.opacity = '1';
+          silverCard.style.transform = 'translateY(0) scale(0.95)';
+        }
+      }, 400);
+
+      // 3등 카드 표시 (오른쪽)
+      setTimeout(() => {
+        const bronzeCard = document.querySelector('.rank-card.bronze');
+        if (bronzeCard) {
+          bronzeCard.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+          bronzeCard.style.opacity = '1';
+          bronzeCard.style.transform = 'translateY(0) scale(0.95)';
+        }
+      }, 800);
+    }, 300);
+  }
+
+  /**
+   * 현재 사용자 행으로 스크롤
+   */
+  function scrollToCurrentUser() {
+    const currentUserRow = document.querySelector('tr.current-user');
+
+    if (currentUserRow) {
+      // TOP 3 애니메이션 후에 스크롤 (2초 후)
+      setTimeout(() => {
+        const offset = currentUserRow.offsetTop - window.innerHeight / 2;
+
+        // 부드러운 스크롤 적용
+        window.scrollTo({
+          top: offset,
+          behavior: 'smooth'
+        });
+
+        // 행 강조 효과
+        currentUserRow.style.transition = 'background-color 0.7s ease';
+        currentUserRow.style.backgroundColor = 'rgba(99, 102, 241, 0.2)';
+
+        setTimeout(() => {
+          currentUserRow.style.backgroundColor = '';
+        }, 2000);
+      }, 2000);
+    }
+  }
+
+  /**
+   * 프로필 이미지 효과 초기화
+   */
+  function initProfileEffects() {
+    // 테이블 프로필 이미지 호버 효과
+    const tableImages = document.querySelectorAll('.table-profile-image');
+    tableImages.forEach(img => {
+      img.addEventListener('mouseenter', function () {
+        this.style.transform = 'scale(1.1)';
+      });
+
+      img.addEventListener('mouseleave', function () {
+        this.style.transform = 'scale(1)';
+      });
+
+      // 이미지 로드 오류 시 기본 이미지 설정
+      img.addEventListener('error', function () {
+        this.src = '/img/profile-placeholder.svg';
+      });
+    });
+
+    // TOP 3 프로필 이미지 로드 효과
+    const topImages = document.querySelectorAll('.profile-image-container img');
+    topImages.forEach(img => {
+      img.style.opacity = '0';
+      img.style.transition = 'opacity 0.5s ease';
+
+      img.onload = function () {
+        this.style.opacity = '1';
+      };
+
+      // 이미지가 이미 캐시되어 있는 경우 처리
+      if (img.complete) {
+        img.style.opacity = '1';
+      }
+
+      // 이미지 로드 오류 시 기본 이미지 설정
+      img.addEventListener('error', function () {
+        this.src = '/img/profile-placeholder.svg';
+        this.style.opacity = '1';
+      });
+    });
+  }
+
+  /**
+   * 반응형 테이블 최적화
+   */
+  function optimizeTableForMobile() {
+    const isMobile = window.innerWidth < 768;
+    const levelColumn = document.querySelectorAll('th:nth-child(3), td:nth-child(3)');
+    const bioColumn = document.querySelectorAll('th:nth-child(5), td:nth-child(5)');
+
+    function adjustColumns() {
+      const currentIsMobile = window.innerWidth < 768;
+
+      levelColumn.forEach(col => {
+        col.style.display = currentIsMobile ? 'none' : '';
+      });
+
+      bioColumn.forEach(col => {
+        col.style.display = currentIsMobile ? 'none' : '';
+      });
+
+      // 모바일에서 사용자 칼럼 너비 조정
+      const userColumns = document.querySelectorAll('th:nth-child(2), td:nth-child(2)');
+      userColumns.forEach(col => {
+        if (currentIsMobile) {
+          col.style.width = '60%';
+        } else {
+          col.style.width = '';
+        }
+      });
+
+      // 모바일에서 점수 칼럼 너비 조정
+      const scoreColumns = document.querySelectorAll('th:nth-child(4), td:nth-child(4)');
+      scoreColumns.forEach(col => {
+        if (currentIsMobile) {
+          col.style.width = '30%';
+        } else {
+          col.style.width = '';
+        }
+      });
+    }
+
+    // 초기 실행
+    adjustColumns();
+
+    // 화면 크기 변경 시 실행
+    window.addEventListener('resize', adjustColumns);
+  }
+</script>
+</body>
+</html>
