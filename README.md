@@ -2,17 +2,17 @@
 persona-wiki         
   ├── Project Modules  
   │   ├── admin                    | Admin pages
-  │   ├── authentication           | OAuth 2.0 social login
+  │   ├── authentication           | OAuth 2.0 social login (Kakao, Google, Naver)
   │   ├── common                   | Common utilities
   │   ├── monitor                  | Slack logging, Spring Actuator
-  │   ├── notification-api         | Email, push notifications
+  │   ├── notification-api         | Email, push notifications (Gmail)
   │   ├── storage-api              | Domain models, JPA entities
   │   ├── backend                  | Backend APIs
   │   └── web                      | Thymeleaf with Spring Boot  
   
   ├── External APIs
   │   ├── google-image-api         | Google Image API 
-  │   └── wikipedia-api            | Wikipedia auto-figure search API integration
+  │   └── wikipedia-api            | Wikipedia auto-figure search API
   
   ├── Deployment & Infrastructure
   │   ├── datas                    | Test SQL data
